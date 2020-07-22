@@ -1,0 +1,4 @@
+app_tdf8541.c:79:6:AmpPort_Init	4	static
+app_tdf8541.c:83:6:TDF8541Init	8	static
+app_tdf8541.c:94:6:TDF8541_AmpMute	16	static
+app_tdf8541.c:107:6:Amp8541_DLL_Loader	4	static

@@ -1,0 +1,6 @@
+app_dsp_driver.c:20:6:DSP_IO_Init	4	static
+app_dsp_driver.c:34:6:SIGMA_READ	32	static
+app_dsp_driver.c:47:6:SIGMA_WRITE	24	static
+app_dsp_driver.c:68:6:SIGMA_SAFELOAD_WRITE_REGISTER	32	static
+app_dsp_driver.c:96:6:SIGMA_WRITE_REGISTER_BLOCK	24	static
+app_dsp_driver.c:110:6:SIGMA_WRITE_DELAY	16	static

@@ -1,0 +1,15 @@
+app_eprom.c:52:6:Eprom_IO_Init	4	static
+app_eprom.c:58:6:Eprom_WR_Order	16	static
+app_eprom.c:64:6:Eprom_WR_Command	16	static
+app_eprom.c:73:6:Eprom_SE_Data	16	static
+app_eprom.c:86:6:Eprom_WR_Data	24	static
+app_eprom.c:99:6:Eprom_RD_Data	32	static
+app_eprom.c:113:6:Flash_WR_State_Clear	4	static
+app_eprom.c:117:10:Flash_Dsp_WR	32	static
+app_eprom.c:207:6:Flash_RD_State_Clear	4	static
+app_eprom.c:211:10:Flash_Dsp_RD	40	static
+app_eprom.c:283:6:Flash_CP_State_Clear	4	static
+app_eprom.c:287:10:Flash_Dsp_CP	280	static
+app_eprom.c:365:6:Flash_Dsp_SE	24	static
+app_eprom.c:384:6:EepromDataRxPro	4	static
+app_eprom.c:401:6:TASK_Eeprom_Pro	4	static

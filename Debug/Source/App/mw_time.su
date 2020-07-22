@@ -1,0 +1,2 @@
+mw_time.c:67:6:FTM0_PWM_Exit	4	static
+mw_time.c:78:6:FTM0_PWM_Init	4	static

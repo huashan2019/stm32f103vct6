@@ -1,0 +1,5 @@
+app_updata.c:15:6:AppJumpToBootloader	8	static
+app_updata.c:22:10:Is_IapMode	16	static
+app_updata.c:28:6:In_IapMode	8	static
+app_updata.c:32:6:Out_IapMode	8	static
+app_updata.c:43:6:IAP_Pro	8	static

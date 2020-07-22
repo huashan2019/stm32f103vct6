@@ -1,0 +1,2 @@
+app_dsp_readback.c:40:6:Dsp_Info_Data	32	static
+app_dsp_readback.c:105:6:Dsp_Info_Det	16	static

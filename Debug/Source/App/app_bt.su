@@ -1,0 +1,6 @@
+app_bt.c:33:10:Is_PASSWORD	24	static
+app_bt.c:43:10:Set_PASSWORD	16	static
+app_bt.c:48:6:Bt_ACK	40	static
+app_bt.c:105:6:BtDataAnalyse	40	static
+app_bt.c:589:6:M2B_TxService	48	static
+app_bt.c:904:6:TASK_Bt_Pro	4	static

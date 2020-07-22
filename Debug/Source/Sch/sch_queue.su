@@ -1,0 +1,7 @@
+sch_queue.c:15:6:Queue_Init	16	static
+sch_queue.c:22:9:Queue_Cnt	16	static
+sch_queue.c:26:10:Queue_IsFull	16	static
+sch_queue.c:30:10:Queue_IsEmpty	16	static
+sch_queue.c:34:10:Queue_In	32	static
+sch_queue.c:51:10:Queue_Out	40	static
+sch_queue.c:67:10:Queue_Insert	32	static

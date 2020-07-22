@@ -1,0 +1,8 @@
+mw_gpio.c:29:6:DSP_TEST_Init	4	static
+mw_gpio.c:35:6:DSP_Test_Detect	16	static
+mw_gpio.c:77:6:PWR_IO_Init	4	static
+mw_gpio.c:83:6:SYS_Power_Ctl	16	static
+mw_gpio.c:96:6:ACC_EN_Ctl	16	static
+mw_gpio.c:114:6:AMP_IO_Init	4	static
+mw_gpio.c:127:6:BT_IO_Init	4	static
+mw_gpio.c:139:6:GPIOInit	8	static

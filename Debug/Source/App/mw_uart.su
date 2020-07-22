@@ -1,0 +1,17 @@
+mw_uart.c:72:6:UartBufInit	16	static
+mw_uart.c:77:9:UartBufCnt	24	static
+mw_uart.c:85:10:UartGetFromBuf	24	static
+mw_uart.c:93:10:UartPutToBuf	24	static
+mw_uart.c:108:6:UartSendData8	16	static
+mw_uart.c:119:6:UartTxIntEn	16	static
+mw_uart.c:123:6:UartTxIntDis	16	static
+mw_uart.c:134:9:UartRxCnt	16	static
+mw_uart.c:138:9:UartTxCnt	16	static
+mw_uart.c:149:6:Uart_Rx_DataPro	16	static
+mw_uart.c:160:6:Uart_Tx_DataPro	24	static
+mw_uart.c:181:10:UartRxData	16	static
+mw_uart.c:192:10:UartTxData	16	static
+mw_uart.c:207:10:UartTxData_Direct	16	static
+mw_uart.c:224:6:UART_IntSerive	16	static
+mw_uart.c:250:6:SysUartExit	16	static
+mw_uart.c:302:10:SysUartInit	16	static

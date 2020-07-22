@@ -1,0 +1,4 @@
+app_ad1938.c:20:6:AD1938_IO_Init	4	static
+app_ad1938.c:32:6:AD1938_WriteData	16	static
+app_ad1938.c:41:8:AD1938_ReadData	24	static
+app_ad1938.c:58:6:AD1938_Freq	16	static

@@ -1,0 +1,8 @@
+interrupt.c:7:6:KBI0_IRQHandler	4	static
+interrupt.c:22:6:IRQ_IRQHandler	4	static
+interrupt.c:27:6:ADC_IRQHandler	4	static
+interrupt.c:54:6:UART0_IRQHandler	8	static
+interrupt.c:61:6:UART1_IRQHandler	8	static
+interrupt.c:68:6:UART2_IRQHandler	8	static
+interrupt.c:113:6:SPI0_IRQHandler	8	static
+interrupt.c:119:6:SPI1_IRQHandler	4	static

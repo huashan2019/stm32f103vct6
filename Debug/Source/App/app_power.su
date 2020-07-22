@@ -1,0 +1,7 @@
+app_power.c:17:6:Hardware_Ver_Pro	4	static
+app_power.c:29:6:SystemPowerUp	8	static
+app_power.c:42:6:PowerOnSystemModule	8	static
+app_power.c:53:6:PowerOffSystemModule	8	static
+app_power.c:58:6:EnterPowerOff	8	static
+app_power.c:72:6:PowerMessage	16	static
+app_power.c:110:6:TASK_Power_Pro	8	static

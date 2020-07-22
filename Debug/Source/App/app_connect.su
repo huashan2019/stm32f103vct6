@@ -1,0 +1,5 @@
+app_connect.c:17:10:Get_Uart_Choose	24	static
+app_connect.c:23:6:Set_Uart_Choose	16	static
+app_connect.c:27:6:Check_Uart	8	static
+app_connect.c:44:6:Change_Uart	16	static
+app_connect.c:74:6:BT_DataRxPro	32	static

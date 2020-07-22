@@ -1,0 +1,6 @@
+queue.c:46:1:queue_init	16	static
+queue.c:62:1:queue_isempty	16	static
+queue.c:75:1:queue_add	16	static
+queue.c:101:1:queue_remove	24	static
+queue.c:124:1:queue_peek	16	static
+queue.c:137:1:queue_move	16	static

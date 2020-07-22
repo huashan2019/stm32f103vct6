@@ -1,0 +1,5 @@
+sch_message.c:31:10:PostMessage	24	static
+sch_message.c:43:10:InsertMessage	24	static
+sch_message.c:50:10:GetMessage	16	static
+sch_message.c:54:6:ClearMessage	16	static
+sch_message.c:58:6:ClearAllModeMessage	16	static

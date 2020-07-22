@@ -1,0 +1,7 @@
+app_dspdata_access.c:15:10:Dsp_Store	16	static
+app_dspdata_access.c:24:10:Dsp_Load	16	static
+app_dspdata_access.c:34:10:Dsp_Flash_TO_File	16	static
+app_dspdata_access.c:61:10:Dsp_File_TO_Flash	32	static
+app_dspdata_access.c:152:10:Dsp_Load_Mode_Name	8	static
+app_dspdata_access.c:158:10:Dsp_Store_Mode_Name	8	static
+app_dspdata_access.c:164:6:Dsp_StoreLoadPro	8	static

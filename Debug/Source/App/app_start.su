@@ -1,0 +1,6 @@
+app_start.c:21:6:ACC_Init	4	static
+app_start.c:26:6:ACC_Detect	4	static
+app_start.c:61:6:Audio_Init	4	static
+app_start.c:66:6:AUDIO_Detect	4	static
+app_start.c:91:6:Start_IO_Init	8	static
+app_start.c:98:6:Start_Detect	8	static

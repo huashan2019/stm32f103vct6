@@ -1,0 +1,10 @@
+app_lowpower.c:15:6:SysWakeUpInit_FromACC	4	static
+app_lowpower.c:22:6:SysWakeUpExit_FromACC	4	static
+app_lowpower.c:30:6:SysWakeUpInit_FromKBI	4	static
+app_lowpower.c:50:6:SysWakeUpExit_FromKBI	4	static
+app_lowpower.c:55:6:SysWakeUpInit_FromRTC	4	static
+app_lowpower.c:59:6:SysWakeUpExit_FromRTC	4	static
+app_lowpower.c:69:6:ResetIO	4	static
+app_lowpower.c:76:6:SysLowPowerInit	8	static
+app_lowpower.c:91:6:SysLowPowerExit	8	static
+app_lowpower.c:109:6:TASK_AccOff_Pro	8	static

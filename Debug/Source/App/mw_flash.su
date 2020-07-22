@@ -1,0 +1,17 @@
+mw_flash.c:15:9:u8_TO_u32	24	static
+mw_flash.c:31:10:Flash_Program_U8	32	static
+mw_flash.c:91:10:Flash_Program_U32	32	static
+mw_flash.c:121:10:Flash_Read	16	static
+mw_flash.c:128:10:Flash_Erase	16	static
+mw_flash.c:134:10:Flash_Write	16	static
+mw_flash.c:147:10:Flash_RD_NUM	24	static
+mw_flash.c:160:10:Flash_RD	16	static
+mw_flash.c:171:10:Flash_WR_NUM_InOnePiece	536	static
+mw_flash.c:189:10:Flash_WR_NUM	24	static
+mw_flash.c:205:10:Flash_WR	16	static
+mw_flash.c:210:10:Flash_Quick_RD	24	static
+mw_flash.c:215:10:Flash_Quick_RD_U8	24	static
+mw_flash.c:225:10:Flash_Quick_WR	24	static
+mw_flash.c:231:10:Flash_Quick_WR_U8	24	static
+mw_flash.c:237:10:Flash_Quick_SE	24	static
+mw_flash.c:249:6:SysFlashInit	4	static
