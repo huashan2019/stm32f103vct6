@@ -61,9 +61,12 @@ uint8_t Rxdata[2];
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
-osThreadId myTask02Handle;
 osThreadId myTask03Handle;
 osThreadId myPrintfTaskHandle;
+osThreadId myTask_4ms_ProHandle;
+osThreadId myTask_8ms_ProHandle;
+osThreadId myTask_16ms_ProHandle;
+osThreadId myTask_100ms_PrHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -71,9 +74,12 @@ osThreadId myPrintfTaskHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
-void StartTask02(void const * argument);
 void StartTask03(void const * argument);
 void PrintfTask(void const * argument);
+void StartTask_4ms_Pro(void const * argument);
+void StartTask_8ms_Pro(void const * argument);
+void StartTask_16ms_Pro(void const * argument);
+void StartTask_100ms_Pro(void const * argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -139,20 +145,32 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* definition and creation of myTask02 */
-  osThreadDef(myTask02, StartTask02, osPriorityNormal, 0, 512);
-  myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
-
   /* definition and creation of myTask03 */
-  osThreadDef(myTask03, StartTask03, osPriorityNormal, 0, 512);
+  osThreadDef(myTask03, StartTask03, osPriorityNormal, 0, 128);
   myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
 
   /* definition and creation of myPrintfTask */
-  osThreadDef(myPrintfTask, PrintfTask, osPriorityBelowNormal, 0, 512);
+  osThreadDef(myPrintfTask, PrintfTask, osPriorityBelowNormal, 0, 256);
   myPrintfTaskHandle = osThreadCreate(osThread(myPrintfTask), NULL);
+
+  /* definition and creation of myTask_4ms_Pro */
+  osThreadDef(myTask_4ms_Pro, StartTask_4ms_Pro, osPriorityIdle, 0, 256);
+  myTask_4ms_ProHandle = osThreadCreate(osThread(myTask_4ms_Pro), NULL);
+
+  /* definition and creation of myTask_8ms_Pro */
+  osThreadDef(myTask_8ms_Pro, StartTask_8ms_Pro, osPriorityIdle, 0, 256);
+  myTask_8ms_ProHandle = osThreadCreate(osThread(myTask_8ms_Pro), NULL);
+
+  /* definition and creation of myTask_16ms_Pro */
+  osThreadDef(myTask_16ms_Pro, StartTask_16ms_Pro, osPriorityIdle, 0, 256);
+  myTask_16ms_ProHandle = osThreadCreate(osThread(myTask_16ms_Pro), NULL);
+
+  /* definition and creation of myTask_100ms_Pr */
+  osThreadDef(myTask_100ms_Pr, StartTask_100ms_Pro, osPriorityIdle, 0, 256);
+  myTask_100ms_PrHandle = osThreadCreate(osThread(myTask_100ms_Pr), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -176,42 +194,14 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
 	//printf("TaskDefault -- Software Version : %s \r\n", MCU_VERSION);
-    //osDelay(10);
-    
-  	vTaskDelay(20);
+	SPI_FLASH_ReadDeviceID();
+    vTaskDelay(200);
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+    vTaskDelay(200);
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+    osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
-}
-
-/* USER CODE BEGIN Header_StartTask02 */
-/**
-* @brief Function implementing the myTask02 thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartTask02 */
-void StartTask02(void const * argument)
-{
-  /* USER CODE BEGIN StartTask02 */
-  /* Infinite loop */
-  for(;;)
-  {
-	//printf("Task2 -- Software Version : %s \r\n", MCU_VERSION);
-	//printf("Code generation tuint8_time : %s %s \r\n", __DATE__, __TIME__);
-  	//vTaskDelay(500);
-	SPI_FLASH_ReadDeviceID();
-  	//vTaskDelay(100);
-  	
-    //vTaskDelay(20);
-	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-    //vTaskDelay(50);
-	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-	//osDelay(1);
-	
-	vTaskDelay(20);
-  }
-  
-  /* USER CODE END StartTask02 */
 }
 
 /* USER CODE BEGIN Header_StartTask03 */
@@ -234,19 +224,17 @@ void StartTask03(void const * argument)
   for(;;)
   {
   
-  	  //printf("Task3 -- Software Version : %s \r\n", MCU_VERSION);
-  	  //printf("Code generation tuint8_time : %s %s \r\n", __DATE__, __TIME__);
+		//printf("Task3 -- Software Version : %s \r\n", MCU_VERSION);
+		//printf("Code generation tuint8_time : %s %s \r\n", __DATE__, __TIME__);
 		//USB SEND BUFF
-	  //USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
-	  //HAL_Delay(1000);
+		//USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
+		//HAL_Delay(1000);
 
-	  //HAL_UART_Transmit(&huart1, (uint8_t *)"hello DISCO\r\n" , sizeof("hello DISCO\r\n"), 0xFFFF);
-	  //vTaskDelay(20);
+	  vTaskDelay(200);
 	  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
-	  //vTaskDelay(100);
+	  vTaskDelay(200);
 	  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
-	  //osDelay(1);
-	  vTaskDelay(20);
+	  osDelay(1);
   }
   /* USER CODE END StartTask03 */
 }
@@ -261,7 +249,7 @@ void StartTask03(void const * argument)
 void PrintfTask(void const * argument)
 {
   /* USER CODE BEGIN PrintfTask */
-	uint8_t pcWriteBuffer[200];
+	uint8_t pcWriteBuffer[500];
 
 /* Infinite loop */
   for(;;)
@@ -298,9 +286,85 @@ void PrintfTask(void const * argument)
 
 #endif
     vTaskDelay(20);
-	//osDelay(10);
+    osDelay(1);
   }
   /* USER CODE END PrintfTask */
+}
+
+/* USER CODE BEGIN Header_StartTask_4ms_Pro */
+/**
+* @brief Function implementing the myTask_4ms_Pro thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask_4ms_Pro */
+void StartTask_4ms_Pro(void const * argument)
+{
+  /* USER CODE BEGIN StartTask_4ms_Pro */
+  /* Infinite loop */
+  for(;;)
+  {
+  	Task_4ms_Pro();
+    osDelay(1);
+  }
+  /* USER CODE END StartTask_4ms_Pro */
+}
+
+/* USER CODE BEGIN Header_StartTask_8ms_Pro */
+/**
+* @brief Function implementing the myTask_8ms_Pro thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask_8ms_Pro */
+void StartTask_8ms_Pro(void const * argument)
+{
+  /* USER CODE BEGIN StartTask_8ms_Pro */
+  /* Infinite loop */
+  for(;;)
+  {
+  	Task_8ms_Pro();
+    osDelay(1);
+  }
+  /* USER CODE END StartTask_8ms_Pro */
+}
+
+/* USER CODE BEGIN Header_StartTask_16ms_Pro */
+/**
+* @brief Function implementing the myTask_16ms_Pro thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask_16ms_Pro */
+void StartTask_16ms_Pro(void const * argument)
+{
+  /* USER CODE BEGIN StartTask_16ms_Pro */
+  /* Infinite loop */
+  for(;;)
+  {
+	Task_16ms_Pro();
+    osDelay(1);
+  }
+  /* USER CODE END StartTask_16ms_Pro */
+}
+
+/* USER CODE BEGIN Header_StartTask_100ms_Pro */
+/**
+* @brief Function implementing the myTask_100ms_Pr thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTask_100ms_Pro */
+void StartTask_100ms_Pro(void const * argument)
+{
+  /* USER CODE BEGIN StartTask_100ms_Pro */
+  /* Infinite loop */
+  for(;;)
+  {
+	Task_100ms_Pro();
+    osDelay(1);
+  }
+  /* USER CODE END StartTask_100ms_Pro */
 }
 
 /* Private application code --------------------------------------------------*/

@@ -1,7 +1,7 @@
 #MicroXplorer Configuration settings - do not modify
 FREERTOS.FootprintOK=true
 FREERTOS.IPParameters=Tasks01,FootprintOK,configGENERATE_RUN_TIME_STATS,configUSE_TRACE_FACILITY,configUSE_STATS_FORMATTING_FUNCTIONS,configTOTAL_HEAP_SIZE
-FREERTOS.Tasks01=defaultTask,0,512,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL;myTask02,0,512,StartTask02,Default,NULL,Dynamic,NULL,NULL;myTask03,0,512,StartTask03,Default,NULL,Dynamic,NULL,NULL;myPrintfTask,-1,512,PrintfTask,Default,NULL,Dynamic,NULL,NULL
+FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask,Default,NULL,Dynamic,NULL,NULL;myTask03,0,128,StartTask03,Default,NULL,Dynamic,NULL,NULL;myPrintfTask,-1,256,PrintfTask,Default,NULL,Dynamic,NULL,NULL;myTask_4ms_Pro,-3,256,StartTask_4ms_Pro,Default,NULL,Dynamic,NULL,NULL;myTask_8ms_Pro,-3,256,StartTask_8ms_Pro,Default,NULL,Dynamic,NULL,NULL;myTask_16ms_Pro,-3,256,StartTask_16ms_Pro,Default,NULL,Dynamic,NULL,NULL;myTask_100ms_Pr,-3,256,StartTask_100ms_Pro,Default,NULL,Dynamic,NULL,NULL
 FREERTOS.configGENERATE_RUN_TIME_STATS=1
 FREERTOS.configTOTAL_HEAP_SIZE=8672
 FREERTOS.configUSE_STATS_FORMATTING_FUNCTIONS=1
