@@ -1,7 +1,7 @@
 mw_i2c.c:14:6:I2CWait	4	static
-mw_i2c.c:40:6:I2C0Init	4	static
+mw_i2c.c:40:6:I2C0Init	8	static
 mw_i2c.c:48:6:I2C0Start	8	static
-mw_i2c.c:60:6:I2C0Stop	8	static
+mw_i2c.c:60:6:I2C0Stop	16	static
 mw_i2c.c:76:8:I2C0Out8Bit	24	static
 mw_i2c.c:107:6:I2C0Ack	8	static
 mw_i2c.c:119:6:I2C0NAck	8	static
@@ -11,9 +11,9 @@ mw_i2c.c:175:10:I2C0_Tx_A	24	static
 mw_i2c.c:199:6:I2C0_Rx	16	static
 mw_i2c.c:213:6:I2C0_Rx_A	16	static
 mw_i2c.c:231:10:I2C0_IsFindAddr	24	static
-mw_i2c.c:255:6:I2C1Init	4	static
+mw_i2c.c:255:6:I2C1Init	8	static
 mw_i2c.c:263:6:I2C1Start	8	static
-mw_i2c.c:275:6:I2C1Stop	8	static
+mw_i2c.c:275:6:I2C1Stop	16	static
 mw_i2c.c:291:8:I2C1Out8Bit	24	static
 mw_i2c.c:322:6:I2C1Ack	8	static
 mw_i2c.c:334:6:I2C1NAck	8	static

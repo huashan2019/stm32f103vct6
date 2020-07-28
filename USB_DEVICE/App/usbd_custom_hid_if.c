@@ -92,7 +92,28 @@
 __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DESC_SIZE] __ALIGN_END =
 {
   /* USER CODE BEGIN 0 */
-  0x00,
+ /* USER CODE BEGIN 0 */
+ // 0x00,
+  0x06, 0x00, 0xff, 			 // USAGE_PAGE (Vendor Defined Page 1) ��ʾһ�����ı�ǩ֮�����;���?
+  0x09, 0x01,					 // USAGE (Vendor Usage 1) ��ʾһ������ID��־
+  0xa1, 0x01,					 // COLLECTION (Application) ��ʾӦ�ü��ϣ�Ҫ����������0xc0������
+  
+  
+  0x09, 0x01,					 //   USAGE (Vendor Usage 1)ͬ��ͬ������
+  0x15, 0x00,					 //   LOGICAL_MINIMUM (0)  ͬ��ͬ������
+  0x26, 0xff, 0x00, 			 //   LOGICAL_MAXIMUM (255) ͬ��ͬ������
+  0x95, 0x40,					 //   REPORT_COUNT (64)����ͬ��REPORT_COUNT
+  0x75, 0x08,					 //   REPORT_SIZE (8)������ͬ��REPORT_SIZE
+  0x81, 0x02,					 //   INPUT (Data,Var,Abs)����ʾUSBҪ�������ݵ�PC�Ĺ���
+  
+  
+  0x09, 0x01,					 //   USAGE (Vendor Usage 1) ÿ�����ܵ�һ������?
+  0x15, 0x00,					 //   LOGICAL_MINIMUM (0)	 ��ʾÿ�����������޶�Ϊ0
+  0x26, 0xff, 0x00, 			 //   LOGICAL_MAXIMUM (255)    ��ʾÿ���������ݵ����ֵ�޶��?255
+  0x95, 0x40,					 //   REPORT_COUNT (64) ÿ�ν��յ����ݳ��ȣ�������64λ
+  0x75, 0x08,					 //   REPORT_SIZE (8)		 �����ֶεĿ���?8bit����ʾÿ����������ݷ�Χ�?0~ffff ffff
+  0x91, 0x02,					 //   OUTPUT (Data,Var,Abs) ��ʾUSB�豸Ҫ����PC�����ݵĹ���
+
   /* USER CODE END 0 */
   0xC0    /*     END_COLLECTION	             */
 };
@@ -112,6 +133,8 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 /* USER CODE BEGIN EXPORTED_VARIABLES */
+extern unsigned char USB_Rx_Buf[64];
+extern unsigned char USB_Received_Count;
 
 /* USER CODE END EXPORTED_VARIABLES */
 /**
@@ -177,6 +200,24 @@ static int8_t CUSTOM_HID_DeInit_FS(void)
 static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
 {
   /* USER CODE BEGIN 6 */
+     char i;
+     //HAL_GPIO_TogglePin(GPIOE,led1_Pin);
+    
+    /*�鿴�������ݳ���
+    USB_Received_Count = USBD_GetRxCount( &hUsbDeviceFS,CUSTOM_HID_EPOUT_ADDR );
+    printf("USB_Received_Count = %d \r\n",USB_Received_Count);
+    
+    USB_Received_Count = USBD_GetRxCount( &hUsbDeviceFS,CUSTOM_HID_EPIN_ADDR  );
+    printf("USB_Received_Count_in = %d \r\n",USB_Received_Count);
+    */
+    
+  USBD_CUSTOM_HID_HandleTypeDef   *hhid;
+  hhid = (USBD_CUSTOM_HID_HandleTypeDef*)hUsbDeviceFS.pClassData;
+    for(i=0;i<64;i++) 
+    {
+        USB_Rx_Buf[i]=hhid->Report_buf[i];
+        printf("USB_Rx_Buf[%d] = 0x%x \r\n",i,USB_Rx_Buf[i]);
+    } 
   return (USBD_OK);
   /* USER CODE END 6 */
 }

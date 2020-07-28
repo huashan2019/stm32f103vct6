@@ -21,7 +21,7 @@ typedef enum
 	Spi_Tx
 }Spi_RT;
 ///============================================================================================
-extern SCH_U8 SPI_RW(Spi_T spi,SCH_U8 Data);
+extern SCH_U8 SPI_RW(Spi_T spi,SCH_U8 TxData);
 extern SCH_U8 SPI_FLASH_ReadDeviceID(void);
 
 extern SCH_BOOL SpiPutToBuf(Spi_T spi, Spi_RT TxRx, SCH_U8 *const data, SCH_U16 Len);

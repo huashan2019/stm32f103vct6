@@ -1,16 +1,16 @@
 /*
 ***************************************************************************************************
 **  Copyright   : 
-**  Project     : KEA128
+**  Project     : STM32F103VCT6
 **  File        : mw_spi.c
 **  Description : This file is the middleware.
-**  Author      : WenjunHu
-**  Created on  : 2017.12.15
+**  Author      : lvhuashan
+**  Created on  : 2020.07.22
 **  Note        : NULL
 ***************************************************************************************************
 */
 #include "include.h"
-
+#include "spi.h"
 
 #if SPI0_FUNC == SPI_MODE_INT
 #define MAX_SPI0_TX_BUF       300
@@ -45,17 +45,36 @@ QUEUE_T *const SpiBufAddr[][2] =
 #endif
 };
 
+uint8_t spi_tx_buff[10]={0xab,0xff,0xff,0xff,0xff};/*W25X16 read device id para*/
+uint8_t spi_rx_buff[10];
 
-SPI_TypeDef *Spi_Arry[]={SPI1,SPI2};
 
-SCH_U8 SPI_RW(Spi_T spi,SCH_U8 Data)
+SPI_HandleTypeDef *Spi_Arry[]={&hspi1,&hspi2,&hspi3};
+
+SCH_U8 SPI_RW(Spi_T spi,SCH_U8 TxData)
 {
-	
+	SCH_U8 RxData;
+	HAL_SPI_TransmitReceive(Spi_Arry[spi],&TxData,&RxData,1,HAL_MAX_DELAY);
+	return RxData;
 }
 
+/*test spi demo 20200722 lhs*/
+uint8_t SPI_FLASH_ReadDeviceID(void)
+{
+	
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);
+	//HAL_SPI_Transmit(&hspi1,spi_tx_buff,4,HAL_MAX_DELAY);
+	//HAL_SPI_Receive(&hspi1,spi_rx_buff,1,HAL_MAX_DELAY);	
+	SPI_RW(SCH_Spi1,spi_tx_buff[0]);
+	SPI_RW(SCH_Spi1,spi_tx_buff[1]);
+	SPI_RW(SCH_Spi1,spi_tx_buff[1]);
+	SPI_RW(SCH_Spi1,spi_tx_buff[1]);
+	spi_rx_buff[0]=SPI_RW(SCH_Spi1,spi_tx_buff[1]);
+	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
+	//printf("APP Begin -- DeviceId : %x \r\n", spi_rx_buff[0]);
+	return(spi_rx_buff[0]);
 
-
-
+}
 
 void SpiBufInit(Spi_T spi,Spi_RT TxRx)
 {
@@ -96,7 +115,7 @@ SCH_BOOL SpiPutToBuf(Spi_T spi, Spi_RT TxRx, SCH_U8 *const data, SCH_U16 Len)
 void SpiSendData8(Spi_T spi,SCH_U8 u8data)
 {
 	//SPI_WriteDataReg(Spi_Arry[spi], u8data);
-	LL_SPI_TransmitData8(Spi_Arry[spi], u8data);
+	HAL_SPI_Transmit(Spi_Arry[spi],&u8data,1,HAL_MAX_DELAY);
 }
 /********************************************************************************
 **  Function	: SpiTxInt En/Dis
@@ -108,10 +127,13 @@ void SpiSendData8(Spi_T spi,SCH_U8 u8data)
 void SpiTxIntEn(Spi_T spi)
 {
 	//SPI_TxIntEnable(Spi_Arry[spi]);
+	/* Enable TXE and ERR interrupt */
+	__HAL_SPI_ENABLE_IT(Spi_Arry[spi], (SPI_IT_TXE | SPI_IT_ERR));
 }
 void SpiTxIntDis(Spi_T spi)
 {
 	//SPI_TxIntDisable(Spi_Arry[spi]);
+	__HAL_SPI_DISABLE_IT(Spi_Arry[spi], (SPI_IT_TXE | SPI_IT_ERR));
 }
 
 /********************************************************************************
@@ -215,7 +237,10 @@ SCH_BOOL SpiTxData_Direct(Spi_T spi,const SCH_U8 *data, SCH_U16 Len)
 ********************************************************************************/
 void SPI_IntSerive(Spi_T spi)
 {
-#if 0
+#if 1
+	HAL_SPI_IRQHandler(Spi_Arry[spi]);
+#else
+
 	SCH_U8 data;
 	if(SPI_IsSPRF(Spi_Arry[spi])) /* Rx interrupt */
 	{
@@ -244,7 +269,9 @@ void SysSpiExit(Spi_T spi)
 	switch(spi)
 	{
 		case SCH_Spi1:
-#if 0
+#if 1
+			MX_SPI1_Init();
+#else
 			SIM->SCGC &= ~SIM_SCGC_SPI0_MASK;
 		    sSPIConfig.sSettings.bModuleEn             = 0;
 		    sSPIConfig.sSettings.bMasterMode           = 0;
@@ -255,7 +282,9 @@ void SysSpiExit(Spi_T spi)
 #endif
 			break;
 		case SCH_Spi2:
-#if 0
+#if 1
+			MX_SPI2_Init();
+#else
 			SIM->SCGC &= ~SIM_SCGC_SPI1_MASK;
 		    sSPIConfig.sSettings.bModuleEn             = 0;
 		    sSPIConfig.sSettings.bMasterMode           = 0;

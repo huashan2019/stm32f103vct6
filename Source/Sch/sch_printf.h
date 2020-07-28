@@ -1,7 +1,7 @@
 /*
 ***************************************************************************************************
 **  Copyright   : Copyright(c) 2015 PROTRULY. All rights reserved.
-**  Project     : KEA128_Frame
+**  Project     : STM32F103VCT6_Frame
 **  File        : printf.h
 **  Description : This file is used to provide print function.
 **  Author      : YizhongLiang

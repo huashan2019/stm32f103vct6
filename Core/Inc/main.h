@@ -136,10 +136,6 @@ void Error_Handler(void);
 #define SPI3_MISO_GPIO_Port GPIOB
 #define SPI3_MOSI_Pin GPIO_PIN_5
 #define SPI3_MOSI_GPIO_Port GPIOB
-#define I2C1_SCL_Pin GPIO_PIN_8
-#define I2C1_SCL_GPIO_Port GPIOB
-#define I2C1_SDA_Pin GPIO_PIN_9
-#define I2C1_SDA_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

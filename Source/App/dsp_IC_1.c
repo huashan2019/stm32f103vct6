@@ -1,5 +1,5 @@
 /*
- * File:           E:\KEA128_DSP\KEA128_DSP_APP\SigmaStudio_Dsp\Dsp_IC_1.h
+ * File:           E:\STM32F103VCT6_DSP\STM32F103VCT6_DSP_APP\SigmaStudio_Dsp\Dsp_IC_1.h
  *
  * Created:        Thursday, September 27, 2018 10:10:01 AM
  * Description:    Dsp:IC 1 program data.

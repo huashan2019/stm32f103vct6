@@ -1,10 +1,10 @@
 /*
 ***************************************************************************************************
 **  Copyright   : 
-**  Project     : KEA128
+**  Project     : STM32F103VCT6
 **  File        : app_connect.c
 **  Description : This file is the application.
-**  Author      : WenjunHu
+**  Author      : lvhuashan
 **  Created on  : 2019.04.02
 **  Note        : NULL
 ***************************************************************************************************

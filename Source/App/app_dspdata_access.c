@@ -1,16 +1,16 @@
 /*
 ***************************************************************************************************
 **  Copyright   : 
-**  Project     : KEA128
+**  Project     : STM32F103VCT6
 **  File        : app_dspdata_access.c  ---   ��dsp data��ȡ
 **  Description : 
-**  Author      : WenjunHu
+**  Author      : lvhuashan
 **  Created on  : 2019.04.02
 **  Note        : NULL
 ***************************************************************************************************
 */
 #include "include.h"
-#define NORMAL	1
+//#define NORMAL	1
 
 SCH_BOOL Dsp_Store(SCH_U8 Num)
 {

@@ -28,6 +28,8 @@
 /* USER CODE BEGIN Includes */     
 #include "include.h"
 #include "spi.h"
+#include "usbd_customhid.h" //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½ï¿½ï¿½Í·ï¿½Ä¼ï¿½
+extern USBD_HandleTypeDef hUsbDeviceFS; //ï¿½â²¿ï¿½ï¿½ï¿½ï¿½USBï¿½ï¿½ï¿½Íºï¿½ï¿½ï¿½
 
 /* USER CODE END Includes */
 
@@ -48,6 +50,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+volatile unsigned long ulHighFrequencyTimerTicks;
+volatile unsigned long ulHighFrequencyTimerTicks1;
+
 UART_HandleTypeDef huart1;
 
 uint8_t Data1[4]={0x9f,0xff,0xff,0xff};
@@ -58,6 +63,7 @@ uint8_t Rxdata[2];
 osThreadId defaultTaskHandle;
 osThreadId myTask02Handle;
 osThreadId myTask03Handle;
+osThreadId myPrintfTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -67,6 +73,7 @@ osThreadId myTask03Handle;
 void StartDefaultTask(void const * argument);
 void StartTask02(void const * argument);
 void StartTask03(void const * argument);
+void PrintfTask(void const * argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -82,12 +89,12 @@ unsigned long getRunTimeCounterValue(void);
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
 __weak void configureTimerForRunTimeStats(void)
 {
-
+	ulHighFrequencyTimerTicks = 0ul;
 }
 
 __weak unsigned long getRunTimeCounterValue(void)
 {
-return 0;
+return ulHighFrequencyTimerTicks;
 }
 /* USER CODE END 1 */
 
@@ -132,16 +139,20 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of myTask02 */
-  osThreadDef(myTask02, StartTask02, osPriorityAboveNormal, 0, 128);
+  osThreadDef(myTask02, StartTask02, osPriorityNormal, 0, 512);
   myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
 
   /* definition and creation of myTask03 */
-  osThreadDef(myTask03, StartTask03, osPriorityHigh, 0, 128);
+  osThreadDef(myTask03, StartTask03, osPriorityNormal, 0, 512);
   myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
+
+  /* definition and creation of myPrintfTask */
+  osThreadDef(myPrintfTask, PrintfTask, osPriorityBelowNormal, 0, 512);
+  myPrintfTaskHandle = osThreadCreate(osThread(myPrintfTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -164,8 +175,10 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-  	//vTaskDelay(10);
-    osDelay(1);
+	//printf("TaskDefault -- Software Version : %s \r\n", MCU_VERSION);
+    //osDelay(10);
+    
+  	vTaskDelay(20);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -183,16 +196,21 @@ void StartTask02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-  
-  	vTaskDelay(500);
+	//printf("Task2 -- Software Version : %s \r\n", MCU_VERSION);
+	//printf("Code generation tuint8_time : %s %s \r\n", __DATE__, __TIME__);
+  	//vTaskDelay(500);
 	SPI_FLASH_ReadDeviceID();
-  	vTaskDelay(500);
-	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-    vTaskDelay(50);
-	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-    vTaskDelay(50);
-	osDelay(1);
+  	//vTaskDelay(100);
+  	
+    //vTaskDelay(20);
+	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+    //vTaskDelay(50);
+	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+	//osDelay(1);
+	
+	vTaskDelay(20);
   }
+  
   /* USER CODE END StartTask02 */
 }
 
@@ -206,21 +224,83 @@ void StartTask02(void const * argument)
 void StartTask03(void const * argument)
 {
   /* USER CODE BEGIN StartTask03 */
+
+  uint8_t USB_Tx_Buf[64] = {
+                         1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,
+                         17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
+                         40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64}; 
+
   /* Infinite loop */
   for(;;)
   {
   
-  	  printf("APP Begin -- Software Version : %s \r\n", MCU_VERSION);
-  	  printf("Code generation tuint8_time : %s %s \r\n", __DATE__, __TIME__);
-		
-	  HAL_UART_Transmit(&huart1, (uint8_t *)"hello DISCO\r\n" , sizeof("hello DISCO\r\n"), 0xFFFF);
+  	  //printf("Task3 -- Software Version : %s \r\n", MCU_VERSION);
+  	  //printf("Code generation tuint8_time : %s %s \r\n", __DATE__, __TIME__);
+		//USB SEND BUFF
+	  //USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
+	  //HAL_Delay(1000);
+
+	  //HAL_UART_Transmit(&huart1, (uint8_t *)"hello DISCO\r\n" , sizeof("hello DISCO\r\n"), 0xFFFF);
+	  //vTaskDelay(20);
 	  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
-	  vTaskDelay(500);
+	  //vTaskDelay(100);
 	  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
-	  vTaskDelay(500);
-    osDelay(1);
+	  //osDelay(1);
+	  vTaskDelay(20);
   }
   /* USER CODE END StartTask03 */
+}
+
+/* USER CODE BEGIN Header_PrintfTask */
+/**
+* @brief Function implementing the myPrintfTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_PrintfTask */
+void PrintfTask(void const * argument)
+{
+  /* USER CODE BEGIN PrintfTask */
+	uint8_t pcWriteBuffer[200];
+
+/* Infinite loop */
+  for(;;)
+  {
+  
+  	//printf("PrintfTask -- Software Version : %s \r\n", MCU_VERSION);
+#if 0
+	printf("=================================================\r\n");
+
+	printf("\r\ntask_name \tstate\t prior\trtack\t Id\r\n");
+
+	vTaskList((char *)&pcWriteBuffer);
+
+	printf("%s\r\n", pcWriteBuffer);
+
+	 
+
+	printf("\r\ntask_name time_count(10us) usage_pec\r\n");
+
+	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
+
+	printf("%s\r\n", pcWriteBuffer);
+
+#else
+	printf("=================================================\r\n");
+	printf("ÈÎÎñÃû		ÈÎÎñ×´Ì¬ ÓÅÏÈ¼¶   Ê£ÓàÕ» ÈÎÎñÐòºÅ\r\n");
+	vTaskList((char *)&pcWriteBuffer);
+	printf("%s\r\n", pcWriteBuffer);
+	
+	printf("\r\nÈÎÎñÃû		 ÔËÐÐ¼ÆÊý		  Ê¹ÓÃÂÊ\r\n");
+	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
+	printf("%s\r\n", pcWriteBuffer);
+
+
+#endif
+    vTaskDelay(20);
+	//osDelay(10);
+  }
+  /* USER CODE END PrintfTask */
 }
 
 /* Private application code --------------------------------------------------*/

@@ -91,7 +91,14 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/dsp_IC_1_PARAM.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/dsp_IC_1_REG.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/app_eprom.h \
- ../Core/Inc/spi.h ../Core/Inc/main.h
+ ../Core/Inc/spi.h ../Core/Inc/main.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc/usbd_customhid.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
+ ../USB_DEVICE/Target/usbd_conf.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
+ ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h
 
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 
@@ -282,3 +289,17 @@ E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source
 ../Core/Inc/spi.h:
 
 ../Core/Inc/main.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc/usbd_customhid.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
+
+../USB_DEVICE/Target/usbd_conf.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
+
+../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:

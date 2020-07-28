@@ -1,5 +1,4 @@
-main.c:76:9:SPI_FLASH_ReadDeviceID	8	static
-main.c:102:5:main	8	static
-main.c:166:6:SystemClock_Config	96	static
-main.c:218:6:HAL_TIM_PeriodElapsedCallback	16	static
-main.c:235:6:Error_Handler	4	static
+main.c:75:5:main	8	static
+main.c:139:6:SystemClock_Config	96	static
+main.c:191:6:HAL_TIM_PeriodElapsedCallback	16	static
+main.c:208:6:Error_Handler	4	static

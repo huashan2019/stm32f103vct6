@@ -66,7 +66,7 @@ typedef unsigned short  word;
  #include  "kea8_config.h"
 #elif (defined(TRK_KEA64))
  #include  "kea64_config.h"
-#elif (defined(TRK_KEA128))
+#elif (defined(TRK_STM32F103VCT6))
  #include  "kea128_config.h"
 #else
   #error "No valid board defined"
@@ -79,7 +79,7 @@ typedef unsigned short  word;
  #include "SKEAZN84.h"
 #elif (defined(CPU_KEA64))
  #include "SKEAZN642.h"
-#elif (defined(CPU_KEA128))
+#elif (defined(CPU_STM32F103VCT6))
  #include "SKEAZ1284.h"
 #else
   #error "No valid CPU defined"

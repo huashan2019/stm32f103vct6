@@ -1,10 +1,10 @@
 /*
 ***************************************************************************************************
 **  Copyright   : 
-**  Project     : KEA128
+**  Project     : STM32F103VCT6
 **  File        : mw_i2c.c
 **  Description : This file is the middleware.
-**  Author      : WenjunHu
+**  Author      : lvhuashan
 **  Created on  : 2017.08.08
 **  Note        : NULL
 ***************************************************************************************************
@@ -62,8 +62,8 @@ void I2C0Stop(void)
 	SCH_U8 i;
 	I2C0_SCL_DDR_0;
 	I2C0_SCL_OUT_1;
-	//for(i=0;(i<20)&&(!I2C0_SCL_IN);i++)//wait 200us
-	//	I2C0_DELAY;
+	for(i=0;(i<20)&&(!I2C0_SCL_IN);i++)//wait 200us
+		I2C0_DELAY;
 	I2C0_SCL_DDR_1;
 	I2C0_SDA_DDR_1;
 	I2C0_SDA_OUT_0;
@@ -95,10 +95,10 @@ SCH_U8 I2C0Out8Bit(SCH_U8 outbyte)
 	I2C0_WAIT;
 	I2C0_SCL_OUT_1;
 	I2C0_WAIT;
-	//if(I2C0_SDA_IN)
-	//	i=NACK;
-	//else
-	//	i=ACK;
+	if(I2C0_SDA_IN)
+		i=NACK;
+	else
+		i=ACK;
 	I2C0_WAIT;
 	I2C0_SCL_OUT_0;
 	I2C0_WAIT;
@@ -133,16 +133,16 @@ SCH_U8 I2C0In8Bit(void)
 	SCH_U8 i,inbyte=0;
 	I2C0_SCL_DDR_0;
 	I2C0_SCL_OUT_1;
-	//for(i=0;(i<20)&&(!I2C0_SCL_IN);i++)
- 	//	I2C0_DELAY;
+	for(i=0;(i<20)&&(!I2C0_SCL_IN);i++)
+ 		I2C0_DELAY;
 	I2C0_SCL_DDR_1;
 	I2C0_SDA_DDR_0;
 	for(i=0x80;i>0;i>>=1)
 	{
 		I2C0_SCL_OUT_1;
 		I2C0_WAIT;
-		//if(I2C0_SDA_IN)
-		//	inbyte|=i;
+		if(I2C0_SDA_IN)
+			inbyte|=i;
 		I2C0_WAIT;
 		I2C0_SCL_OUT_0;
 		I2C0_WAIT;
@@ -277,8 +277,8 @@ void I2C1Stop(void)
 	SCH_U8 i;
 	I2C1_SCL_DDR_0;
 	I2C1_SCL_OUT_1;
-	//for(i=0;(i<20)&&(!I2C1_SCL_IN);i++)//wait 200us
-	//	I2C1_DELAY;
+	for(i=0;(i<20)&&(!I2C1_SCL_IN);i++)//wait 200us
+		I2C1_DELAY;
 	I2C1_SCL_DDR_1;
 	I2C1_SDA_DDR_1;
 	I2C1_SDA_OUT_0;
@@ -310,10 +310,10 @@ SCH_U8 I2C1Out8Bit(SCH_U8 outbyte)
 	I2C1_WAIT;
 	I2C1_SCL_OUT_1;
 	I2C1_WAIT;
-	//if(I2C1_SDA_IN)
-	//	i=NACK;
-	//else
-	//	i=ACK;
+	if(I2C1_SDA_IN)
+		i=NACK;
+	else
+		i=ACK;
 	I2C1_WAIT;
 	I2C1_SCL_OUT_0;
 	I2C1_WAIT;
@@ -348,16 +348,16 @@ SCH_U8 I2C1In8Bit(void)
 	SCH_U8 i,inbyte=0;
 	I2C1_SCL_DDR_0;
 	I2C1_SCL_OUT_1;
-	//for(i=0;(i<20)&&(!I2C1_SCL_IN);i++)
- 	//	I2C1_DELAY;
+	for(i=0;(i<20)&&(!I2C1_SCL_IN);i++)
+ 		I2C1_DELAY;
 	I2C1_SCL_DDR_1;
 	I2C1_SDA_DDR_0;
 	for(i=0x80;i>0;i>>=1)
 	{
 		I2C1_SCL_OUT_1;
 		I2C1_WAIT;
-		//if(I2C1_SDA_IN)
-		//	inbyte|=i;
+		if(I2C1_SDA_IN)
+			inbyte|=i;
 		I2C1_WAIT;
 		I2C1_SCL_OUT_0;
 		I2C1_WAIT;

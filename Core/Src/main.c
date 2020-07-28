@@ -62,36 +62,9 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define BUFFER_SIZE		200
+unsigned char USB_Rx_Buf[64]; //USB接收缓存
+unsigned char USB_Received_Count = 0;//USB接收数据计数
 
-volatile uint8_t rx_len=0;
-volatile uint8_t recv_end_flag=0;
-uint8_t  rx_buffer[BUFFER_SIZE];
-
-uint8_t spi_tx_buff[10]={0xab,0xff,0xff,0xff,0xff};
-uint8_t spi_rx_buff[10];
-
-
-
-uint8_t SPI_FLASH_ReadDeviceID(void)
-{
-	
-	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);
-	HAL_SPI_Transmit(&hspi1,spi_tx_buff,4,HAL_MAX_DELAY);
-	HAL_SPI_Receive(&hspi1,spi_rx_buff,1,HAL_MAX_DELAY);
-	//HAL_SPI_TransmitReceive(&hspi1,&spi_tx_buff[0],&spi_rx_buff[0],1,HAL_MAX_DELAY);
-	//HAL_SPI_TransmitReceive(&hspi1,&spi_tx_buff[1],&spi_rx_buff[1],1,HAL_MAX_DELAY);
-	//HAL_SPI_TransmitReceive(&hspi1,&spi_tx_buff[2],&spi_rx_buff[2],1,HAL_MAX_DELAY);
-	//HAL_SPI_TransmitReceive(&hspi1,&spi_tx_buff[3],&spi_rx_buff[3],1,HAL_MAX_DELAY);
-	
-	//HAL_SPI_TransmitReceive(&hspi1,&spi_tx_buff[4],&spi_rx_buff[4],1,HAL_MAX_DELAY);
-	
-	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
-	
-	printf("APP Begin -- DeviceId : %x \r\n", spi_rx_buff[0]);
-	return(spi_rx_buff[0]);
-
-}
 
 /* USER CODE END 0 */
 
@@ -133,7 +106,7 @@ int main(void)
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 
-  //HAL_TIM_Base_Start_IT(&htim5);
+  HAL_TIM_Base_Start_IT(&htim5);
   HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
 
   printf("APP Begin -- Software Version : %s \n", MCU_VERSION);

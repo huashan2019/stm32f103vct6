@@ -1,10 +1,10 @@
 /*
 ***************************************************************************************************
 **  Copyright   : 
-**  Project     : KEA128
+**  Project     : STM32F103VCT6
 **  File        : sch_common.c
 **  Description : This file is the SCH.
-**  Author      : WenjunHu
+**  Author      : lvhuashan
 **  Created on  : 2017.06.30
 **  Note        : NULL
 ***************************************************************************************************

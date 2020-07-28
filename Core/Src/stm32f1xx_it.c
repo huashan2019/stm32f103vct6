@@ -54,19 +54,14 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define BUFFER_SIZE		200
-
-extern volatile uint8_t recv_end_flag;
-
-extern volatile uint8_t rx_len;
 
 extern volatile unsigned long ulHighFrequencyTimerTicks;
+extern volatile unsigned long ulHighFrequencyTimerTicks1;
 
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_FS;
-extern I2C_HandleTypeDef hi2c2;
 extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim1;
 
@@ -171,6 +166,20 @@ void DebugMon_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles USB high priority or CAN TX interrupts.
+  */
+void USB_HP_CAN1_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN USB_HP_CAN1_TX_IRQn 0 */
+
+  /* USER CODE END USB_HP_CAN1_TX_IRQn 0 */
+  HAL_PCD_IRQHandler(&hpcd_USB_FS);
+  /* USER CODE BEGIN USB_HP_CAN1_TX_IRQn 1 */
+
+  /* USER CODE END USB_HP_CAN1_TX_IRQn 1 */
+}
+
+/**
   * @brief This function handles USB low priority or CAN RX0 interrupts.
   */
 void USB_LP_CAN1_RX0_IRQHandler(void)
@@ -194,36 +203,14 @@ void TIM1_UP_IRQHandler(void)
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_IRQn 1 */
+  //验证测试为1MS中断
+  //ulHighFrequencyTimerTicks1++;
+ // if(ulHighFrequencyTimerTicks1%2 == 0)
+//  	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+//  else
+//	  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 
   /* USER CODE END TIM1_UP_IRQn 1 */
-}
-
-/**
-  * @brief This function handles I2C2 event interrupt.
-  */
-void I2C2_EV_IRQHandler(void)
-{
-  /* USER CODE BEGIN I2C2_EV_IRQn 0 */
-
-  /* USER CODE END I2C2_EV_IRQn 0 */
-  HAL_I2C_EV_IRQHandler(&hi2c2);
-  /* USER CODE BEGIN I2C2_EV_IRQn 1 */
-
-  /* USER CODE END I2C2_EV_IRQn 1 */
-}
-
-/**
-  * @brief This function handles I2C2 error interrupt.
-  */
-void I2C2_ER_IRQHandler(void)
-{
-  /* USER CODE BEGIN I2C2_ER_IRQn 0 */
-
-  /* USER CODE END I2C2_ER_IRQn 0 */
-  HAL_I2C_ER_IRQHandler(&hi2c2);
-  /* USER CODE BEGIN I2C2_ER_IRQn 1 */
-
-  /* USER CODE END I2C2_ER_IRQn 1 */
 }
 
 /**
@@ -236,7 +223,12 @@ void TIM5_IRQHandler(void)
   /* USER CODE END TIM5_IRQn 0 */
   HAL_TIM_IRQHandler(&htim5);
   /* USER CODE BEGIN TIM5_IRQn 1 */
-//  ulHighFrequencyTimerTicks++;
+  //验证测试为50uS中断
+  ulHighFrequencyTimerTicks++;
+//if(ulHighFrequencyTimerTicks%2 == 0)
+//	  	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+//else
+//		HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 
   /* USER CODE END TIM5_IRQn 1 */
 }

@@ -1,10 +1,10 @@
 /*
 ***************************************************************************************************
 **  Copyright   : 
-**  Project     : KEA128
+**  Project     : STM32F103VCT6
 **  File        : mw_uart.c
 **  Description : This file is the middleware.
-**  Author      : WenjunHu
+**  Author      : lvhuashan
 **  Created on  : 2017.05.05
 **  Note        : NULL
 ***************************************************************************************************

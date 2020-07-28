@@ -54,7 +54,7 @@ Source/App/mw_spi.o: ../Source/App/mw_spi.c ../Source/App/include.h \
  ../Source/App/app_dsp_single_mute.h ../Source/App/app_dsp_mix.h \
  ../Source/App/app_ad1938.h ../Source/App/dsp_defines.h \
  ../Source/App/dsp_IC_1_PARAM.h ../Source/App/dsp_IC_1_REG.h \
- ../Source/App/app_eprom.h
+ ../Source/App/app_eprom.h ../Core/Inc/spi.h ../Core/Inc/main.h
 
 ../Source/App/include.h:
 
@@ -207,3 +207,7 @@ E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source
 ../Source/App/dsp_IC_1_REG.h:
 
 ../Source/App/app_eprom.h:
+
+../Core/Inc/spi.h:
+
+../Core/Inc/main.h:

@@ -1,5 +1,5 @@
 /*
- * File:           E:\KEA128_DSP\KEA128_DSP_APP\SigmaStudio_Dsp - 副本\Dsp_IC_1_PARAM.h
+ * File:           E:\STM32F103VCT6_DSP\STM32F103VCT6_DSP_APP\SigmaStudio_Dsp - 副本\Dsp_IC_1_PARAM.h
  *
  * Created:        Wednesday, March 20, 2019 2:24:45 PM
  * Description:    Dsp:IC 1 parameter RAM definitions.
