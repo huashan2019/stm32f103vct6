@@ -25,6 +25,7 @@
 #include "task.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usbd_customhid.h" //
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,9 +55,8 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+unsigned char i,USB_Tx_Buf[64]; //USBΩ” ’ª∫¥Ê
 
-extern volatile unsigned long ulHighFrequencyTimerTicks;
-extern volatile unsigned long ulHighFrequencyTimerTicks1;
 
 /* USER CODE END 0 */
 
@@ -66,6 +66,9 @@ extern TIM_HandleTypeDef htim5;
 extern TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN EV */
+extern USBD_HandleTypeDef hUsbDeviceFS;
+extern volatile unsigned long ulHighFrequencyTimerTicks;
+extern volatile unsigned long ulHighFrequencyTimerTicks1;
 
 /* USER CODE END EV */
 
@@ -194,6 +197,38 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles EXTI line[9:5] interrupts.
+  */
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+  ulHighFrequencyTimerTicks1++;
+  if(ulHighFrequencyTimerTicks1%2 == 0)
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+  else
+  	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+	printf("EXTI9_5_IRQHandler1:%x \r\n",ulHighFrequencyTimerTicks1);
+
+	  if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_5) != 0x00u)
+	  {
+	  
+	  printf("EXTI9_5_IRQHandler2:%x \r\n",ulHighFrequencyTimerTicks1);
+			for(i = 0; i< 64; i++)
+			{		 
+				USB_Tx_Buf[i]= 0x30+i%10;
+			}
+		  USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
+	  }
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM1 update interrupt.
   */
 void TIM1_UP_IRQHandler(void)
@@ -203,7 +238,7 @@ void TIM1_UP_IRQHandler(void)
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_IRQn 1 */
-  //—È÷§≤‚ ‘Œ™1MS÷–∂œ
+  //ÔøΩÔøΩ÷§ÔøΩÔøΩÔøΩÔøΩŒ™1MSÔøΩ–∂ÔøΩ
   //ulHighFrequencyTimerTicks1++;
  // if(ulHighFrequencyTimerTicks1%2 == 0)
 //  	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
@@ -223,7 +258,7 @@ void TIM5_IRQHandler(void)
   /* USER CODE END TIM5_IRQn 0 */
   HAL_TIM_IRQHandler(&htim5);
   /* USER CODE BEGIN TIM5_IRQn 1 */
-  //—È÷§≤‚ ‘Œ™50uS÷–∂œ
+  //50uS
   ulHighFrequencyTimerTicks++;
 //if(ulHighFrequencyTimerTicks%2 == 0)
 //	  	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);

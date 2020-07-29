@@ -60,8 +60,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define REM_CTRL_Pin GPIO_PIN_4
 #define REM_CTRL_GPIO_Port GPIOE
-#define DSP_ONOFF_CHECK_Pin GPIO_PIN_5
-#define DSP_ONOFF_CHECK_GPIO_Port GPIOE
 #define SYS_POW_EN_Pin GPIO_PIN_6
 #define SYS_POW_EN_GPIO_Port GPIOE
 #define LED1_Pin GPIO_PIN_3

@@ -28,8 +28,7 @@
 /* USER CODE BEGIN Includes */     
 #include "include.h"
 #include "spi.h"
-#include "usbd_customhid.h" //锟斤拷锟斤拷锟斤拷锟酵猴拷锟斤拷头锟侥硷拷
-extern USBD_HandleTypeDef hUsbDeviceFS; //锟解部锟斤拷锟斤拷USB锟斤拷锟酵猴拷锟斤拷
+#include "usbd_customhid.h" //
 
 /* USER CODE END Includes */
 
@@ -215,10 +214,6 @@ void StartTask03(void const * argument)
 {
   /* USER CODE BEGIN StartTask03 */
 
-  uint8_t USB_Tx_Buf[64] = {
-                         1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,
-                         17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
-                         40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64}; 
 
   /* Infinite loop */
   for(;;)
@@ -257,29 +252,13 @@ void PrintfTask(void const * argument)
   
   	//printf("PrintfTask -- Software Version : %s \r\n", MCU_VERSION);
 #if 0
+
 	printf("=================================================\r\n");
-
-	printf("\r\ntask_name \tstate\t prior\trtack\t Id\r\n");
-
-	vTaskList((char *)&pcWriteBuffer);
-
-	printf("%s\r\n", pcWriteBuffer);
-
-	 
-
-	printf("\r\ntask_name time_count(10us) usage_pec\r\n");
-
-	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
-
-	printf("%s\r\n", pcWriteBuffer);
-
-#else
-	printf("=================================================\r\n");
-	printf("任务名		任务状态 优先级   剩余栈 任务序号\r\n");
+	printf("任务名	    任务状态 优先级   剩余栈 任务序号\r\n");
 	vTaskList((char *)&pcWriteBuffer);
 	printf("%s\r\n", pcWriteBuffer);
 	
-	printf("\r\n任务名		 运行计数		  使用率\r\n");
+	printf("\r\n任务名		运行计数	使用率\r\n");
 	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
 	printf("%s\r\n", pcWriteBuffer);
 
