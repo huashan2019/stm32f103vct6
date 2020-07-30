@@ -18,6 +18,13 @@
 #include "pmc.h"
 #include "sysinit.h"
 #else
+
+#include "adc.h"
+//#include "uart.h"
+#include "spi.h"
+
+
+
 ///=====================================================
 #include  <stdarg.h>
 #include  <stdio.h>

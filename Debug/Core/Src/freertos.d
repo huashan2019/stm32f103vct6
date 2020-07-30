@@ -26,6 +26,8 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h \
+ ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h \
+ ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h \
@@ -46,6 +48,7 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/include.h \
+ ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/spi.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/common/stdlib.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/config.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/Sch/sch_config.h \
@@ -91,7 +94,6 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/dsp_IC_1_PARAM.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/dsp_IC_1_REG.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/app_eprom.h \
- ../Core/Inc/spi.h ../Core/Inc/main.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc/usbd_customhid.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
@@ -156,6 +158,10 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
 
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h:
 
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h:
+
+../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc_ex.h:
+
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h:
 
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h:
@@ -195,6 +201,12 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
 ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:
 
 E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/include.h:
+
+../Core/Inc/adc.h:
+
+../Core/Inc/main.h:
+
+../Core/Inc/spi.h:
 
 E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/common/stdlib.h:
 
@@ -285,10 +297,6 @@ E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source
 E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/dsp_IC_1_REG.h:
 
 E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/app_eprom.h:
-
-../Core/Inc/spi.h:
-
-../Core/Inc/main.h:
 
 ../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc/usbd_customhid.h:
 

@@ -29,6 +29,7 @@
 #include "include.h"
 #include "spi.h"
 #include "usbd_customhid.h" //
+#include "adc.h"
 
 /* USER CODE END Includes */
 
@@ -213,6 +214,7 @@ void StartDefaultTask(void const * argument)
 void StartTask03(void const * argument)
 {
   /* USER CODE BEGIN StartTask03 */
+  float a, b;
 
 
   /* Infinite loop */
@@ -224,11 +226,10 @@ void StartTask03(void const * argument)
 		//USB SEND BUFF
 		//USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
 		//HAL_Delay(1000);
-
 	  vTaskDelay(200);
-	  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
-	  vTaskDelay(200);
-	  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+	  //HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
+	  //vTaskDelay(200);
+	  //HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
 	  osDelay(1);
   }
   /* USER CODE END StartTask03 */
@@ -254,11 +255,11 @@ void PrintfTask(void const * argument)
 #if 0
 
 	printf("=================================================\r\n");
-	printf("ÈÎÎñÃû	    ÈÎÎñ×´Ì¬ ÓÅÏÈ¼¶   Ê£ÓàÕ» ÈÎÎñÐòºÅ\r\n");
+	printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	    ï¿½ï¿½ï¿½ï¿½×´Ì¬ ï¿½ï¿½ï¿½È¼ï¿½   Ê£ï¿½ï¿½Õ» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\r\n");
 	vTaskList((char *)&pcWriteBuffer);
 	printf("%s\r\n", pcWriteBuffer);
 	
-	printf("\r\nÈÎÎñÃû		ÔËÐÐ¼ÆÊý	Ê¹ÓÃÂÊ\r\n");
+	printf("\r\nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½	Ê¹ï¿½ï¿½ï¿½ï¿½\r\n");
 	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
 	printf("%s\r\n", pcWriteBuffer);
 

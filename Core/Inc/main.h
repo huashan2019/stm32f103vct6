@@ -74,10 +74,8 @@ void Error_Handler(void);
 #define SPI1_MISO_GPIO_Port GPIOA
 #define SPI1_MOSI_Pin GPIO_PIN_7
 #define SPI1_MOSI_GPIO_Port GPIOA
-#define LED2_Pin GPIO_PIN_4
-#define LED2_GPIO_Port GPIOC
-#define BAT_CHECK_Pin GPIO_PIN_5
-#define BAT_CHECK_GPIO_Port GPIOC
+#define BAT_AD_CHECK_Pin GPIO_PIN_5
+#define BAT_AD_CHECK_GPIO_Port GPIOC
 #define TEMP_CHECK_Pin GPIO_PIN_0
 #define TEMP_CHECK_GPIO_Port GPIOB
 #define AUDIO_CHECK_Pin GPIO_PIN_1

@@ -34,7 +34,7 @@ typedef struct
 }Vol_Det_T;
 extern Vol_Det_T VolDet;
 
-#define BATTERY_VOLT_DET_AD     	 //ADC_CHANNEL_AD11
+#define BATTERY_VOLT_DET_AD     	 ADC_CHANNEL_15
 
 extern void TASK_Voltage_Det(void);
 

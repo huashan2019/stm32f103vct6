@@ -13,6 +13,7 @@
 #include "include.h"
 
 Vol_Det_T VolDet;
+extern unsigned int AD_DMA[2];
 
 const SCH_U16 VoltageTable[2][4]=
 {
@@ -35,13 +36,21 @@ void EmergencyPowerDown(void)
 #define BU_CONFIRM_TIMER	T120MS_4
 void TASK_Voltage_Det(void)
 {
-	//if(!ADC_GetData(BATTERY_VOLT_DET_AD,&VolDet.ADC_current))
-	//	return;
+	VolDet.ADC_current = AD_DMA[1];
+
+	if(!VolDet.ADC_current)
+		return;
+	
+	printf("AD_DMA_0 = %d\r\n",AD_DMA[0]);
+	printf("AD_DMA_1 = %d\r\n",AD_DMA[1]);
+	//printf("\r\n");
+
+	
 	if(VolDet.BUTimerOut)
 		VolDet.BUTimerOut--;
 	if(VolDet.ADC_current<VoltageTable[Get_SysPower_Flag][N_8V])///9V
 	{	 
-		//if(VolDet.VoltageState!=LOW_ERROR||Get_VolErr_Flag==NORMAL)
+		if(VolDet.VoltageState!=LOW_ERROR||Get_VolErr_Flag==NORMAL)
 		{    
 			VolDet.VoltageState=LOW_ERROR;
 			Get_VolErr_Flag=ERROR;
@@ -57,7 +66,7 @@ void TASK_Voltage_Det(void)
 	{
 		if(VolDet.BUTimerOut==0)
 		{
-			///Printf("voltage normal \n");
+			printf("voltage normal \n");
 			//VolDet.VoltageState=V_NORMAL;
 			//Get_VolErr_Flag=NORMAL;
 		}	
