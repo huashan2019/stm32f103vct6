@@ -3,8 +3,8 @@
 #define __MW_UART_H
 
 
-#define UART0_FUNC    ENABLE
-#define UART1_FUNC    ENABLE
+#define UART0_FUNC    DISABLE
+#define UART1_FUNC    DISABLE
 #define UART2_FUNC    ENABLE
 #define UART3_FUNC    DISABLE
 

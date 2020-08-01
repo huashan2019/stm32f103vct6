@@ -51,7 +51,14 @@ void Bsp_GPIO_Init(void)
 	//GPIO_DeInit(GPIOA);
 	//GPIO_DeInit(GPIOB);
 	//GPIO_DeInit(GPIOC);
-	//GPIOInit();///
+	HAL_GPIO_DeInit(GPIOA,0xFFFFFFFF);
+	HAL_GPIO_DeInit(GPIOB,0xFFFFFFFF);
+	HAL_GPIO_DeInit(GPIOC,0xFFFFFFFF);
+	HAL_GPIO_DeInit(GPIOD,0xFFFFFFFF);
+	HAL_GPIO_DeInit(GPIOE,0xFFFFFFFF);
+	HAL_GPIO_DeInit(GPIOF,0xFFFFFFFF);
+	HAL_GPIO_DeInit(GPIOG,0xFFFFFFFF);
+	GPIOInit();
 }
 ////=================================================================================================================
 /********************************************************************************
@@ -139,18 +146,18 @@ void Bsp_CAN_Init(void)
 ////=================================================================================================================
 void Bsp_ADC_Init(void)
 {
-	SysAdcInit();
+	//SysAdcInit();
 }
 ////=================================================================================================================
 void Bsp_I2C_Init(void)
 {
-	I2C0Init();
-	I2C1Init();
+	//I2C0Init();
+	//I2C1Init();
 }
 ////=================================================================================================================
 void Bsp_FLASH_Init(void)
 {
-	SysFlashInit();
+	//SysFlashInit();
 }
 
 

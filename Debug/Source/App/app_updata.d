@@ -31,7 +31,7 @@ Source/App/app_updata.o: ../Source/App/app_updata.c \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pcd.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_ll_usb.h \
  ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pcd_ex.h \
- ../Core/Inc/spi.h \
+ ../Core/Inc/usart.h ../Core/Inc/spi.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/common/stdlib.h \
  ../Source/App/config.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/Sch/sch_config.h \
@@ -127,6 +127,8 @@ Source/App/app_updata.o: ../Source/App/app_updata.c \
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_ll_usb.h:
 
 ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pcd_ex.h:
+
+../Core/Inc/usart.h:
 
 ../Core/Inc/spi.h:
 

@@ -53,7 +53,6 @@
 volatile unsigned long ulHighFrequencyTimerTicks;
 volatile unsigned long ulHighFrequencyTimerTicks1;
 
-UART_HandleTypeDef huart1;
 
 uint8_t Data1[4]={0x9f,0xff,0xff,0xff};
 uint8_t Data2[2]={0x00,0x00};
@@ -214,8 +213,6 @@ void StartDefaultTask(void const * argument)
 void StartTask03(void const * argument)
 {
   /* USER CODE BEGIN StartTask03 */
-  float a, b;
-
 
   /* Infinite loop */
   for(;;)
@@ -226,10 +223,20 @@ void StartTask03(void const * argument)
 		//USB SEND BUFF
 		//USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
 		//HAL_Delay(1000);
-	  vTaskDelay(200);
-	  //HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_SET);
-	  //vTaskDelay(200);
-	  //HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+		if(recv_end_flag ==1)
+		{
+			printf("rx_len1=%d\r\n",rx_len);//��ӡ���ճ���
+			HAL_UART_Transmit(&huart2,rx_buffer, rx_len,0xFFFF);//�������ݴ�ӡ����
+			for(uint8_t i=0;i<BUFFER_SIZE;i++)
+				{
+					printf("rx_buffer%d %x\r\n",i,rx_buffer[i]);//��ӡ���ճ���
+					//rx_buffer[i]=0;//����ջ���?
+				}
+			rx_len=0;//�������?
+			recv_end_flag=0;//������ս�����־�?
+		}
+		HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//���´�DMA����	
+		
 	  osDelay(1);
   }
   /* USER CODE END StartTask03 */

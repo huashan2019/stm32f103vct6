@@ -68,6 +68,8 @@ QUEUE_T *const UartBufAddr[][2] =
 };
 
 //UART_Type *Uart_Arry[]={UART0,UART1,UART2};
+UART_HandleTypeDef *Uart_Arry[]={&huart1,&huart2};
+
 ///========================================================
 void UartBufInit(Uart_T uart,Uart_RT TxRx)
 {
@@ -108,6 +110,7 @@ SCH_BOOL UartPutToBuf(Uart_T uart, Uart_RT TxRx, SCH_U8 *const data, SCH_U16 Len
 void UartSendData8(Uart_T uart,SCH_U8 u8data)
 {
 	//UART_PutChar(Uart_Arry[uart], u8data);
+	HAL_UART_Transmit(Uart_Arry[uart],&u8data,1,0xffff);
 }
 /********************************************************************************
 **  Function	: UartTxInt En/Dis

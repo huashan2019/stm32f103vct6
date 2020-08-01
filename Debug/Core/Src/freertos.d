@@ -48,7 +48,8 @@ Core/Src/freertos.o: ../Core/Src/freertos.c \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/include.h \
- ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/spi.h \
+ ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/usart.h \
+ ../Core/Inc/spi.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/common/stdlib.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/config.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/Sch/sch_config.h \
@@ -205,6 +206,8 @@ E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source
 ../Core/Inc/adc.h:
 
 ../Core/Inc/main.h:
+
+../Core/Inc/usart.h:
 
 ../Core/Inc/spi.h:
 

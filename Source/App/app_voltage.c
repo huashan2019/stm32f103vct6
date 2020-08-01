@@ -41,8 +41,8 @@ void TASK_Voltage_Det(void)
 	if(!VolDet.ADC_current)
 		return;
 	
-	printf("AD_DMA_0 = %d\r\n",AD_DMA[0]);
-	printf("AD_DMA_1 = %d\r\n",AD_DMA[1]);
+	//printf("AD_DMA_0 = %d\r\n",AD_DMA[0]);
+	//printf("AD_DMA_1 = %d\r\n",AD_DMA[1]);
 	//printf("\r\n");
 
 	
@@ -66,7 +66,7 @@ void TASK_Voltage_Det(void)
 	{
 		if(VolDet.BUTimerOut==0)
 		{
-			printf("voltage normal \n");
+			//printf("voltage normal \n");
 			//VolDet.VoltageState=V_NORMAL;
 			//Get_VolErr_Flag=NORMAL;
 		}	

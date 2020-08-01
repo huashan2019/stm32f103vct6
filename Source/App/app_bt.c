@@ -903,7 +903,7 @@ void M2B_TxService(void)
 ********************************************************************************/
 void TASK_Bt_Pro(void)
 {
-#if 0
+#if 1
 	if(/*Get_OsStartOk==OFF||*/Get_SysPower_Flag==OFF)  
 	{
 		return;

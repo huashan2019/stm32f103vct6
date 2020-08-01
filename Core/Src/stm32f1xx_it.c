@@ -26,6 +26,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usbd_customhid.h" //
+#include "include.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,7 +57,8 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-unsigned char i,USB_Tx_Buf[64]; //USB���ջ���
+unsigned char USB_Tx_Buf[64];
+
 
 
 /* USER CODE END 0 */
@@ -65,6 +68,9 @@ extern PCD_HandleTypeDef hpcd_USB_FS;
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim5;
+extern DMA_HandleTypeDef hdma_usart2_tx;
+extern DMA_HandleTypeDef hdma_usart2_rx;
+extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim1;
 
 /* USER CODE BEGIN EV */
@@ -185,6 +191,34 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles DMA1 channel6 global interrupt.
+  */
+void DMA1_Channel6_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel6_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel6_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart2_rx);
+  /* USER CODE BEGIN DMA1_Channel6_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel6_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 channel7 global interrupt.
+  */
+void DMA1_Channel7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel7_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart2_tx);
+  /* USER CODE BEGIN DMA1_Channel7_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel7_IRQn 1 */
+}
+
+/**
   * @brief This function handles ADC1 and ADC2 global interrupts.
   */
 void ADC1_2_IRQHandler(void)
@@ -232,17 +266,18 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 void EXTI9_5_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+	unsigned char i;
   ulHighFrequencyTimerTicks1++;
-  if(ulHighFrequencyTimerTicks1%2 == 0)
-	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-  else
-  	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-	printf("EXTI9_5_IRQHandler1:%x \r\n",ulHighFrequencyTimerTicks1);
+  //if(ulHighFrequencyTimerTicks1%2 == 0)
+	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
+  //else
+  	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+	//printf("EXTI9_5_IRQHandler1:%x \r\n",ulHighFrequencyTimerTicks1);
 
 	  if (__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_5) != 0x00u)
 	  {
 	  
-	  printf("EXTI9_5_IRQHandler2:%x \r\n",ulHighFrequencyTimerTicks1);
+		  	//printf("EXTI9_5_IRQHandler2:%x \r\n",ulHighFrequencyTimerTicks1);
 			for(i = 0; i< 64; i++)
 			{		 
 				USB_Tx_Buf[i]= 0x30+i%10;
@@ -264,6 +299,26 @@ void EXTI9_5_IRQHandler(void)
 void TIM1_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_IRQn 0 */
+  {
+  
+	  Sys.TimeCounter++;
+	  /*F_1ms_Set;
+	  if(Sys.TimeCounter%2==0)
+		  F_2ms_Set;
+	  if(Sys.TimeCounter%4==0)*/
+		  F_4ms_Set;
+	  if(Sys.TimeCounter%2==0)
+		  F_8ms_Set;
+	  if(Sys.TimeCounter%4==0)
+		  F_16ms_Set;
+	  if(Sys.TimeCounter%8==0)
+		  F_32ms_Set;
+	  if(Sys.TimeCounter%25==0)
+		  F_100ms_Set;
+	  if(Sys.TimeCounter==3000)
+		  Sys.TimeCounter=0;
+  
+  }
 
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
@@ -276,6 +331,34 @@ void TIM1_UP_IRQHandler(void)
 //	  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 
   /* USER CODE END TIM1_UP_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART2 global interrupt.
+  */
+void USART2_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART2_IRQn 0 */
+#if 0
+  uint32_t tmp_flag = 0;
+  uint32_t temp;
+  tmp_flag =__HAL_UART_GET_FLAG(&huart2,UART_FLAG_IDLE); //��ȡIDLE��־λ
+  if((tmp_flag != RESET))//idle��־����λ
+  { 
+	  __HAL_UART_CLEAR_IDLEFLAG(&huart2);//�����־�?
+	  temp = huart2.Instance->SR;  //���״̬�Ĵ���SR,��ȡSR�Ĵ�������ʵ�����SR�Ĵ����Ĺ���
+	  temp = huart2.Instance->DR; //��ȡ���ݼĴ����е�����
+	  HAL_UART_DMAStop(&huart2); //
+	  temp	= hdma_usart2_rx.Instance->CNDTR;// ��ȡDMA��δ��������ݸ�����NDTR�Ĵ�������������
+	  rx_len =	BUFFER_SIZE - temp; //�ܼ�����ȥδ��������ݸ������õ��Ѿ����յ����ݸ���?
+	  recv_end_flag = 1;  // ������ɱ�־λ��?1	  
+   }
+#endif
+  /* USER CODE END USART2_IRQn 0 */
+  HAL_UART_IRQHandler(&huart2);
+  /* USER CODE BEGIN USART2_IRQn 1 */
+  
+  /* USER CODE END USART2_IRQn 1 */
 }
 
 /**

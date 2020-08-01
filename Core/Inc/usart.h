@@ -31,12 +31,19 @@
 /* USER CODE END Includes */
 
 extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN Private defines */
+#define BUFFER_SIZE	10
+
+ volatile uint8_t rx_len;
+ volatile uint8_t recv_end_flag;
+ uint8_t rx_buffer[BUFFER_SIZE];
 
 /* USER CODE END Private defines */
 
 void MX_USART1_UART_Init(void);
+void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 

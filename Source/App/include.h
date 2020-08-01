@@ -20,7 +20,7 @@
 #else
 
 #include "adc.h"
-//#include "uart.h"
+#include "usart.h"
 #include "spi.h"
 
 

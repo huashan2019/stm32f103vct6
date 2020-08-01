@@ -66,9 +66,46 @@ void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN 0 */
 unsigned char USB_Rx_Buf[64]; //USB½ÓÊÕ»º´æ
 unsigned char USB_Received_Count = 0;//USB½ÓÊÕÊý¾Ý¼ÆÊý
-
 unsigned int AD_DMA[2];
 
+UART_HandleTypeDef huart2;
+
+void SysHardware_Init(void)
+{
+	//Bsp_Clock_Init();
+	//Bsp_SysTick_Init();
+	//Bsp_GPIO_Init();
+	//Bsp_WDOG_Init();  
+	//Bsp_UART_Init();
+	//Bsp_SPI_Init();
+	//Bsp_ADC_Init();
+	//Bsp_FLASH_Init();
+	//Print_Init();
+}
+void SysSoftware_Init(void)
+{
+	SysDataInit();
+	DspInit();
+	Check_Uart();
+}
+
+HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(recv_end_flag ==1)	printf("Rec end \r\n");
+	{
+		printf("rx_len=%d\r\n",rx_len);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
+		HAL_UART_Transmit(&huart2,rx_buffer, rx_len,0xFFFF);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½
+		for(uint8_t i=0;i<BUFFER_SIZE;i++)
+			{
+				printf("rx_buffer%d %x\r\n",i,rx_buffer[i]);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
+				//rx_buffer[i]=0;//ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿?
+			}
+		rx_len=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+		//recv_end_flag=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Î?
+	}
+	HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//ï¿½ï¿½ï¿½Â´ï¿½DMAï¿½ï¿½ï¿½ï¿½ 
+
+}
 
 /* USER CODE END 0 */
 
@@ -89,7 +126,8 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   //SysHardware_Init();
-  //SysSoftware_Init();
+  SysSoftware_Init();
+  
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -110,14 +148,17 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM5_Init();
   MX_ADC1_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADCEx_Calibration_Start(&hadc1);
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&AD_DMA,2); //ÆôÓÃDMAµÄADC×ª»»£¬AD_DMA 0~3 ¶ÔÓ¦ADC 0~3£¬ÕâÀï×¢Òâ×îºóÒ»¸ö²ÎÊýµÄ´óÐ¡
 
-
-
-  HAL_TIM_Base_Start_IT(&htim5);
+  //HAL_TIM_Base_Start_IT(&htim5);
   HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
+
+	//ÉÏÃæµÄusartÅäÖÃ´úÂëÎªcubemx×Ô¶¯Éú³ÉµÄ£¬ÔÚÏÂ·½Ìí¼ÓÊ¹ÄÜidleÖÐ¶ÏºÍ´ò¿ª´®¿ÚDMA½ÓÊÕÓï¾ä
+  __HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);//Ê¹ÄÜidleÖÐ¶Ï
+  HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//´ò¿ªDMA½ÓÊÕ£¬Êý¾Ý´æÈërx_bufferÊý×éÖÐ¡£
 
   printf("APP Begin -- Software Version : %s \n", MCU_VERSION);
   printf("Code generation time : %s %s \n", __DATE__, __TIME__);
