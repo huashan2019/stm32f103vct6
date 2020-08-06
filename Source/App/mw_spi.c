@@ -107,7 +107,7 @@ SCH_BOOL SpiPutToBuf(Spi_T spi, Spi_RT TxRx, SCH_U8 *const data, SCH_U16 Len)
 }
 /********************************************************************************
 **  Function	: SpiSendData8
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20171218
 **  Description	: ����һ��8λ������
 **  Return		: void
@@ -119,7 +119,7 @@ void SpiSendData8(Spi_T spi,SCH_U8 u8data)
 }
 /********************************************************************************
 **  Function	: SpiTxInt En/Dis
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20171218
 **  Description	:
 **  Return		: void
@@ -138,7 +138,7 @@ void SpiTxIntDis(Spi_T spi)
 
 /********************************************************************************
 **  Function	: SpiRx/TxCnt
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20171218
 **  Description	:
 **  Return		: SCH_U16
@@ -153,7 +153,7 @@ SCH_U16 SpiTxCnt(Spi_T spi)
 }
 /********************************************************************************
 **  Function    : Spi_Rx_DataPro
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20171218
 **  Description	:  ---   int������ִ��
 **  Return		: NULL
@@ -164,7 +164,7 @@ void Spi_Rx_DataPro(Spi_T spi,SCH_U8 data)
 }
 /********************************************************************************
 **  Function    : Spi_Tx_DataPro
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20160621
 **  Description :   ---   int������ִ��
 **  Return      : NULL
@@ -185,7 +185,7 @@ void Spi_Tx_DataPro(Spi_T spi)
 }
 /********************************************************************************
 **  Function	: SpiRxData
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20171218
 **  Description	:
 **  Return		: BOOL
@@ -196,7 +196,7 @@ SCH_BOOL SpiRxData(Spi_T spi, SCH_U8 *data, SCH_U16 Len)
 }
 /********************************************************************************
 **  Function         : SpiTxData
-**  Author           : wenjunHu
+**  Author           : lvhuashan
 **  Created on       : 20160621
 **  Description      :
 **  Return           : BOOL
@@ -230,7 +230,7 @@ SCH_BOOL SpiTxData_Direct(Spi_T spi,const SCH_U8 *data, SCH_U16 Len)
 }
 /********************************************************************************
 **  Function    : Spi_IntSerive
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20170407
 **  Description :  ---   int������ִ��
 **  Return      : void
@@ -311,64 +311,22 @@ SCH_BOOL SysSpiInit(Spi_T spi,SCH_U32 Baudrate)
 	switch(spi)
 	{
 		case SCH_Spi1:
-#if 0
-			SIM_RemapSPI0ToPTE_0_12_3();
-#if SPI0_FUNC == SPI_MODE_INT
-		    sSPIConfig.u32BitRate = Baudrate;
-		    sSPIConfig.u32BusClkHz = BUS_CLK_HZ;
-		    sSPIConfig.sSettings.bModuleEn             = 1;
-		    sSPIConfig.sSettings.bMasterMode           = 1;
-			sSPIConfig.sSettings.bIntEn                = 1;
-			sSPIConfig.sSettings.bTxIntEn              = 1;
-		    sSPIConfig.sSettings.bClkPhase1            = 1;
-			sSPIConfig.sSettings.bClkPolarityLow       = 1;
-		    sSPIConfig.sSettings.bMasterAutoDriveSS    = 1;
-		    SPI_Init(SPI0, &sSPIConfig);
-    		NVIC_EnableIRQ(SPI0_IRQn);
-			NVIC_SetPriority(SPI0_IRQn, (1<<__NVIC_PRIO_BITS) - 4);
-#elif SPI0_FUNC == SPI_MODE_UNINT
-			sSPIConfig.u32BitRate = Baudrate;
-			sSPIConfig.u32BusClkHz = BUS_CLK_HZ;
-			sSPIConfig.sSettings.bModuleEn			   = 1;
-			sSPIConfig.sSettings.bMasterMode		   = 1;
-			sSPIConfig.sSettings.bIntEn 			   = 0;
-			sSPIConfig.sSettings.bTxIntEn			   = 0;
-			sSPIConfig.sSettings.bClkPhase1 		   = 1;
-			sSPIConfig.sSettings.bClkPolarityLow	   = 1;
-			sSPIConfig.sSettings.bMasterAutoDriveSS    = 0;
-			SPI_Init(SPI0, &sSPIConfig);
-#endif
+#if 1
+		MX_SPI1_Init();
 #endif
 			break;
 		case SCH_Spi2:
-#if 0
-			SIM_RemapSPI1ToPTG_4_5_6_7();
-#if SPI1_FUNC == SPI_MODE_INT
-		    sSPIConfig.u32BitRate = Baudrate;
-		    sSPIConfig.u32BusClkHz = BUS_CLK_HZ;
-		    sSPIConfig.sSettings.bModuleEn             = 1;
-		    sSPIConfig.sSettings.bMasterMode           = 1;
-			sSPIConfig.sSettings.bIntEn                = 1;
-			sSPIConfig.sSettings.bTxIntEn              = 0;
-		    sSPIConfig.sSettings.bClkPhase1            = 1;
-			sSPIConfig.sSettings.bClkPolarityLow       = 1;
-		    sSPIConfig.sSettings.bMasterAutoDriveSS    = 1;
-		    SPI_Init(SPI1, &sSPIConfig);
-    		///NVIC_EnableIRQ(SPI1_IRQn);
-#elif SPI1_FUNC == SPI_MODE_UNINT
-		    sSPIConfig.u32BitRate = Baudrate;
-		    sSPIConfig.u32BusClkHz = BUS_CLK_HZ;
-		    sSPIConfig.sSettings.bModuleEn             = 1;
-		    sSPIConfig.sSettings.bMasterMode           = 1;
-			sSPIConfig.sSettings.bIntEn                = 0;
-			sSPIConfig.sSettings.bTxIntEn              = 0;
-		    sSPIConfig.sSettings.bClkPhase1            = 1;
-			sSPIConfig.sSettings.bClkPolarityLow       = 1;
-		    sSPIConfig.sSettings.bMasterAutoDriveSS    = 0;
-		    SPI_Init(SPI1, &sSPIConfig);
-#endif
+#if 1
+		MX_SPI2_Init();
 #endif
 			break;
+		case SCH_Spi3:
+#if 1
+		MX_SPI3_Init();
+#endif
+			break;
+
+
 		default:break;
 	}		 
 	SpiBufInit(spi, Spi_Tx);

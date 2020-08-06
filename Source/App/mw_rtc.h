@@ -14,6 +14,8 @@ typedef struct
 } ClockStruct;
 extern ClockStruct Clock;
 
+SCH_U8 rtc_alarm_flag;
+
 #define _IsLeapYear(_Year_)	(((0 == (_Year_ % 4)) && (0 != (_Year_ % 100))) || (0 == (_Year_ % 400)))
 
 

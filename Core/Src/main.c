@@ -24,6 +24,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "i2c.h"
+#include "rtc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -89,24 +90,6 @@ void SysSoftware_Init(void)
 	Check_Uart();
 }
 
-HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	if(recv_end_flag ==1)	printf("Rec end \r\n");
-	{
-		printf("rx_len=%d\r\n",rx_len);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
-		HAL_UART_Transmit(&huart2,rx_buffer, rx_len,0xFFFF);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½
-		for(uint8_t i=0;i<BUFFER_SIZE;i++)
-			{
-				printf("rx_buffer%d %x\r\n",i,rx_buffer[i]);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
-				//rx_buffer[i]=0;//ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿?
-			}
-		rx_len=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
-		//recv_end_flag=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Î?
-	}
-	HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//ï¿½ï¿½ï¿½Â´ï¿½DMAï¿½ï¿½ï¿½ï¿½ 
-
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -149,6 +132,7 @@ int main(void)
   MX_TIM5_Init();
   MX_ADC1_Init();
   MX_USART2_UART_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADCEx_Calibration_Start(&hadc1);
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&AD_DMA,2); //ÆôÓÃDMAµÄADC×ª»»£¬AD_DMA 0~3 ¶ÔÓ¦ADC 0~3£¬ÕâÀï×¢Òâ×îºóÒ»¸ö²ÎÊýµÄ´óÐ¡
@@ -159,6 +143,11 @@ int main(void)
 	//ÉÏÃæµÄusartÅäÖÃ´úÂëÎªcubemx×Ô¶¯Éú³ÉµÄ£¬ÔÚÏÂ·½Ìí¼ÓÊ¹ÄÜidleÖÐ¶ÏºÍ´ò¿ª´®¿ÚDMA½ÓÊÕÓï¾ä
   __HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);//Ê¹ÄÜidleÖÐ¶Ï
   HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//´ò¿ªDMA½ÓÊÕ£¬Êý¾Ý´æÈërx_bufferÊý×éÖÐ¡£
+
+  /*##-1- Configure Alarm ####################################################*/
+  /* Configure RTC Alarm */
+  Set_RtcWorkStatus;
+  SysWakeUp_SetAlarm(10);
 
   printf("APP Begin -- Software Version : %s \n", MCU_VERSION);
   printf("Code generation time : %s %s \n", __DATE__, __TIME__);
@@ -195,10 +184,11 @@ void SystemClock_Config(void)
 
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
@@ -219,7 +209,9 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC|RCC_PERIPHCLK_USB;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_ADC
+                              |RCC_PERIPHCLK_USB;
+  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
   PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
   PeriphClkInit.UsbClockSelection = RCC_USBCLKSOURCE_PLL_DIV1_5;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
@@ -229,6 +221,40 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+/**
+  * @brief  Alarm callback
+  * @param  hrtc : RTC handle
+  * @retval None
+  */
+void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
+{
+    rtc_alarm_flag++; 
+	Set_RtcWorkStatus;
+}
+
+/**
+  * @brief  UART callback
+  * @param  hrtc : RTC handle
+  * @retval None
+  */
+
+HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if(recv_end_flag ==1)	printf("Rec end \r\n");
+	{
+		printf("rx_len=%d\r\n",rx_len);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
+		HAL_UART_Transmit(&huart2,rx_buffer, rx_len,0xFFFF);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½
+		for(uint8_t i=0;i<BUFFER_SIZE;i++)
+			{
+				printf("rx_buffer%d %x\r\n",i,rx_buffer[i]);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
+				//rx_buffer[i]=0;//ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿?
+			}
+		rx_len=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
+		//recv_end_flag=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Î?
+	}
+	HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//ï¿½ï¿½ï¿½Â´ï¿½DMAï¿½ï¿½ï¿½ï¿½ 
+
+}
 
 /* USER CODE END 4 */
 

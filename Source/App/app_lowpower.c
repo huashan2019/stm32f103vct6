@@ -5,51 +5,58 @@
 **  File        : APP_lowpower.c  ---   �͹���
 **  Description : 
 **  Author      : lvhuashan
-**  Created on  : 2017.04.27
+**  Created on  : 2020.08.05
 **  Note        : NULL
 ***************************************************************************************************
 */
 
 #include "include.h"
 
+TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim5;
+UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart2;
+ADC_HandleTypeDef hadc1;
+DMA_HandleTypeDef hdma_adc1;
+DMA_HandleTypeDef hdma_usart2_tx;
+DMA_HandleTypeDef hdma_usart2_rx;
+
 void SysWakeUpInit_FromACC(void)
 {
-	//SIM->SCGC |= SIM_SCGC_IRQ_MASK;
-	//SIM->PINSEL = (SIM->PINSEL & (~SIM_PINSEL_IRQPS_MASK)) | SIM_PINSEL_IRQPS(7);///3--PTI6
-	//IRQ->SC = IRQ_SC_IRQPDD_MASK|IRQ_SC_IRQEDG_MASK|IRQ_SC_IRQPE_MASK|IRQ_SC_IRQIE_MASK;
-	//NVIC_EnableIRQ(IRQ_IRQn);
+	
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	/*Configure GPIO pins : PC0  */
+	GPIO_InitStruct.Pin = GPIO_ACC_DECT;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(IO_ACC, &GPIO_InitStruct);
+	
+	/* EXTI interrupt init*/
+	HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
+	HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 }
 void SysWakeUpExit_FromACC(void)
 {
-	//SIM->SCGC &= ~SIM_SCGC_IRQ_MASK;
-	//SIM->PINSEL = (SIM->PINSEL & (~SIM_PINSEL_IRQPS_MASK)) | SIM_PINSEL_IRQPS(0);///0--PTA5  default
-	//NVIC_DisableIRQ(IRQ_IRQn);
-	//ACC_Init();
+	ACC_Init();
 }
 
 void SysWakeUpInit_FromKBI(void)
 {
-#if 0
-	SCH_U32 i;
-	KBI_ConfigType  sKBIConfig={0};
-	for (i = 0; i < KBI_MAX_PINS_PER_PORT; i++)
-	{
-		sKBIConfig.sPin[i].bEn	 = 0;
-	}
-	sKBIConfig.sBits.bRstKbsp   = 1;/*Writing a 1 to RSTKBSP is to clear the KBIxSP Register*/
-	sKBIConfig.sBits.bKbspEn   = 1;/*The latched value in KBxSP register while interrupt flag occur to be read.*/
-	sKBIConfig.sBits.bMode   = KBI_MODE_EDGE_ONLY;
-	sKBIConfig.sBits.bIntEn  = 1;
-	/*Rising edge/high level select; PTD5 channel enable(SW1 on TRK board) */
-	sKBIConfig.sPin[KBI0_PTD0_SHIFT].bEdge = KBI_FALLING_EDGE_LOW_LEVEL;
-	sKBIConfig.sPin[KBI0_PTD0_SHIFT].bEn   = 1;
-	KBI_Init(KBI0, &sKBIConfig);
-	GPIO_PinInit(GPIO_PTD5, GPIO_PinInput_InternalPullup);
-#endif
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	/*Configure GPIO pins : PB1  */
+	GPIO_InitStruct.Pin = GPIO_AUDIO_DECT;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(IO_AUDIO, &GPIO_InitStruct);
+	
+	/* EXTI interrupt init*/
+	HAL_NVIC_SetPriority(EXTI1_IRQn, 5, 0);
+	HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+
 }
 void SysWakeUpExit_FromKBI(void)
 {
-	//KBI_DeInit(KBI0);
+	Audio_Init();
 }
 
 void SysWakeUpInit_FromRTC(void)
@@ -58,8 +65,35 @@ void SysWakeUpInit_FromRTC(void)
 }
 void SysWakeUpExit_FromRTC(void)
 {
-	
+	if(Get_RtcWorkStatus == ON)
+	HAL_RTC_DeactivateAlarm(&hrtc,RTC_ALARM_A);
 }
+void SysWakeUp_SetAlarm(SCH_U8 index)
+{
+
+	if(Get_RtcWorkStatus == ON)
+	{
+	    /*##-1- Configure the RTC Alarm peripheral #################################*/
+	    /* Set Alarm to 00:00:00+index
+	       RTC Alarm Generation: Alarm on Hours, Minutes and Seconds */
+		HAL_RTC_GetTime(&hrtc, &stimestructure, RTC_FORMAT_BIN);
+		stimestructure.Seconds = stimestructure.Seconds+index;
+		
+	    salarmstructure.Alarm = RTC_ALARM_A;
+	    salarmstructure.AlarmTime.Hours = stimestructure.Hours;
+	    salarmstructure.AlarmTime.Minutes = stimestructure.Minutes;
+	    salarmstructure.AlarmTime.Seconds = stimestructure.Seconds;
+
+	    if(HAL_RTC_SetAlarm_IT(&hrtc,&salarmstructure,RTC_FORMAT_BCD) != HAL_OK)
+	    {
+	        /* Initialization Error */
+	        Error_Handler();
+	    }
+		
+	}
+}
+
+
 /*******************************************************************************\
 * Function    : Reset I/O.          											*
 * Input       :                                                                 *
@@ -69,13 +103,27 @@ void SysWakeUpExit_FromRTC(void)
 void ResetIO(void)
 {
 
-	//GPIO_Init(GPIOA,0xFFFFFFFF,GPIO_PinInput);
-	//GPIO_Init(GPIOB,0xFFFFFFFF,GPIO_PinInput);
-	//GPIO_Init(GPIOC,0xFFFFFFFF,GPIO_PinInput);
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.Pin=GPIO_PIN_All;
+	GPIO_InitStructure.Mode=GPIO_MODE_ANALOG;
+	HAL_GPIO_Init(GPIOA,&GPIO_InitStructure);
+	HAL_GPIO_Init(GPIOB,&GPIO_InitStructure);
+	HAL_GPIO_Init(GPIOC,&GPIO_InitStructure);
+	HAL_GPIO_Init(GPIOD,&GPIO_InitStructure);
+	HAL_GPIO_Init(GPIOE,&GPIO_InitStructure);
+	HAL_GPIO_Init(GPIOF,&GPIO_InitStructure);
+	HAL_GPIO_Init(GPIOG,&GPIO_InitStructure);
 }
 void SysLowPowerInit(void)
 {
 	ResetIO();
+	HAL_TIM_Base_DeInit(&htim1);
+	HAL_TIM_Base_DeInit(&htim5);
+	HAL_UART_MspDeInit(&huart1);
+	HAL_UART_MspDeInit(&huart2);
+	HAL_DMA_DeInit(&hdma_adc1);
+	HAL_DMA_DeInit(&hdma_usart2_rx);
+	HAL_DMA_DeInit(&hdma_usart2_tx);
 	Bsp_SysTick_Close();
 	///SysRtcExit();
 	Bsp_WDOG_Close();
@@ -84,6 +132,7 @@ void SysLowPowerInit(void)
 	SysUartExit(SCH_Uart2);
 	SysSpiExit(SCH_Spi1);
 	SysSpiExit(SCH_Spi2);
+	SysSpiExit(SCH_Spi3);
 	///SysCanExit(SCH_Can0);
 	///FTM0_PWM_Exit();
 	SysAdcExit();
@@ -123,11 +172,15 @@ void TASK_AccOff_Pro(void)
 		while(!Get_AccWakeUP_Flag)
 		{
 			FeedDog();
-			//if((Get_ACC_Has&&ACC_DET_LVOFF)||(!Get_ACC_Has&&AUDIO_DET_LVOFF))
-			//	PMC_SetMode(PMC,PmcModeStop3);
-			//if(AUDIO_DET_LVON||ACC_DET_LVON)
-			//	Set_AccWakeUP_Flag;
+			SysWakeUp_SetAlarm(2);
+			__DSB();
+			
+			if((Get_ACC_Has&&ACC_DET_LVOFF)||(!Get_ACC_Has&&AUDIO_DET_LVOFF))
+				HAL_PWR_EnterSTOPMode(PWR_MAINREGULATOR_ON, PWR_STOPENTRY_WFI);
+			if(AUDIO_DET_LVON||ACC_DET_LVON)
+				Set_AccWakeUP_Flag;
 		}
+		portENTER_CRITICAL();
 		FeedDog();
 		SysWakeUpExit_FromRTC();
 	#if AUDIO_START == ENABLE
@@ -138,6 +191,7 @@ void TASK_AccOff_Pro(void)
 		SysLowPowerExit();
 		Clr_SLEEP_Mode;
 		Printf("Enter Normalmode \n");
+		portEXIT_CRITICAL();
 		return;
 	}
 }

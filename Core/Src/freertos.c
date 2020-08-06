@@ -204,6 +204,10 @@ void StartDefaultTask(void const * argument)
 }
 
 /* USER CODE BEGIN Header_StartTask03 */
+//RTC_AlarmTypeDef salarmstructure;
+RTC_TimeTypeDef stime;
+RTC_HandleTypeDef hrtc;
+
 /**
 * @brief Function implementing the myTask03 thread.
 * @param argument: Not used
@@ -214,10 +218,20 @@ void StartTask03(void const * argument)
 {
   /* USER CODE BEGIN StartTask03 */
 
+
   /* Infinite loop */
   for(;;)
   {
-  
+	 	 //vTaskDelay(500);
+
+		/* Call HAL_RTC_GetTime function to update date if counter higher than 24 hours */
+		if (HAL_RTC_GetTime(&hrtc, &stime, RTC_FORMAT_BIN) != HAL_OK)
+		{
+			printf("rx_time err=%d,%d,%d\r\n",stime.Hours,stime.Minutes,stime.Seconds);//��ӡ���ճ���
+			return HAL_ERROR;
+		}
+		printf("rx_time=%d,%d,%d,%d\r\n",stime.Hours,stime.Minutes,stime.Seconds,rtc_alarm_flag);//��ӡ���ճ���
+
 		//printf("Task3 -- Software Version : %s \r\n", MCU_VERSION);
 		//printf("Code generation tuint8_time : %s %s \r\n", __DATE__, __TIME__);
 		//USB SEND BUFF

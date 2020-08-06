@@ -29,6 +29,7 @@ typedef union
 		SCH_U32 DspTest         :1;///DSP进入直通测试模式
 		SCH_U32 AccHasFlag      :1;///带有acc标志
 		SCH_U32 StartFlag       :1;///启动标志
+		SCH_U32 RtcWorkStatus   :1;
 	}Flag;
 }FLAG_T;
 typedef struct 
@@ -129,6 +130,11 @@ extern SYS_T Sys;
 #define Set_DSP_OFF_Flag             Sys.Status.Flag.DspTest = ON 
 #define Clr_DSP_OFF_Flag             Sys.Status.Flag.DspTest = OFF 
 #define Get_DSP_OFF_Flag             Sys.Status.Flag.DspTest
+
+
+#define Set_RtcWorkStatus        Sys.Status.Flag.RtcWorkStatus = ON 
+#define Clr_RtcWorkStatus        Sys.Status.Flag.RtcWorkStatus = OFF 
+#define Get_RtcWorkStatus        Sys.Status.Flag.RtcWorkStatus
 
 
 #define F_1ms_Set  SetBit(Sys.SchedulerTimer,0)

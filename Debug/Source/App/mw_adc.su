@@ -1,3 +1,3 @@
 mw_adc.c:14:10:ADC_GetData	16	static
-mw_adc.c:20:6:SysAdcExit	4	static
+mw_adc.c:20:6:SysAdcExit	8	static
 mw_adc.c:25:6:SysAdcInit	4	static

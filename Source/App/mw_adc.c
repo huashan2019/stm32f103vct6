@@ -19,7 +19,7 @@ SCH_BOOL ADC_GetData(SCH_U8 u8Channel,SCH_U16 *ADC_Data)
 
 void SysAdcExit(void)
 {
-	//ADC_DeInit(ADC);
+	HAL_ADC_MspDeInit(&hadc1);
 }
 
 void SysAdcInit(void)

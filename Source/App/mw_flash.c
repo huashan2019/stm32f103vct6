@@ -23,7 +23,7 @@ SCH_U32 u8_TO_u32(SCH_U8 *u8Data)
 }
 /**************************************************************
 **  Function    : Flash_Program_U8
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170425
 **  Description	: 
 **  Return		: NULL
@@ -83,7 +83,7 @@ SCH_BOOL Flash_Program_U8(SCH_U32 u32NVMTargetAddress,SCH_U8 *pData,SCH_U16 u16S
 }
 /**************************************************************
 **  Function    : Flash_Program_U32
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170425
 **  Description	: 
 **  Return		: NULL
@@ -139,7 +139,7 @@ SCH_BOOL Flash_Write(SCH_U32 u32addr, SCH_U32 u32data)
 }
 /**************************************************************
 **  Function    : Flash_RD_XXX
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170814
 **  Description	: 
 **  Return		: NULL
@@ -163,7 +163,7 @@ SCH_BOOL Flash_RD(FLASH_DATA flash_data, SCH_U32 *u32data)
 }
 /**************************************************************
 **  Function    : Flash_WR_XXX
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170814
 **  Description	: 
 **  Return		: NULL
@@ -241,7 +241,7 @@ SCH_BOOL Flash_Quick_SE(FLASH_QUICK_DATA flash_data)
 }
 /**************************************************************
 **  Function    : SysFlashInit
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170814
 **  Description	: 
 **  Return		: NULL

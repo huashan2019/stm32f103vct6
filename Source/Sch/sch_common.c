@@ -15,7 +15,7 @@
 
 /*************************************************************************************
 **  Function    : SysWaitXXX
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 
 **  Description	: �ȴ�ʱ�� Delay
 **  Return		: NULL
@@ -54,7 +54,7 @@ void SysWaitMs(SCH_U32 Time)
 }
 /*************************************************************************************
 **  Function    : GetMax GetMin
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170608
 **  Description	: �Ƚϴ�С����
 **  Return		: NULL
@@ -87,7 +87,7 @@ SCH_S8 LimitMaxMin_S8(SCH_S8 min,SCH_S8 Data,SCH_S8 max)
 }
 /*************************************************************************************
 **  Function    : sch_memxxx
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170608
 **  Description	: ��������
 **  Return		: NULL
@@ -122,7 +122,7 @@ SCH_U8 sch_compare(void const *COM_A, void const *COM_B, SCH_U16 n)
 }
 /*************************************************************************************
 **  Function    : GetCheckData 
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170608
 **  Description	: ��ȡУ����
 **  Return		: NULL
@@ -143,7 +143,7 @@ SCH_U8 GetCheckData_Xor(SCH_U8 *data, SCH_U8 Len)
 }
 /*************************************************************************************
 **  Function    :  IsInXXX
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170703
 **  Description	: �ж�һ�������Ƿ���ĳ����Χ��
 **  Return		: NULL
@@ -162,7 +162,7 @@ SCH_BOOL IsInData(SCH_U32 data0,SCH_U32 data1,SCH_U32 step)
 }
 /*************************************************************************************
 **  Function    : GetAverage_UXX
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170803
 **  Description	: ��һ�������ƽ��ֵ
 **  Return		: NULL
@@ -189,7 +189,7 @@ SCH_U8 GetAverage_U8(SCH_U8 *pTable, SCH_U8 Array_Cnt)
 }
 /*************************************************************************************
 **  Function    : IsInArray_UXX
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170803
 **  Description	: ��һ�����������λ��(�±�)
 **  Return		: NULL
@@ -222,7 +222,7 @@ SCH_BOOL IsInArray_U16(SCH_U16 Data,SCH_U16 *pTable,SCH_U8 Array_Cnt,SCH_U8 *num
 }
 /*************************************************************************************
 **  Function    : ExchangeTwoVariable_UXX
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20180131
 **  Description	: ��������������ֵ
 **  Return		: NULL

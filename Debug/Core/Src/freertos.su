@@ -3,9 +3,9 @@ freertos.c:100:22:getRunTimeCounterValue	4	static
 freertos.c:110:6:vApplicationGetIdleTaskMemory	24	static
 freertos.c:124:6:MX_FREERTOS_Init	216	static
 freertos.c:187:6:StartDefaultTask	16	static
-freertos.c:213:6:StartTask03	24	static
-freertos.c:252:6:PrintfTask	520	static
-freertos.c:288:6:StartTask_4ms_Pro	16	static
-freertos.c:307:6:StartTask_8ms_Pro	16	static
-freertos.c:326:6:StartTask_16ms_Pro	16	static
-freertos.c:345:6:StartTask_100ms_Pro	16	static
+freertos.c:217:6:StartTask03	32	static
+freertos.c:266:6:PrintfTask	520	static
+freertos.c:302:6:StartTask_4ms_Pro	16	static
+freertos.c:321:6:StartTask_8ms_Pro	16	static
+freertos.c:340:6:StartTask_16ms_Pro	16	static
+freertos.c:359:6:StartTask_100ms_Pro	16	static

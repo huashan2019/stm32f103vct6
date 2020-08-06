@@ -13,7 +13,7 @@
 
 /********************************************************************************
 **  Function	: SysDataInit
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20160623
 **  Description	: 
 **  Return		: NULL

@@ -4,7 +4,7 @@
 
 
 #define UART0_FUNC    DISABLE
-#define UART1_FUNC    DISABLE
+#define UART1_FUNC    ENABLE
 #define UART2_FUNC    ENABLE
 #define UART3_FUNC    DISABLE
 

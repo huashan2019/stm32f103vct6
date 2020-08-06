@@ -67,6 +67,7 @@ unsigned char USB_Tx_Buf[64];
 extern PCD_HandleTypeDef hpcd_USB_FS;
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
+extern RTC_HandleTypeDef hrtc;
 extern TIM_HandleTypeDef htim5;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
@@ -350,8 +351,8 @@ void USART2_IRQHandler(void)
 	  temp = huart2.Instance->DR; //��ȡ���ݼĴ����е�����
 	  HAL_UART_DMAStop(&huart2); //
 	  temp	= hdma_usart2_rx.Instance->CNDTR;// ��ȡDMA��δ��������ݸ�����NDTR�Ĵ�������������
-	  rx_len =	BUFFER_SIZE - temp; //�ܼ�����ȥδ��������ݸ������õ��Ѿ����յ����ݸ���?
-	  recv_end_flag = 1;  // ������ɱ�־λ��?1	  
+	  rx_len =	BUFFER_SIZE - temp; //�ܼ�����ȥδ��������ݸ������õ��Ѿ����յ����ݸ���??
+	  recv_end_flag = 1;  // ������ɱ�־λ��??1	  
    }
 #endif
   /* USER CODE END USART2_IRQn 0 */
@@ -359,6 +360,20 @@ void USART2_IRQHandler(void)
   /* USER CODE BEGIN USART2_IRQn 1 */
   
   /* USER CODE END USART2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles RTC alarm interrupt through EXTI line 17.
+  */
+void RTC_Alarm_IRQHandler(void)
+{
+  /* USER CODE BEGIN RTC_Alarm_IRQn 0 */
+
+  /* USER CODE END RTC_Alarm_IRQn 0 */
+  HAL_RTC_AlarmIRQHandler(&hrtc);
+  /* USER CODE BEGIN RTC_Alarm_IRQn 1 */
+
+  /* USER CODE END RTC_Alarm_IRQn 1 */
 }
 
 /**

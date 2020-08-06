@@ -12,7 +12,7 @@
 #include "include.h"
 /********************************************************************************
 **  Function    : ACC_Detect
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20160909
 **  Description :
 **  Return      : 
@@ -20,12 +20,17 @@
 IO_DET_T AccDetect;
 void ACC_Init(void)
 {///===ACC
-	//GPIO_PinInit(GPIO_ACC_DECT, GPIO_PinInput);
-	//sch_memset(&AccDetect, 0x00, sizeof(AccDetect));
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	
+	GPIO_InitStruct.Pin = GPIO_ACC_DECT;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(IO_ACC, &GPIO_InitStruct);
+	sch_memset(&AccDetect, 0x00, sizeof(AccDetect));
 }
 void ACC_Detect(void)
 {
-	//AccDetect.IO_Status = ACC_DET_LVON;
+	AccDetect.IO_Status = ACC_DET_LVON;
 	if(AccDetect.IO_Status != Get_ACC_Flag)
 	{
 		if(++AccDetect.IO_SamplingCounter >= T200MS_8)
@@ -52,7 +57,7 @@ void ACC_Detect(void)
 #if AUDIO_START == ENABLE
 /********************************************************************************
 **  Function    : AUDIO_Detect
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20160909
 **  Description :
 **  Return      : 
@@ -60,12 +65,17 @@ void ACC_Detect(void)
 IO_DET_T AudioDetect;
 void Audio_Init(void)
 {	
-	//GPIO_PinInit(GPIO_AUDIO_DECT, GPIO_PinInput_InternalPullup);
-	//sch_memset(&AudioDetect, 0x00, sizeof(AudioDetect));
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	
+	GPIO_InitStruct.Pin = GPIO_AUDIO_DECT;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(IO_AUDIO, &GPIO_InitStruct);
+	sch_memset(&AudioDetect, 0x00, sizeof(AudioDetect));
 }
 void AUDIO_Detect(void)
 {
-	//AudioDetect.IO_Status = AUDIO_DET_LVON;
+	AudioDetect.IO_Status = AUDIO_DET_LVON;
 	if(AudioDetect.IO_Status != Get_AUDIO_Flag)
 	{
 		if(++AudioDetect.IO_SamplingCounter >= T200MS_8)

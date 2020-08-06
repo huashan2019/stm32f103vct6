@@ -20,7 +20,7 @@
 //}
 /********************************************************************************
 **  Function    : DSP_Test_Detect
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20180724
 **  Description :
 **  Return      : 
@@ -131,7 +131,7 @@ void BT_IO_Init(void)
 
 /********************************************************************************
 **  Function	: GPIOInit
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20160623
 **  Description	: 
 **  Return		: NULL

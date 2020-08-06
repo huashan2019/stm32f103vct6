@@ -3,5 +3,5 @@ mw_rtc.c:41:8:GetClockDay	24	static
 mw_rtc.c:62:6:GetCurrentTime	4	static
 mw_rtc.c:113:6:GetRTCClock	8	static
 mw_rtc.c:130:6:RTCInit	4	static
-mw_rtc.c:144:6:SysRtcExit	8	static
+mw_rtc.c:144:6:SysRtcExit	4	static
 mw_rtc.c:148:6:SysRtcInit	4	static

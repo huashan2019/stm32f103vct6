@@ -4,14 +4,9 @@
 #include "common.h"
 #include "systick.h"
 #include "wdog.h"
-#include "gpio.h"
-#include "rtc.h"
 #include "ftm.h"
-#include "pit.h"
-#include "uart.h"
 #include "kbi.h"
 #include "mscan.h"
-#include "adc.h"
 #include "flash.h"
 #include "ics.h"
 #include "sim.h"
@@ -22,7 +17,10 @@
 #include "adc.h"
 #include "usart.h"
 #include "spi.h"
-
+#include "gpio.h"
+#include "tim.h"
+#include "adc.h"
+#include "rtc.h"
 
 
 ///=====================================================
@@ -45,7 +43,7 @@
 
 #include <math.h>
 
-///#include "mw_rtc.h"
+#include "mw_rtc.h"
 #include "mw_uart.h"
 ///#include "mw_can.h"
 #include "mw_gpio.h"

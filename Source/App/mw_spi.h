@@ -13,6 +13,7 @@ typedef enum
 {
 	SCH_Spi1,
 	SCH_Spi2,
+	SCH_Spi3,
 	SCH_Spi_Num
 }Spi_T;
 typedef enum

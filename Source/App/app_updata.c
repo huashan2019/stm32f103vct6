@@ -5,7 +5,7 @@
 **  File        : APP_updata.c  ---   ��������
 **  Description : 
 **  Author      : lvhuashan
-**  Created on  : 2017.04.27
+**  Created on  : 2020.08.05
 **  Note        : NULL
 ***************************************************************************************************
 */
@@ -35,7 +35,7 @@ void Out_IapMode(void)
 }
 /*************************************************************************************
 **  Function    : IAP_Pro
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20170425
 **  Description	: 
 **  Return		: NULL
@@ -49,7 +49,7 @@ void IAP_Pro(void)
 	SysUartExit(SCH_Uart2);
 	SysSpiExit(SCH_Spi1);
 	SysSpiExit(SCH_Spi2);
-	///CAN_DeInit(MSCAN);
+	SysSpiExit(SCH_Spi3);
 	///SysRtcExit();	
 	In_IapMode();
 	AppJumpToBootloader();

@@ -14,7 +14,7 @@
 //ClockStruct Clock;
 /**************************************************************
 **  Function    : 
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20160623
 **  Description	: 
 **  Return		: NULL
@@ -105,7 +105,7 @@ void GetCurrentTime(void)
 }
 /************************************************************************
 **  Function    : GetRTCClock
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 
 **  Description : 100msִ��һ��
 **  Return      : NULL
@@ -122,7 +122,7 @@ void GetRTCClock(void)
 }
 /********************************************************************************
 **  Function    : RTCInit
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20160623
 **  Description : RTC
 **  Return      : NULL
@@ -143,7 +143,7 @@ void RTCInit(void)
 ///=============================================================================================================
 void SysRtcExit(void)
 {
-	RTC_DeInit();
+	//HAL_RTC_DeInit(hrtc);
 }
 void SysRtcInit(void)
 {

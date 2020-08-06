@@ -102,7 +102,7 @@ SCH_BOOL UartPutToBuf(Uart_T uart, Uart_RT TxRx, SCH_U8 *const data, SCH_U16 Len
 }
 /********************************************************************************
 **  Function	: UartSendData8
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20160621
 **  Description	: ����һ��8λ������
 **  Return		: void
@@ -114,7 +114,7 @@ void UartSendData8(Uart_T uart,SCH_U8 u8data)
 }
 /********************************************************************************
 **  Function	: UartTxInt En/Dis
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20160621
 **  Description	:
 **  Return		: void
@@ -129,7 +129,7 @@ void UartTxIntDis(Uart_T uart)
 }
 /********************************************************************************
 **  Function	: UartRx/TxCnt
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20160621
 **  Description	:
 **  Return		: SCH_U16
@@ -144,7 +144,7 @@ SCH_U16 UartTxCnt(Uart_T uart)
 }
 /********************************************************************************
 **  Function    : Uart_Rx_DataPro
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20160621
 **  Description	:  ---   int������ִ��
 **  Return		: NULL
@@ -155,7 +155,7 @@ void Uart_Rx_DataPro(Uart_T uart,SCH_U8 data)
 }
 /********************************************************************************
 **  Function    : Uart_Tx_DataPro
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20160621
 **  Description :   ---   int������ִ��
 **  Return      : NULL
@@ -176,7 +176,7 @@ void Uart_Tx_DataPro(Uart_T uart)
 }
 /********************************************************************************
 **  Function	: UartRxData
-**  Author		: wenjunHu
+**  Author		: lvhuashan
 **  Created on	: 20160621
 **  Description	:
 **  Return		: BOOL
@@ -187,7 +187,7 @@ SCH_BOOL UartRxData(Uart_T uart, SCH_U8 *data, SCH_U16 Len)
 }
 /********************************************************************************
 **  Function         : UartTxData
-**  Author           : wenjunHu
+**  Author           : lvhuashan
 **  Created on       : 20160621
 **  Description      :
 **  Return           : BOOL
@@ -219,7 +219,7 @@ SCH_BOOL UartTxData_Direct(Uart_T uart, SCH_U8 *data, SCH_U16 Len)
 
 /********************************************************************************
 **  Function    : UART_IntSerive
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20170407
 **  Description :  ---   int������ִ��
 **  Return      : void
@@ -245,7 +245,7 @@ void UART_IntSerive(Uart_T uart)
 
 /********************************************************************************
 **  Function    : SysUartExit
-**  Author      : wenjunHu
+**  Author      : lvhuashan
 **  Created on  : 20170830
 **  Description :
 **  Return      : BOOL
@@ -264,21 +264,13 @@ void SysUartExit(Uart_T uart)
 #endif
 			break;
 		case SCH_Uart1:
-#if 0//UART1_FUNC == ENABLE
-			UART1->C2 &= ~(UART_C2_TE_MASK | UART_C2_RE_MASK );
-			UART_DisableInterrupt(Uart_Arry[uart], UART_RxBuffFullInt);
-			UART_DisableInterrupt(Uart_Arry[uart], UART_TxCompleteInt);
-			NVIC_DisableIRQ(UART1_IRQn);
-			SIM->SCGC &= ~SIM_SCGC_UART1_MASK;
+#if UART1_FUNC == ENABLE
+			MX_USART1_UART_Init();
 #endif
 			break;
 		case SCH_Uart2:
-#if 0//UART2_FUNC == ENABLE
-			UART2->C2 &= ~(UART_C2_TE_MASK | UART_C2_RE_MASK );
-			UART_DisableInterrupt(Uart_Arry[uart], UART_RxBuffFullInt);
-			UART_DisableInterrupt(Uart_Arry[uart], UART_TxCompleteInt);
-			NVIC_DisableIRQ(UART2_IRQn);
-			SIM->SCGC &= ~SIM_SCGC_UART2_MASK;
+#if UART2_FUNC == ENABLE
+			MX_USART2_UART_Init();
 #endif
 #if 0 ///UART2_FUNC == ENABLE
 			TurnOff_UART2_LIN_EN;

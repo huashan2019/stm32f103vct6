@@ -34,17 +34,27 @@ void Bsp_Clock_Init(void)
 ////=================================================================================================================
 void Bsp_SysTick_Init(void)
 {
-	//SysTick->VAL = 0x0;
-    //SysTick->LOAD = 160000-1;///40000*4=4ms///0x00FFFFFF;
-    //SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk | SysTick_CTRL_TICKINT_Msk;
-	//NVIC_SetPriority (SysTick_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
-	//NVIC_EnableIRQ (SysTick_IRQn);
+	SysTick->CTRL  |= SysTick_CTRL_ENABLE_Msk; 
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
+	MX_RTC_Init();
 }
 void Bsp_SysTick_Close(void)
 {
-	//systick_disable();
-	///SysTick->CTRL  &= ~SysTick_CTRL_ENABLE_Msk; 
+	SysTick->CTRL  &= ~SysTick_CTRL_ENABLE_Msk; 
+	SysTick->VAL = 0x00;   //清空val,清空定时器
+	//RCC_HCLKConfig(RCC_SYSCLK_Div8); 
+	//RCC_PCLK2Config(RCC_HCLK_Div8); 			
+	//RCC_PCLK1Config(RCC_HCLK_Div8);
+	/* Select HSI as system clock source */
+	//RCC_SYSCLKConfig(RCC_SYSCLKSource_HSI);
+	/* Wait till HSI is used as system clock source */
+	//while(RCC_GetSYSCLKSource() != 0x00);
+
+	///FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Disable);  
+	///FLASH_SetLatency(FLASH_Latency_0);
 }
+
 ////=================================================================================================================
 void Bsp_GPIO_Init(void)
 {	
@@ -133,10 +143,13 @@ void Bsp_UART_Init(void)
 ////=================================================================================================================
 #define SPI1_BAUDRATE       400000///* bps */
 #define SPI2_BAUDRATE       400000///
+#define SPI3_BAUDRATE       400000///
+
 void Bsp_SPI_Init(void)
 {
 	SysSpiInit(SCH_Spi1,SPI1_BAUDRATE);
 	SysSpiInit(SCH_Spi2,SPI2_BAUDRATE);
+	SysSpiInit(SCH_Spi3,SPI3_BAUDRATE);
 }
 ////=================================================================================================================
 void Bsp_CAN_Init(void)
