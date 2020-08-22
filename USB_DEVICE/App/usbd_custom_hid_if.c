@@ -23,6 +23,7 @@
 #include "usbd_custom_hid_if.h"
 
 /* USER CODE BEGIN INCLUDE */
+#include "include.h"
 
 /* USER CODE END INCLUDE */
 
@@ -201,7 +202,7 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
 {
   /* USER CODE BEGIN 6 */
      char i;
-     //HAL_GPIO_TogglePin(GPIOE,led1_Pin);
+     //HAL_GPIO_TogglePin(GPIOE,LED1_Pin);
     
     /*�鿴�������ݳ���
     USB_Received_Count = USBD_GetRxCount( &hUsbDeviceFS,CUSTOM_HID_EPOUT_ADDR );
@@ -216,8 +217,10 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
     for(i=0;i<64;i++) 
     {
         USB_Rx_Buf[i]=hhid->Report_buf[i];
+		Uart_Rx_DataPro(SCH_Uart0, hhid->Report_buf[i]);
         printf("USB_Rx_Buf[%d] = 0x%x \r\n",i,USB_Rx_Buf[i]);
     } 
+	
   return (USBD_OK);
   /* USER CODE END 6 */
 }

@@ -12,10 +12,10 @@
 #include "include.h"
 
 #if UART0_FUNC == ENABLE
-#define MAX_UART0_TX_BUF       256
+#define MAX_UART0_TX_BUF       512
 SCH_U8 Uart0_TX_buf[MAX_UART0_TX_BUF];
 QUEUE_T UART0_TX_QUEUE = {0,0,0,MAX_UART0_TX_BUF,1,Uart0_TX_buf};
-#define MAX_UART0_RX_BUF       256
+#define MAX_UART0_RX_BUF       512
 SCH_U8 Uart0_RX_buf[MAX_UART0_RX_BUF];
 QUEUE_T UART0_RX_QUEUE = {0,0,0,MAX_UART0_RX_BUF,1,Uart0_RX_buf};
 #endif
@@ -68,7 +68,7 @@ QUEUE_T *const UartBufAddr[][2] =
 };
 
 //UART_Type *Uart_Arry[]={UART0,UART1,UART2};
-UART_HandleTypeDef *Uart_Arry[]={&huart1,&huart2};
+UART_HandleTypeDef *Uart_Arry[]={&huart0,&huart1,&huart2};
 
 ///========================================================
 void UartBufInit(Uart_T uart,Uart_RT TxRx)
@@ -110,7 +110,7 @@ SCH_BOOL UartPutToBuf(Uart_T uart, Uart_RT TxRx, SCH_U8 *const data, SCH_U16 Len
 void UartSendData8(Uart_T uart,SCH_U8 u8data)
 {
 	//UART_PutChar(Uart_Arry[uart], u8data);
-	HAL_UART_Transmit(Uart_Arry[uart],&u8data,1,0xffff);
+	HAL_UART_Transmit(Uart_Arry[uart],&u8data,1,HAL_MAX_DELAY);
 }
 /********************************************************************************
 **  Function	: UartTxInt En/Dis
@@ -121,10 +121,14 @@ void UartSendData8(Uart_T uart,SCH_U8 u8data)
 ********************************************************************************/
 void UartTxIntEn(Uart_T uart)
 {
+	__HAL_UART_ENABLE_IT(Uart_Arry[uart], UART_IT_TXE);
+
 	//UART_EnableInterrupt(Uart_Arry[uart], UART_TxCompleteInt);/* Enable Tx interrupt */
 }
 void UartTxIntDis(Uart_T uart)
 {
+	__HAL_UART_DISABLE_IT(Uart_Arry[uart], UART_IT_TXE);
+
 	//UART_DisableInterrupt(Uart_Arry[uart], UART_TxCompleteInt);/* Disable Tx interrupt */
 }
 /********************************************************************************
@@ -170,7 +174,8 @@ void Uart_Tx_DataPro(Uart_T uart)
 	}
 	if(UartGetFromBuf(uart,Uart_Tx,&u8data,1))
 	{
-		UartSendData8(uart, u8data);
+		//UartSendData8(uart, u8data);
+		HAL_UART_Transmit_IT(Uart_Arry[uart],&u8data,1);
 		UartTxIntEn(uart);
 	}
 }
@@ -226,21 +231,17 @@ SCH_BOOL UartTxData_Direct(Uart_T uart, SCH_U8 *data, SCH_U16 Len)
 ********************************************************************************/
 void UART_IntSerive(Uart_T uart)
 {
-#if 0
-	SCH_U8 data;
-	if(UART_CheckFlag(Uart_Arry[uart], UART_FlagRDRF))/* Rx interrupt */
+	SCH_U8 data[1];
+	if(HAL_UART_Receive_IT(Uart_Arry[uart],data,1) == HAL_OK)/* Rx interrupt */
 	{
-		data = UART_GetChar(Uart_Arry[uart]);
-		Uart_Rx_DataPro(uart, data);
+		//data = USART_ReceiveData(Uart_Arry[uart]);
+		Uart_Rx_DataPro(uart, data[0]);
 	}
-	if(UART_CheckFlag(Uart_Arry[uart], UART_FlagTC))/* Tx interrupt */
+	if(HAL_UART_Transmit_IT(Uart_Arry[uart],data,1) == HAL_OK)/* Tx interrupt */
 	{
-		if(Uart_Arry[uart]->C2 & UART_C2_TCIE_MASK)
-		{	
-			Uart_Tx_DataPro(uart);
-		}
+		Uart_Tx_DataPro(uart);
 	}
-#endif
+
 }
 
 /********************************************************************************

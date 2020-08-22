@@ -5,9 +5,6 @@
 
 
 
-
-
-
 extern void FTM0_PWM_Init(void);
 extern void FTM0_PWM_Exit(void);
 #endif

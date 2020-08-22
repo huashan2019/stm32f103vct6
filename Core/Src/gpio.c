@@ -30,13 +30,13 @@
 
 /* USER CODE END 1 */
 
-/** Configure pins as 
-        * Analog 
-        * Input 
+/** Configure pins as
+        * Analog
+        * Input
         * Output
         * EVENT_OUT
         * EXTI
-        * Free pins are configured automatically as Analog (this feature is enabled through 
+        * Free pins are configured automatically as Analog (this feature is enabled through
         * the Code Generation settings)
      PD8   ------> USART3_TX
      PD9   ------> USART3_RX
@@ -57,7 +57,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, REM_CTRL_Pin|SYS_POW_EN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LED1_Pin|LED_CTRL1_Pin|LED_CTRL2_Pin|POW_AMP_STANDBY_Pin 
+  HAL_GPIO_WritePin(GPIOC, LED1_Pin|LED_CTRL1_Pin|LED_CTRL2_Pin|POW_AMP_STANDBY_Pin
                           |MUTE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -72,9 +72,9 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PE2 PE3 PE10 PE12 
+  /*Configure GPIO pins : PE2 PE3 PE10 PE12
                            PE13 PE14 PE15 PE1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_10|GPIO_PIN_12 
+  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_10|GPIO_PIN_12
                           |GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
@@ -92,9 +92,9 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PC13 PC0 PC1 PC2 
+  /*Configure GPIO pins : PC13 PC0 PC1 PC2
                            PC10 PC11 PC12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2 
+  GPIO_InitStruct.Pin = GPIO_PIN_13|GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2
                           |GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -148,11 +148,11 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USB_RX_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PD10 PD14 PD15 PD0 
-                           PD1 PD2 PD3 PD4 
+  /*Configure GPIO pins : PD10 PD14 PD15 PD0
+                           PD1 PD2 PD3 PD4
                            PD5 PD6 PD7 */
-  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_0 
-                          |GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4 
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_14|GPIO_PIN_15|GPIO_PIN_0
+                          |GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4
                           |GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7;
   GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);

@@ -77,6 +77,12 @@
 
 
 extern void SCH_Task_Execute (void);
+extern void Task_4ms_Pro(void);
+extern void Task_8ms_Pro(void);
+extern void Task_16ms_Pro(void);
+extern void Task_100ms_Pro(void);
+
+
 #ifdef __cplusplus
 }
 #endif

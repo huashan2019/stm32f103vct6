@@ -11,15 +11,14 @@
 */
 
 #include "include.h"
+#include "rtc.h"
+#include "tim.h"
 
-TIM_HandleTypeDef htim1;
-TIM_HandleTypeDef htim5;
-UART_HandleTypeDef huart1;
-UART_HandleTypeDef huart2;
-ADC_HandleTypeDef hadc1;
-DMA_HandleTypeDef hdma_adc1;
-DMA_HandleTypeDef hdma_usart2_tx;
-DMA_HandleTypeDef hdma_usart2_rx;
+//ADC_HandleTypeDef hadc1;
+//DMA_HandleTypeDef hdma_adc1;
+ RTC_AlarmTypeDef salarmstructure;
+ RTC_TimeTypeDef stimestructure;
+ extern TIM_HandleTypeDef htim1;
 
 void SysWakeUpInit_FromACC(void)
 {
@@ -122,8 +121,8 @@ void SysLowPowerInit(void)
 	HAL_UART_MspDeInit(&huart1);
 	HAL_UART_MspDeInit(&huart2);
 	HAL_DMA_DeInit(&hdma_adc1);
-	HAL_DMA_DeInit(&hdma_usart2_rx);
-	HAL_DMA_DeInit(&hdma_usart2_tx);
+	//HAL_DMA_DeInit(&hdma_usart2_rx);
+	//HAL_DMA_DeInit(&hdma_usart2_tx);
 	Bsp_SysTick_Close();
 	///SysRtcExit();
 	Bsp_WDOG_Close();
@@ -180,7 +179,7 @@ void TASK_AccOff_Pro(void)
 			if(AUDIO_DET_LVON||ACC_DET_LVON)
 				Set_AccWakeUP_Flag;
 		}
-		portENTER_CRITICAL();
+		//portENTER_CRITICAL();
 		FeedDog();
 		SysWakeUpExit_FromRTC();
 	#if AUDIO_START == ENABLE
@@ -191,7 +190,7 @@ void TASK_AccOff_Pro(void)
 		SysLowPowerExit();
 		Clr_SLEEP_Mode;
 		Printf("Enter Normalmode \n");
-		portEXIT_CRITICAL();
+		//portEXIT_CRITICAL();
 		return;
 	}
 }

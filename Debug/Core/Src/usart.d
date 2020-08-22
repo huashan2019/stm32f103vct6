@@ -55,6 +55,7 @@ Core/Src/usart.o: ../Core/Src/usart.c ../Core/Inc/usart.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_gpio.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_i2c.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_adc.h \
+ E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_time.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_flash.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_spi.h \
  E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/app_connect.h \
@@ -204,6 +205,8 @@ E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source
 E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_i2c.h:
 
 E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_adc.h:
+
+E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_time.h:
 
 E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source/App/mw_flash.h:
 

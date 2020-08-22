@@ -11,6 +11,16 @@
 */
 #include "include.h"
 
+SCH_U32 FLASH_Program2LongWords(uint32_t Address, uint32_t u32DwData0, uint32_t u32DwData1)
+{
+	return HAL_FLASH_Program(0x03, Address, (u32DwData1<<32)|u32DwData0);
+}
+
+	
+SCH_U32 FLASH_Program1LongWord(uint32_t Address, uint32_t u32DwData0 )
+{
+	return HAL_FLASH_Program(0x02, Address, u32DwData0 );
+}
 
 SCH_U32 u8_TO_u32(SCH_U8 *u8Data)
 {

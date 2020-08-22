@@ -3,9 +3,9 @@
 #define __MW_UART_H
 
 
-#define UART0_FUNC    DISABLE
-#define UART1_FUNC    ENABLE
-#define UART2_FUNC    ENABLE
+#define UART0_FUNC    ENABLE /*USB DATA*/
+#define UART1_FUNC    DISABLE/*DEBUG DATA*/
+#define UART2_FUNC    ENABLE /*BT DATA*/
 #define UART3_FUNC    DISABLE
 
 

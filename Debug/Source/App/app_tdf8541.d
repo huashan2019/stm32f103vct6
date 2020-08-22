@@ -48,9 +48,9 @@ Source/App/app_tdf8541.o: ../Source/App/app_tdf8541.c \
  ../Source/App/bsp.h ../Source/App/system.h ../Source/App/app_task.h \
  ../Core/Inc/main.h ../Source/App/app_debug.h ../Source/App/mw_rtc.h \
  ../Source/App/mw_uart.h ../Source/App/mw_gpio.h ../Source/App/mw_i2c.h \
- ../Source/App/mw_adc.h ../Source/App/mw_flash.h ../Source/App/mw_spi.h \
- ../Source/App/app_connect.h ../Source/App/app_at.h \
- ../Source/App/app_led.h ../Source/App/app_start.h \
+ ../Source/App/mw_adc.h ../Source/App/mw_time.h ../Source/App/mw_flash.h \
+ ../Source/App/mw_spi.h ../Source/App/app_connect.h \
+ ../Source/App/app_at.h ../Source/App/app_led.h ../Source/App/app_start.h \
  ../Source/App/app_mute.h ../Source/App/app_power.h \
  ../Source/App/app_voltage.h ../Source/App/app_updata.h \
  ../Source/App/app_lowpower.h ../Source/App/app_amp.h \
@@ -184,6 +184,8 @@ E:/project/DSP/16\ chl\ DSP/SW/STM32CubeIDE/workspace_1.3.0/stm32f103vct6/Source
 ../Source/App/mw_i2c.h:
 
 ../Source/App/mw_adc.h:
+
+../Source/App/mw_time.h:
 
 ../Source/App/mw_flash.h:
 

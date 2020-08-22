@@ -11,6 +11,8 @@
 */
 #include "include.h"
 
+SCH_U8 rtc_alarm_flag;
+
 //ClockStruct Clock;
 /**************************************************************
 **  Function    : 

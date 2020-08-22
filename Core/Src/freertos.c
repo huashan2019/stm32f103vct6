@@ -25,11 +25,12 @@
 #include "cmsis_os.h"
 
 /* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */     
+/* USER CODE BEGIN Includes */
 #include "include.h"
 #include "spi.h"
 #include "usbd_customhid.h" //
 #include "adc.h"
+#include "stm32f1xx_hal_rtc.h"
 
 /* USER CODE END Includes */
 
@@ -59,32 +60,71 @@ uint8_t Data2[2]={0x00,0x00};
 uint8_t Rxdata[2];
 
 /* USER CODE END Variables */
-osThreadId defaultTaskHandle;
-osThreadId myTask03Handle;
-osThreadId myPrintfTaskHandle;
-osThreadId myTask_4ms_ProHandle;
-osThreadId myTask_8ms_ProHandle;
-osThreadId myTask_16ms_ProHandle;
-osThreadId myTask_100ms_PrHandle;
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4
+};
+/* Definitions for myTask03 */
+osThreadId_t myTask03Handle;
+const osThreadAttr_t myTask03_attributes = {
+  .name = "myTask03",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4
+};
+/* Definitions for myPrintfTask */
+osThreadId_t myPrintfTaskHandle;
+const osThreadAttr_t myPrintfTask_attributes = {
+  .name = "myPrintfTask",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 1024 * 4
+};
+/* Definitions for myTask_4ms_Pro */
+osThreadId_t myTask_4ms_ProHandle;
+const osThreadAttr_t myTask_4ms_Pro_attributes = {
+  .name = "myTask_4ms_Pro",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4
+};
+/* Definitions for myTask_8ms_Pro */
+osThreadId_t myTask_8ms_ProHandle;
+const osThreadAttr_t myTask_8ms_Pro_attributes = {
+  .name = "myTask_8ms_Pro",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4
+};
+/* Definitions for myTask_16ms_Pro */
+osThreadId_t myTask_16ms_ProHandle;
+const osThreadAttr_t myTask_16ms_Pro_attributes = {
+  .name = "myTask_16ms_Pro",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4
+};
+/* Definitions for myTask_100ms_Pr */
+osThreadId_t myTask_100ms_PrHandle;
+const osThreadAttr_t myTask_100ms_Pr_attributes = {
+  .name = "myTask_100ms_Pr",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
    
 /* USER CODE END FunctionPrototypes */
 
-void StartDefaultTask(void const * argument);
-void StartTask03(void const * argument);
-void PrintfTask(void const * argument);
-void StartTask_4ms_Pro(void const * argument);
-void StartTask_8ms_Pro(void const * argument);
-void StartTask_16ms_Pro(void const * argument);
-void StartTask_100ms_Pro(void const * argument);
+void StartDefaultTask(void *argument);
+void StartTask03(void *argument);
+void PrintfTask(void *argument);
+void StartTask_4ms_Pro(void *argument);
+void StartTask_8ms_Pro(void *argument);
+void StartTask_16ms_Pro(void *argument);
+void StartTask_100ms_Pro(void *argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
-
-/* GetIdleTaskMemory prototype (linked to static allocation support) */
-void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize );
 
 /* Hook prototypes */
 void configureTimerForRunTimeStats(void);
@@ -102,19 +142,6 @@ __weak unsigned long getRunTimeCounterValue(void)
 return ulHighFrequencyTimerTicks;
 }
 /* USER CODE END 1 */
-
-/* USER CODE BEGIN GET_IDLE_TASK_MEMORY */
-static StaticTask_t xIdleTaskTCBBuffer;
-static StackType_t xIdleStack[configMINIMAL_STACK_SIZE];
-  
-void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize )
-{
-  *ppxIdleTaskTCBBuffer = &xIdleTaskTCBBuffer;
-  *ppxIdleTaskStackBuffer = &xIdleStack[0];
-  *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
-  /* place for user code */
-}                   
-/* USER CODE END GET_IDLE_TASK_MEMORY */
 
 /**
   * @brief  FreeRTOS initialization
@@ -143,33 +170,26 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* definition and creation of myTask03 */
-  osThreadDef(myTask03, StartTask03, osPriorityNormal, 0, 128);
-  myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
+  /* creation of myTask03 */
+  myTask03Handle = osThreadNew(StartTask03, NULL, &myTask03_attributes);
 
-  /* definition and creation of myPrintfTask */
-  osThreadDef(myPrintfTask, PrintfTask, osPriorityBelowNormal, 0, 256);
-  myPrintfTaskHandle = osThreadCreate(osThread(myPrintfTask), NULL);
+  /* creation of myPrintfTask */
+  myPrintfTaskHandle = osThreadNew(PrintfTask, NULL, &myPrintfTask_attributes);
 
-  /* definition and creation of myTask_4ms_Pro */
-  osThreadDef(myTask_4ms_Pro, StartTask_4ms_Pro, osPriorityIdle, 0, 256);
-  myTask_4ms_ProHandle = osThreadCreate(osThread(myTask_4ms_Pro), NULL);
+  /* creation of myTask_4ms_Pro */
+  myTask_4ms_ProHandle = osThreadNew(StartTask_4ms_Pro, NULL, &myTask_4ms_Pro_attributes);
 
-  /* definition and creation of myTask_8ms_Pro */
-  osThreadDef(myTask_8ms_Pro, StartTask_8ms_Pro, osPriorityIdle, 0, 256);
-  myTask_8ms_ProHandle = osThreadCreate(osThread(myTask_8ms_Pro), NULL);
+  /* creation of myTask_8ms_Pro */
+  myTask_8ms_ProHandle = osThreadNew(StartTask_8ms_Pro, NULL, &myTask_8ms_Pro_attributes);
 
-  /* definition and creation of myTask_16ms_Pro */
-  osThreadDef(myTask_16ms_Pro, StartTask_16ms_Pro, osPriorityIdle, 0, 256);
-  myTask_16ms_ProHandle = osThreadCreate(osThread(myTask_16ms_Pro), NULL);
+  /* creation of myTask_16ms_Pro */
+  myTask_16ms_ProHandle = osThreadNew(StartTask_16ms_Pro, NULL, &myTask_16ms_Pro_attributes);
 
-  /* definition and creation of myTask_100ms_Pr */
-  osThreadDef(myTask_100ms_Pr, StartTask_100ms_Pro, osPriorityIdle, 0, 256);
-  myTask_100ms_PrHandle = osThreadCreate(osThread(myTask_100ms_Pr), NULL);
+  /* creation of myTask_100ms_Pr */
+  myTask_100ms_PrHandle = osThreadNew(StartTask_100ms_Pro, NULL, &myTask_100ms_Pr_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -184,7 +204,7 @@ void MX_FREERTOS_Init(void) {
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+void StartDefaultTask(void *argument)
 {
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
@@ -205,8 +225,7 @@ void StartDefaultTask(void const * argument)
 
 /* USER CODE BEGIN Header_StartTask03 */
 //RTC_AlarmTypeDef salarmstructure;
-RTC_TimeTypeDef stime;
-RTC_HandleTypeDef hrtc;
+//RTC_TimeTypeDef stime;
 
 /**
 * @brief Function implementing the myTask03 thread.
@@ -214,7 +233,7 @@ RTC_HandleTypeDef hrtc;
 * @retval None
 */
 /* USER CODE END Header_StartTask03 */
-void StartTask03(void const * argument)
+void StartTask03(void *argument)
 {
   /* USER CODE BEGIN StartTask03 */
 
@@ -222,34 +241,19 @@ void StartTask03(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+  
+  		BT_DataRxPro(Uart_CONNECT,	 &BtRxModuel);
+  		BT_DataRxPro(Uart_OTHER,	 &PcRxModuel_0);
 	 	 //vTaskDelay(500);
-
+		 //printf("Task3 -- Software Version : %s \r\n", MCU_VERSION);
 		/* Call HAL_RTC_GetTime function to update date if counter higher than 24 hours */
-		if (HAL_RTC_GetTime(&hrtc, &stime, RTC_FORMAT_BIN) != HAL_OK)
-		{
-			printf("rx_time err=%d,%d,%d\r\n",stime.Hours,stime.Minutes,stime.Seconds);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
-			return HAL_ERROR;
-		}
-		printf("rx_time=%d,%d,%d,%d\r\n",stime.Hours,stime.Minutes,stime.Seconds,rtc_alarm_flag);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
+		//if (HAL_RTC_GetTime(&hrtc, &stimestructure, RTC_FORMAT_BIN) != HAL_OK)
+		//{
+		//	printf("rx_time err=%d,%d,%d\r\n",stimestructure.Hours,stimestructure.Minutes,stimestructure.Seconds);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
+		//	return ;
+		//}
+		//printf("rx_time=%d,%d,%d,%d\r\n",stimestructure.Hours,stimestructure.Minutes,stimestructure.Seconds,rtc_alarm_flag);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
 
-		//printf("Task3 -- Software Version : %s \r\n", MCU_VERSION);
-		//printf("Code generation tuint8_time : %s %s \r\n", __DATE__, __TIME__);
-		//USB SEND BUFF
-		//USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
-		//HAL_Delay(1000);
-		if(recv_end_flag ==1)
-		{
-			printf("rx_len1=%d\r\n",rx_len);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
-			HAL_UART_Transmit(&huart2,rx_buffer, rx_len,0xFFFF);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½
-			for(uint8_t i=0;i<BUFFER_SIZE;i++)
-				{
-					printf("rx_buffer%d %x\r\n",i,rx_buffer[i]);//ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Õ³ï¿½ï¿½ï¿½
-					//rx_buffer[i]=0;//ï¿½ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿?
-				}
-			rx_len=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿?
-			recv_end_flag=0;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¾Î?
-		}
-		HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//ï¿½ï¿½ï¿½Â´ï¿½DMAï¿½ï¿½ï¿½ï¿½	
 		
 	  osDelay(1);
   }
@@ -263,7 +267,7 @@ void StartTask03(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_PrintfTask */
-void PrintfTask(void const * argument)
+void PrintfTask(void *argument)
 {
   /* USER CODE BEGIN PrintfTask */
 	uint8_t pcWriteBuffer[500];
@@ -273,21 +277,21 @@ void PrintfTask(void const * argument)
   {
   
   	//printf("PrintfTask -- Software Version : %s \r\n", MCU_VERSION);
-#if 0
+#if 1
 
 	printf("=================================================\r\n");
-	printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	    ï¿½ï¿½ï¿½ï¿½×´Ì¬ ï¿½ï¿½ï¿½È¼ï¿½   Ê£ï¿½ï¿½Õ» ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\r\n");
+	printf("ÈÎÎñÃû	    ÈÎÎñ×´Ì¬ ÓÅÏÈ¼¶   Ê£ÓàÕ» ÈÎÎñÐòºÅ\r\n");
 	vTaskList((char *)&pcWriteBuffer);
 	printf("%s\r\n", pcWriteBuffer);
 	
-	printf("\r\nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½		ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½	Ê¹ï¿½ï¿½ï¿½ï¿½\r\n");
+	printf("\r\nÈÎÎñÃû		 ÔËÐÐ¼ÆÊý		  Ê¹ÓÃÂÊ\r\n");
 	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
 	printf("%s\r\n", pcWriteBuffer);
 
 
 #endif
-    vTaskDelay(20);
-    osDelay(1);
+    //vTaskDelay(20);
+    osDelay(100);
   }
   /* USER CODE END PrintfTask */
 }
@@ -299,7 +303,7 @@ void PrintfTask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask_4ms_Pro */
-void StartTask_4ms_Pro(void const * argument)
+void StartTask_4ms_Pro(void *argument)
 {
   /* USER CODE BEGIN StartTask_4ms_Pro */
   /* Infinite loop */
@@ -318,7 +322,7 @@ void StartTask_4ms_Pro(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask_8ms_Pro */
-void StartTask_8ms_Pro(void const * argument)
+void StartTask_8ms_Pro(void *argument)
 {
   /* USER CODE BEGIN StartTask_8ms_Pro */
   /* Infinite loop */
@@ -337,7 +341,7 @@ void StartTask_8ms_Pro(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask_16ms_Pro */
-void StartTask_16ms_Pro(void const * argument)
+void StartTask_16ms_Pro(void *argument)
 {
   /* USER CODE BEGIN StartTask_16ms_Pro */
   /* Infinite loop */
@@ -356,7 +360,7 @@ void StartTask_16ms_Pro(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask_100ms_Pro */
-void StartTask_100ms_Pro(void const * argument)
+void StartTask_100ms_Pro(void *argument)
 {
   /* USER CODE BEGIN StartTask_100ms_Pro */
   /* Infinite loop */

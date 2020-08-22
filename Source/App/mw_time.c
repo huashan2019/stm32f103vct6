@@ -12,13 +12,6 @@
 #include "include.h"
 
 
-
-
-
-
-
-
-
 #if 0
 ////=======================================================================================================FTM====Pwm======
 void Sch_FTM_PWMInit(FTM_Type *pFTM, SCH_U8 u8PWMModeSelect, SCH_U8 u8PWMEdgeSelect, SCH_U8 u8FTM_Channel)

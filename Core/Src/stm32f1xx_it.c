@@ -21,8 +21,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f1xx_it.h"
-#include "FreeRTOS.h"
-#include "task.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usbd_customhid.h" //
@@ -67,10 +65,7 @@ unsigned char USB_Tx_Buf[64];
 extern PCD_HandleTypeDef hpcd_USB_FS;
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
-extern RTC_HandleTypeDef hrtc;
 extern TIM_HandleTypeDef htim5;
-extern DMA_HandleTypeDef hdma_usart2_tx;
-extern DMA_HandleTypeDef hdma_usart2_rx;
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim1;
 
@@ -78,11 +73,13 @@ extern TIM_HandleTypeDef htim1;
 extern USBD_HandleTypeDef hUsbDeviceFS;
 extern volatile unsigned long ulHighFrequencyTimerTicks;
 extern volatile unsigned long ulHighFrequencyTimerTicks1;
+extern PCD_HandleTypeDef hpcd_USB_FS;
+extern TIM_HandleTypeDef htim1;
 
 /* USER CODE END EV */
 
 /******************************************************************************/
-/*           Cortex-M3 Processor Interruption and Exception Handlers          */ 
+/*           Cortex-M3 Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
   * @brief This function handles Non maskable interrupt.
@@ -192,34 +189,6 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles DMA1 channel6 global interrupt.
-  */
-void DMA1_Channel6_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel6_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel6_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_usart2_rx);
-  /* USER CODE BEGIN DMA1_Channel6_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel6_IRQn 1 */
-}
-
-/**
-  * @brief This function handles DMA1 channel7 global interrupt.
-  */
-void DMA1_Channel7_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel7_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel7_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_usart2_tx);
-  /* USER CODE BEGIN DMA1_Channel7_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel7_IRQn 1 */
-}
-
-/**
   * @brief This function handles ADC1 and ADC2 global interrupts.
   */
 void ADC1_2_IRQHandler(void)
@@ -279,11 +248,12 @@ void EXTI9_5_IRQHandler(void)
 	  {
 	  
 		  	//printf("EXTI9_5_IRQHandler2:%x \r\n",ulHighFrequencyTimerTicks1);
-			for(i = 0; i< 64; i++)
+			for(i = 0; i< 10; i++)
 			{		 
 				USB_Tx_Buf[i]= 0x30+i%10;
 			}
 		  USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
+		  HAL_UART_Transmit_IT(&huart2,USB_Tx_Buf,10);
 	  }
 
   /* USER CODE END EXTI9_5_IRQn 0 */
@@ -340,40 +310,12 @@ void TIM1_UP_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-#if 0
-  uint32_t tmp_flag = 0;
-  uint32_t temp;
-  tmp_flag =__HAL_UART_GET_FLAG(&huart2,UART_FLAG_IDLE); //��ȡIDLE��־λ
-  if((tmp_flag != RESET))//idle��־����λ
-  { 
-	  __HAL_UART_CLEAR_IDLEFLAG(&huart2);//�����־�?
-	  temp = huart2.Instance->SR;  //���״̬�Ĵ���SR,��ȡSR�Ĵ�������ʵ�����SR�Ĵ����Ĺ���
-	  temp = huart2.Instance->DR; //��ȡ���ݼĴ����е�����
-	  HAL_UART_DMAStop(&huart2); //
-	  temp	= hdma_usart2_rx.Instance->CNDTR;// ��ȡDMA��δ��������ݸ�����NDTR�Ĵ�������������
-	  rx_len =	BUFFER_SIZE - temp; //�ܼ�����ȥδ��������ݸ������õ��Ѿ����յ����ݸ���??
-	  recv_end_flag = 1;  // ������ɱ�־λ��??1	  
-   }
-#endif
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
-  
+
+
   /* USER CODE END USART2_IRQn 1 */
-}
-
-/**
-  * @brief This function handles RTC alarm interrupt through EXTI line 17.
-  */
-void RTC_Alarm_IRQHandler(void)
-{
-  /* USER CODE BEGIN RTC_Alarm_IRQn 0 */
-
-  /* USER CODE END RTC_Alarm_IRQn 0 */
-  HAL_RTC_AlarmIRQHandler(&hrtc);
-  /* USER CODE BEGIN RTC_Alarm_IRQn 1 */
-
-  /* USER CODE END RTC_Alarm_IRQn 1 */
 }
 
 /**

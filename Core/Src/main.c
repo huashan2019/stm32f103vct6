@@ -17,7 +17,6 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
@@ -68,8 +67,8 @@ void MX_FREERTOS_Init(void);
 unsigned char USB_Rx_Buf[64]; //USB接收缓存
 unsigned char USB_Received_Count = 0;//USB接收数据计数
 unsigned int AD_DMA[2];
+uint8_t rUARTDataBuffer[1];
 
-UART_HandleTypeDef huart2;
 
 void SysHardware_Init(void)
 {
@@ -122,7 +121,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_I2C1_Init();
   MX_I2C2_Init();
   MX_SPI1_Init();
@@ -137,12 +135,13 @@ int main(void)
   HAL_ADCEx_Calibration_Start(&hadc1);
   HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&AD_DMA,2); //启用DMA的ADC转换，AD_DMA 0~3 对应ADC 0~3，这里注意最后一个参数的大小
 
-  //HAL_TIM_Base_Start_IT(&htim5);
+  HAL_TIM_Base_Start_IT(&htim5);
   HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
 
 	//上面的usart配置代码为cubemx自动生成的，在下方添加使能idle中断和打开串口DMA接收语句
-  __HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);//使能idle中断
-  HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//打开DMA接收，数据存入rx_buffer数组中。
+  //__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);//使能idle中断
+  //HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//打开DMA接收，数据存入rx_buffer数组中。
+	while(HAL_UART_Receive_IT(&huart2, rUARTDataBuffer, 1) != HAL_OK);
 
   /*##-1- Configure Alarm ####################################################*/
   /* Configure RTC Alarm */
@@ -155,11 +154,12 @@ int main(void)
 
   /* USER CODE END 2 */
 
-  /* Call init function for freertos objects (in freertos.c) */
-  MX_FREERTOS_Init(); 
+  /* Init scheduler */
+  osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
+  MX_FREERTOS_Init();
   /* Start scheduler */
   osKernelStart();
- 
+
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -182,7 +182,8 @@ void SystemClock_Config(void)
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
@@ -196,7 +197,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
+  /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -226,10 +227,12 @@ void SystemClock_Config(void)
   * @param  hrtc : RTC handle
   * @retval None
   */
-void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
+  
+ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 {
     rtc_alarm_flag++; 
 	Set_RtcWorkStatus;
+	 __HAL_RTC_ALARM_CLEAR_FLAG(hrtc, RTC_FLAG_ALRAF);
 }
 
 /**
@@ -237,28 +240,33 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
   * @param  hrtc : RTC handle
   * @retval None
   */
-
-HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	if(recv_end_flag ==1)	printf("Rec end \r\n");
-	{
-		printf("rx_len=%d\r\n",rx_len);//锟斤拷印锟斤拷锟秸筹拷锟斤拷
-		HAL_UART_Transmit(&huart2,rx_buffer, rx_len,0xFFFF);//锟斤拷锟斤拷锟斤拷锟捷达拷印锟斤拷锟斤拷
-		for(uint8_t i=0;i<BUFFER_SIZE;i++)
-			{
-				printf("rx_buffer%d %x\r\n",i,rx_buffer[i]);//锟斤拷印锟斤拷锟秸筹拷锟斤拷
-				//rx_buffer[i]=0;//锟斤拷锟斤拷栈锟斤拷锟?
-			}
-		rx_len=0;//锟斤拷锟斤拷锟斤拷锟?
-		//recv_end_flag=0;//锟斤拷锟斤拷锟斤拷战锟斤拷锟斤拷锟街疚?
-	}
-	HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//锟斤拷锟铰达拷DMA锟斤拷锟斤拷 
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(huart);
+  /* NOTE: This function should not be modified, when the callback is needed,
+           the HAL_UART_RxCpltCallback could be implemented in the user file
+   */
 
+  if(huart == &huart1)
+  {
+	  Uart_Rx_DataPro(SCH_Uart1, rUARTDataBuffer[0]);
+  }
+  else if(huart == &huart2)
+  {
+	  Uart_Rx_DataPro(SCH_Uart2, rUARTDataBuffer[0]);
+	  // if(rUARTDataBuffer[0]==0x30){	
+	   //  recv_end_flag = 1;
+  }
+  
+  //}
+  while(HAL_UART_Receive_IT(huart, rUARTDataBuffer, 1) != HAL_OK); // Wait completly receive 1 byte data, and put data in rUARTDataBuffer
 }
+
 
 /* USER CODE END 4 */
 
- /**
+/**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM1 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
@@ -300,7 +308,7 @@ void Error_Handler(void)
   * @retval None
   */
 void assert_failed(uint8_t *file, uint32_t line)
-{ 
+{
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

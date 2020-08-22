@@ -23,16 +23,14 @@
 /* USER CODE BEGIN 0 */
 #include "include.h"
 
-extern volatile uint8_t rx_len;
-extern volatile uint8_t recv_end_flag;
-extern uint8_t rx_buffer[BUFFER_SIZE];
+ volatile uint8_t rx_len;
+ volatile uint8_t recv_end_flag;
+ uint8_t rx_buffer[BUFFER_SIZE];
 
 /* USER CODE END 0 */
-
+UART_HandleTypeDef huart0;
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_usart2_tx;
-DMA_HandleTypeDef hdma_usart2_rx;
 
 /* USART1 init function */
 
@@ -84,11 +82,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART1_MspInit 0 */
     /* USART1 clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**USART1 GPIO Configuration    
+    /**USART1 GPIO Configuration
     PA9     ------> USART1_TX
-    PA10     ------> USART1_RX 
+    PA10     ------> USART1_RX
     */
     GPIO_InitStruct.Pin = MCU_TX1_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -111,11 +109,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART2_MspInit 0 */
     /* USART2 clock enable */
     __HAL_RCC_USART2_CLK_ENABLE();
-  
+
     __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**USART2 GPIO Configuration    
+    /**USART2 GPIO Configuration
     PA2     ------> USART2_TX
-    PA3     ------> USART2_RX 
+    PA3     ------> USART2_RX
     */
     GPIO_InitStruct.Pin = GPIO_PIN_2;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -126,39 +124,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    /* USART2 DMA Init */
-    /* USART2_TX Init */
-    hdma_usart2_tx.Instance = DMA1_Channel7;
-    hdma_usart2_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_usart2_tx.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_usart2_tx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_usart2_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_usart2_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart2_tx.Init.Mode = DMA_NORMAL;
-    hdma_usart2_tx.Init.Priority = DMA_PRIORITY_LOW;
-    if (HAL_DMA_Init(&hdma_usart2_tx) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart2_tx);
-
-    /* USART2_RX Init */
-    hdma_usart2_rx.Instance = DMA1_Channel6;
-    hdma_usart2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_usart2_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_usart2_rx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_usart2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_usart2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart2_rx.Init.Mode = DMA_NORMAL;
-    hdma_usart2_rx.Init.Priority = DMA_PRIORITY_LOW;
-    if (HAL_DMA_Init(&hdma_usart2_rx) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    __HAL_LINKDMA(uartHandle,hdmarx,hdma_usart2_rx);
 
     /* USART2 interrupt Init */
     HAL_NVIC_SetPriority(USART2_IRQn, 5, 0);
@@ -179,10 +144,10 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USART1_CLK_DISABLE();
-  
-    /**USART1 GPIO Configuration    
+
+    /**USART1 GPIO Configuration
     PA9     ------> USART1_TX
-    PA10     ------> USART1_RX 
+    PA10     ------> USART1_RX
     */
     HAL_GPIO_DeInit(GPIOA, MCU_TX1_Pin|MCU_RX1_Pin);
 
@@ -197,16 +162,12 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE END USART2_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USART2_CLK_DISABLE();
-  
-    /**USART2 GPIO Configuration    
+
+    /**USART2 GPIO Configuration
     PA2     ------> USART2_TX
-    PA3     ------> USART2_RX 
+    PA3     ------> USART2_RX
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2|GPIO_PIN_3);
-
-    /* USART2 DMA DeInit */
-    HAL_DMA_DeInit(uartHandle->hdmatx);
-    HAL_DMA_DeInit(uartHandle->hdmarx);
 
     /* USART2 interrupt Deinit */
     HAL_NVIC_DisableIRQ(USART2_IRQn);
@@ -214,7 +175,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
   /* USER CODE END USART2_MspDeInit 1 */
   }
-} 
+}
 
 /* USER CODE BEGIN 1 */
 //实现printf函数重定向到串口1，即支持printf信息到USART1
@@ -248,7 +209,14 @@ PUTCHAR_PROTOTYPE
 {
 
 /* Place your implementation of fputc here */
+//if(HAL_UART_GetError(&huart1)){
+//    USART1->DR = (uint8_t) ch;
+//	HAL_UART_Init(&huart1);
 
+//}
+
+
+#if 0
 /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
 {
     /* 堵塞判断串口是否发送完成 */
@@ -259,9 +227,9 @@ PUTCHAR_PROTOTYPE
 
     return ch;
 }
-
-//HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
-//return ch;
+#endif
+HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+return ch;
 
 }
 
@@ -322,14 +290,14 @@ int _write(int file, char *ptr, int len)
 /**  * 函数功能: 重定向c库函数printf到DEBUG_USARTx  * 输入参数: 无  * 返 回 值: 无  * 说    明：无  */
 int fputc(int ch, FILE *f)
 	{  
-		HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xffff);  
+		HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);  
 		return ch;
 	} /**  * 函数功能: 重定向c库函数getchar,scanf到DEBUG_USARTx  * 输入参数: 无  * 返 回 值: 无  * 说    明：无  */
 
 int fgetc(FILE *f)
 	{  
 		uint8_t ch = 0;  
-		HAL_UART_Receive(&huart1, &ch, 1, 0xffff);  
+		HAL_UART_Receive(&huart1, &ch, 1, HAL_MAX_DELAY);  
 		return ch;
 	}
 #endif

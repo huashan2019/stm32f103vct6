@@ -22,4 +22,6 @@ extern void AUDIO_Init(void);
 
 extern void Start_IO_Init(void);
 extern void Start_Detect(void);
+extern void Audio_Init(void);
+
 #endif

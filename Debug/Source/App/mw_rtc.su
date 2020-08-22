@@ -1,7 +1,7 @@
-mw_rtc.c:22:8:GetMaxDay	32	static
-mw_rtc.c:41:8:GetClockDay	24	static
-mw_rtc.c:62:6:GetCurrentTime	4	static
-mw_rtc.c:113:6:GetRTCClock	8	static
-mw_rtc.c:130:6:RTCInit	4	static
-mw_rtc.c:144:6:SysRtcExit	4	static
-mw_rtc.c:148:6:SysRtcInit	4	static
+mw_rtc.c:24:8:GetMaxDay	32	static
+mw_rtc.c:43:8:GetClockDay	24	static
+mw_rtc.c:64:6:GetCurrentTime	4	static
+mw_rtc.c:115:6:GetRTCClock	8	static
+mw_rtc.c:132:6:RTCInit	4	static
+mw_rtc.c:146:6:SysRtcExit	4	static
+mw_rtc.c:150:6:SysRtcInit	4	static

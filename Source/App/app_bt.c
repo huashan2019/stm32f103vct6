@@ -10,6 +10,13 @@
 ***************************************************************************************************
 */
 #include "include.h"
+#include "usb_device.h"
+
+extern unsigned char USB_Rx_Buf[64];
+extern USBD_HandleTypeDef hUsbDeviceFS;
+extern uint8_t USBD_CUSTOM_HID_SendReport(USBD_HandleTypeDef *pdev,
+                                   uint8_t *report,
+                                   uint16_t len);
 
 typedef struct
 {
@@ -883,7 +890,15 @@ void M2B_TxService(void)
 	BtTxModuel.TxData_Parity = GetCheckData_Xor(&BtTx_Head1,BtTx_Length-1);
 	BtTxModuel.TxData[BtTx_Length+10-1] = BtTxModuel.TxData_Parity;
 	BtTxModuel.TxData[BtTx_Length+10] = 0x0d;/*\r*/
-	UartTxData(Uart_CONNECT, BtTxModuel.TxData, BtTx_Length+1+10);
+	//UartTxData(Uart_CONNECT, BtTxModuel.TxData, BtTx_Length+1+10);
+	if(Uart_CONNECT == SCH_Uart_BT)
+	{
+		for(i = 0;i<(BtTx_Length+1+10);i++)
+		USB_Rx_Buf[i] = BtTxModuel.TxData[i];
+		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Rx_Buf, sizeof(USB_Rx_Buf));
+	}
+	else if(Uart_CONNECT == SCH_Uart_PC)
+	HAL_UART_Transmit_IT(&huart2, BtTxModuel.TxData, BtTx_Length+1+10);
 	
 	Printf("Tx data : ");
 	for(i = 0;i<BtTx_Length+1+10;i++)
