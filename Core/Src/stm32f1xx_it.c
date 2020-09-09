@@ -66,6 +66,7 @@ extern PCD_HandleTypeDef hpcd_USB_FS;
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim5;
+extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern TIM_HandleTypeDef htim1;
 
@@ -253,7 +254,7 @@ void EXTI9_5_IRQHandler(void)
 				USB_Tx_Buf[i]= 0x30+i%10;
 			}
 		  USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
-		  HAL_UART_Transmit_IT(&huart2,USB_Tx_Buf,10);
+		  HAL_UART_Transmit_IT(&huart1,USB_Tx_Buf,10);
 	  }
 
   /* USER CODE END EXTI9_5_IRQn 0 */
@@ -270,38 +271,32 @@ void EXTI9_5_IRQHandler(void)
 void TIM1_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_IRQn 0 */
-  {
-  
-	  Sys.TimeCounter++;
-	  /*F_1ms_Set;
-	  if(Sys.TimeCounter%2==0)
-		  F_2ms_Set;
-	  if(Sys.TimeCounter%4==0)*/
-		  F_4ms_Set;
-	  if(Sys.TimeCounter%2==0)
-		  F_8ms_Set;
-	  if(Sys.TimeCounter%4==0)
-		  F_16ms_Set;
-	  if(Sys.TimeCounter%8==0)
-		  F_32ms_Set;
-	  if(Sys.TimeCounter%25==0)
-		  F_100ms_Set;
-	  if(Sys.TimeCounter==3000)
-		  Sys.TimeCounter=0;
-  
-  }
-
+  SysTick_Handler1();
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_IRQn 1 */
   //��֤����Ϊ1MS�ж�
   //ulHighFrequencyTimerTicks1++;
- // if(ulHighFrequencyTimerTicks1%2 == 0)
-//  	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-//  else
-//	  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
+  //if(ulHighFrequencyTimerTicks1%2 == 0)
+	//  HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+ // else
+	//  HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
 
   /* USER CODE END TIM1_UP_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /**

@@ -137,15 +137,14 @@ SCH_BOOL Flash_Read(SCH_U32 u32addr,SCH_U32 *u32data)
 }
 SCH_BOOL Flash_Erase(SCH_U32 u32addr)
 {
-	//if(FLASH_EraseSector(u32addr)==FLASH_ERR_SUCCESS)
-	//	return TRUE;
-	//return FALSE;
+	FLASH_PageErase(u32addr);
+	return TRUE;
 }
 SCH_BOOL Flash_Write(SCH_U32 u32addr, SCH_U32 u32data)
 {
-	//if(FLASH_Program1LongWord(u32addr,u32data)==FLASH_ERR_SUCCESS)
-	//	return TRUE;
-	//return FALSE;
+	if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD,u32addr,u32data)== HAL_OK)
+		return TRUE;
+	return FALSE;
 }
 /**************************************************************
 **  Function    : Flash_RD_XXX

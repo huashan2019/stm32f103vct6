@@ -22,7 +22,6 @@
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
-#include "i2c.h"
 #include "rtc.h"
 #include "spi.h"
 #include "tim.h"
@@ -33,6 +32,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "include.h"
+#include "FreeRTOS.h"
+#include "task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -121,8 +122,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C1_Init();
-  MX_I2C2_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_SPI3_Init();
@@ -141,7 +140,7 @@ int main(void)
 	//上面的usart配置代码为cubemx自动生成的，在下方添加使能idle中断和打开串口DMA接收语句
   //__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);//使能idle中断
   //HAL_UART_Receive_DMA(&huart2,rx_buffer,BUFFER_SIZE);//打开DMA接收，数据存入rx_buffer数组中。
-	while(HAL_UART_Receive_IT(&huart2, rUARTDataBuffer, 1) != HAL_OK);
+	while(HAL_UART_Receive_IT(&huart1, rUARTDataBuffer, 1) != HAL_OK);
 
   /*##-1- Configure Alarm ####################################################*/
   /* Configure RTC Alarm */
@@ -222,6 +221,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
 /**
   * @brief  Alarm callback
   * @param  hrtc : RTC handle
@@ -240,14 +240,21 @@ void SystemClock_Config(void)
   * @param  hrtc : RTC handle
   * @retval None
   */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+  uint32_t ulReturn;
+
   /* Prevent unused argument(s) compilation warning */
   UNUSED(huart);
   /* NOTE: This function should not be modified, when the callback is needed,
            the HAL_UART_RxCpltCallback could be implemented in the user file
    */
-
+  /* 进入临界段，临界段可以嵌套 */
+  	//if(recv_end_flag)
+  	//{
+  		//recv_end_flag = 0;
+		//App_Printf("\r\n :%x",rUARTDataBuffer[0]);
+  	//}
   if(huart == &huart1)
   {
 	  Uart_Rx_DataPro(SCH_Uart1, rUARTDataBuffer[0]);
@@ -255,12 +262,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   else if(huart == &huart2)
   {
 	  Uart_Rx_DataPro(SCH_Uart2, rUARTDataBuffer[0]);
-	  // if(rUARTDataBuffer[0]==0x30){	
-	   //  recv_end_flag = 1;
   }
   
-  //}
   while(HAL_UART_Receive_IT(huart, rUARTDataBuffer, 1) != HAL_OK); // Wait completly receive 1 byte data, and put data in rUARTDataBuffer
+
 }
 
 

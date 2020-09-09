@@ -10,6 +10,7 @@
 ***************************************************************************************************
 */
 #include "include.h"
+extern osMutexId_t myMutex05Handle;
 
 ///==================================================================================readback========
 const SCH_U16 Mix_READBACK_addr[DSP_CHANNEL_CNT]=
@@ -39,10 +40,14 @@ const double Data_dbe_MaxMin[8][3]=
 };
 void Dsp_Info_Data(SCH_U8 Channel,SCH_U8 *Cnt)
 {
-	SCH_U8 DataBuff[4];
-	SCH_S32 Data_S32;
+	static SCH_U8 DataBuff[4];
+	static SCH_S32 Data_S32;
+	
+	//osMutexAcquire(myMutex05Handle,portMAX_DELAY);
+
 	SIGMA_READ(DEVICE_ADDR_IC_1|0x01,Mix_READBACK_addr[Channel-1],DataBuff);
 	Data_S32 = (DataBuff[0]<<24)+(DataBuff[1]<<16)+(DataBuff[2]<<8)+DataBuff[3];
+	//App_Printf("Dsp read:%x",Data_S32);
 	Data_dbe[Channel-1] = fabs((double)Data_S32/0x1000000);
 	if(Data_dbe[Channel-1] == 0)
 	{
@@ -101,6 +106,7 @@ void Dsp_Info_Data(SCH_U8 Channel,SCH_U8 *Cnt)
 	{
 		*Cnt = 0;
 	}
+	//osMutexRelease(myMutex05Handle);
 }
 void Dsp_Info_Det(void)
 {

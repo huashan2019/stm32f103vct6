@@ -28,8 +28,27 @@ void SysDataInit(void)
 	///Set_ACC_Has;
 }
 
+void SysTick_Handler1(void)
+{
 
+	Sys.TimeCounter++;
+	/*F_1ms_Set;
+	if(Sys.TimeCounter%2==0)
+		F_2ms_Set;
+	if(Sys.TimeCounter%4==0)*/
+		F_4ms_Set;
+	if(Sys.TimeCounter%2==0)
+		F_8ms_Set;
+	if(Sys.TimeCounter%4==0)
+		F_16ms_Set;
+	if(Sys.TimeCounter%8==0)
+		F_32ms_Set;
+	if(Sys.TimeCounter%25==0)
+		F_100ms_Set;
+	if(Sys.TimeCounter==3000)
+		Sys.TimeCounter=0;
 
+}
 
 
 

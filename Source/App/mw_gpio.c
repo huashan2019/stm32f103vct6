@@ -13,11 +13,15 @@
 
 
 
-//GPIO_Type *GPIO_Arry[]={GPIOA,GPIOB,GPIOC};
-//SCH_BOOL GPIO_ReadInputPin(GPIO_PinType GPIO_Pin)
-//{
-	//return (GPIO_Arry[GPIO_Pin/32]->PDIR & (SCH_U32)(1<<(GPIO_Pin%32))) ? HIGH_LEVEL : LOW_LEVEL;
-//}
+void SCH_GPIO_PinInit(GPIO_TypeDef* GPIOx,SCH_U32 GPIO_Pin,SCH_U32 GPIO_Mode)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.Pin = GPIO_Pin;
+	GPIO_InitStructure.Speed= GPIO_SPEED_FREQ_HIGH;
+	GPIO_InitStructure.Mode = GPIO_Mode;
+	HAL_GPIO_Init(GPIOx, &GPIO_InitStructure);
+}
+
 /********************************************************************************
 **  Function    : DSP_Test_Detect
 **  Author      : lvhuashan
@@ -76,7 +80,7 @@ void DSP_Test_Detect(void)
 ********************************************************************************/
 void PWR_IO_Init(void)
 {
-
+	//HAL_GPIO_WritePin(SYS_POW_EN_GPIO_Port, SYS_POW_EN_Pin, GPIO_PIN_SET);
 	//GPIO_PinInit(GPIO_SYS_POWER_CTL, GPIO_PinOutput);
 	//GPIO_PinInit(GPIO_ACC_EN_CTL,    GPIO_PinOutput);
 }
@@ -112,7 +116,8 @@ void ACC_EN_Ctl(SCH_BOOL OnOff)
 **  Return		: 
 ********************************************************************************/
 void AMP_IO_Init(void)
-{///===
+{///===POW_AMP_STANDBY_GPIO_Port
+	//HAL_GPIO_WritePin(POW_AMP_STANDBY_GPIO_Port, POW_AMP_STANDBY_Pin, GPIO_PIN_SET);
 	//GPIO_PinInit(GPIO_AMP_CTL,   GPIO_PinOutput);
 	//GPIO_PinInit(GPIO_AMP_BEEP,  GPIO_PinOutput);
 	//GPIO_PinInit(GPIO_AMP_DECT,  GPIO_PinInput_InternalPullup);
@@ -126,7 +131,7 @@ void AMP_IO_Init(void)
 ********************************************************************************/
 void BT_IO_Init(void)
 {///===
-	//GPIO_PinInit(GPIO_BT_RESET_CTL, GPIO_PinOutput);
+	//HAL_GPIO_WritePin(BT_REST_GPIO_Port, BT_REST_Pin, GPIO_PIN_SET);
 }
 
 /********************************************************************************

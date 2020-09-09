@@ -11,11 +11,19 @@
 */
 #include "include.h"
 
+extern osMutexId_t myMutex03Handle;
+extern osMutexId_t myMutex04Handle;
+
+
 void I2CWait(void)
 {
-#if 0
-	//SCH_NOP;SCH_NOP;SCH_NOP;
-	//SCH_NOP;SCH_NOP;SCH_NOP;
+#if 1
+	SCH_U8 i;
+	for(i = 0;i<80*2;i++) SCH_NOP;
+		
+#else
+	SCH_NOP;SCH_NOP;SCH_NOP;
+	SCH_NOP;SCH_NOP;SCH_NOP;
 	SCH_NOP;SCH_NOP;SCH_NOP;
 	SCH_NOP;SCH_NOP;SCH_NOP;
 	SCH_NOP;SCH_NOP;SCH_NOP;
@@ -103,6 +111,7 @@ SCH_U8 I2C0Out8Bit(SCH_U8 outbyte)
 	I2C0_SCL_OUT_0;
 	I2C0_WAIT;
 	return(i);
+	
 }
 void I2C0Ack(void)
 {
@@ -115,9 +124,11 @@ void I2C0Ack(void)
 	I2C0_SCL_OUT_0;
 	I2C0_SDA_DDR_0;
 	I2C0_WAIT;
+	
 }
 void I2C0NAck(void)
 {
+
 	I2C0_SCL_DDR_1;
 	I2C0_SDA_DDR_1;
 	I2C0_SDA_OUT_1;
@@ -127,10 +138,12 @@ void I2C0NAck(void)
 	I2C0_SCL_OUT_0;
 	I2C0_SDA_DDR_0;
 	I2C0_WAIT;
+	
 }
 SCH_U8 I2C0In8Bit(void)
 {
 	SCH_U8 i,inbyte=0;
+	
 	I2C0_SCL_DDR_0;
 	I2C0_SCL_OUT_1;
 	for(i=0;(i<20)&&(!I2C0_SCL_IN);i++)
@@ -148,15 +161,17 @@ SCH_U8 I2C0In8Bit(void)
 		I2C0_WAIT;
 	}
 	return (inbyte);
+	
 }
 SCH_BOOL I2C0_Tx (SCH_U8 dest_add,SCH_U8 *buff,SCH_U8 nb)
 {
 	SCH_U8 ii2c;
+	
 	I2C0Start();
 	if(I2C0Out8Bit(dest_add)==NACK)
 	{
 		I2C0Stop();
-		Printf("ADDR %x NACK \n", dest_add);
+		App_Printf("ADDR %x NACK \r\n", dest_add);
 		return FALSE; 
 	}
 	for(ii2c=0; ii2c<nb; ii2c++)/*Loop to send all selected data from output buffer.*/
@@ -164,17 +179,19 @@ SCH_BOOL I2C0_Tx (SCH_U8 dest_add,SCH_U8 *buff,SCH_U8 nb)
 		if(I2C0Out8Bit(*(buff+ii2c))==NACK) /* Next output buffer data byte sent.*/ 
 		{
 			I2C0Stop();
-			Printf("ADDR %x NACK- \n", dest_add);
+			App_Printf("ADDR %x NACK- \r\n", dest_add);
 			return FALSE;  
 		}
 	}
 	I2C0Stop();/* End of communication: stop condition generation.*/
+	App_Printf("ADDR0 %x init ok \r\n", dest_add);
 	return TRUE;
 }
 
 SCH_BOOL I2C0_Tx_A (SCH_U8 dest_add,SCH_U8 sub_add,SCH_U8 *buff,SCH_U8 nb)
 {
 	SCH_U8 ii2c;
+	
 	I2C0Start();
 	if(I2C0Out8Bit(dest_add)==NACK)
 	{
@@ -194,10 +211,12 @@ SCH_BOOL I2C0_Tx_A (SCH_U8 dest_add,SCH_U8 sub_add,SCH_U8 *buff,SCH_U8 nb)
 	}
 	I2C0Stop();/* End of communication: stop condition generation.*/
 	return TRUE;
+	
 }
 
 void I2C0_Rx (SCH_U8 dest_add,SCH_U8 *buff,SCH_U8 nb)
 {
+
 	I2C0Start ();
 	I2C0Out8Bit(dest_add+1);
 	for(;nb>0;nb--,buff++)
@@ -209,9 +228,11 @@ void I2C0_Rx (SCH_U8 dest_add,SCH_U8 *buff,SCH_U8 nb)
 			I2C0Ack();
 	}
 	I2C0Stop(); 
+	
 }
 void I2C0_Rx_A (SCH_U8 dest_add,SCH_U8 sub_add,SCH_U8 *buff,SCH_U8 nb)
 {
+
 	I2C0Start ();
 	I2C0Out8Bit(dest_add);
 	I2C0Out8Bit(sub_add);
@@ -227,12 +248,15 @@ void I2C0_Rx_A (SCH_U8 dest_add,SCH_U8 sub_add,SCH_U8 *buff,SCH_U8 nb)
 			I2C0Ack();
 	}
 	I2C0Stop(); 
+	
 }
 SCH_BOOL I2C0_IsFindAddr(SCH_U8 Addr)
 {
 	SCH_U8 err=0;
 	SCH_U8 correct=0;
 	SCH_U8 count;
+	
+	//osMutexAcquire(myMutex03Handle,portMAX_DELAY);
 	for(count=0; count<3; count++) 
 	{
 		I2C0Start();
@@ -250,6 +274,8 @@ SCH_BOOL I2C0_IsFindAddr(SCH_U8 Addr)
 		return TRUE;
 	else 
 		return FALSE;
+	
+	//osMutexRelease(myMutex03Handle);
 }
 ////===========================================================================I2C1==========================================
 void I2C1Init(void)
@@ -366,12 +392,13 @@ SCH_U8 I2C1In8Bit(void)
 }
 SCH_BOOL I2C1_Tx(SCH_U8 dest_add,SCH_U8 *buff,SCH_U8 nb)
 {
+
 	SCH_U8 ii2c;
 	I2C1Start();
 	if(I2C1Out8Bit(dest_add)==NACK)
 	{
 		I2C1Stop();
-		Printf("ADDR %x NACK \n", dest_add);
+		Printf("ADDR1 %x NACK \n", dest_add);
 		return FALSE; 
 	}
 	for(ii2c=0; ii2c<nb; ii2c++)/*Loop to send all selected data from output buffer.*/
@@ -379,11 +406,12 @@ SCH_BOOL I2C1_Tx(SCH_U8 dest_add,SCH_U8 *buff,SCH_U8 nb)
 		if(I2C1Out8Bit(*(buff+ii2c))==NACK) /* Next output buffer data byte sent.*/ 
 		{
 			I2C1Stop();
-			Printf("ADDR %x NACK- \n", dest_add);
+			Printf("ADDR1 %x NACK- \n", dest_add);
 			return FALSE;  
 		}
 	}
 	I2C1Stop();/* End of communication: stop condition generation.*/
+	App_Printf("ADDR1 %x init ok \r\n", dest_add);
 	return TRUE;
 }
 
@@ -447,6 +475,7 @@ void I2C1_Rx_A (SCH_U8 dest_add,SCH_U8 sub_add,SCH_U8 *buff,SCH_U8 nb)
 
 SCH_BOOL I2C1_IsFindAddr(SCH_U8 Addr)
 {
+
 	SCH_U8 err=0;
 	SCH_U8 correct=0;
 	SCH_U8 count;

@@ -116,6 +116,8 @@ void TASK_Power_Pro(void)
 		case POWER_ON_START:
 			if(SysPower.Power_Timer>=T40MS_8)
 			{
+			Clr_VolErr_Flag;
+			Get_START_Flag = 1;
 				if(Get_START_Flag&&!Get_VolErr_Flag)
 				{
 					PostMessage(POWER_MODULE,EVT_POWER_ON,0);  

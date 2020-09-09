@@ -62,7 +62,7 @@ SCH_U8 SPI_RW(Spi_T spi,SCH_U8 TxData)
 uint8_t SPI_FLASH_ReadDeviceID(void)
 {
 	
-	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);
 	//HAL_SPI_Transmit(&hspi1,spi_tx_buff,4,HAL_MAX_DELAY);
 	//HAL_SPI_Receive(&hspi1,spi_rx_buff,1,HAL_MAX_DELAY);	
 	SPI_RW(SCH_Spi1,spi_tx_buff[0]);
@@ -70,7 +70,7 @@ uint8_t SPI_FLASH_ReadDeviceID(void)
 	SPI_RW(SCH_Spi1,spi_tx_buff[1]);
 	SPI_RW(SCH_Spi1,spi_tx_buff[1]);
 	spi_rx_buff[0]=SPI_RW(SCH_Spi1,spi_tx_buff[1]);
-	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
+	//HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
 	//printf("APP Begin -- DeviceId : %x \r\n", spi_rx_buff[0]);
 	return(spi_rx_buff[0]);
 

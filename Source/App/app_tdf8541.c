@@ -10,6 +10,9 @@
 ***************************************************************************************************
 */
 #include "include.h"
+#include "FreeRTOS.h"
+#include "cmsis_os2.h"
+#include "semphr.h"
 
 /* amplifier init data table*/
 SCH_U8 tbl_Amp_Init[5]=
@@ -35,7 +38,7 @@ SCH_U8 tbl_Amp_Init[5]=
 	D1------ 0: channel 2 and 4 not soft mute,   1:channel 2and 4 soft mute
 	D0------ 0: all amplifer channel not fast mute,   1:fast mute all channel
 	*/
-	0x41,///0x40,
+	0x40,///0x40,
 
 	/*IDB3
 	D7------ null
@@ -80,10 +83,16 @@ void AmpPort_Init(void)
 {
 	TurnOn_AMP;
 }
+extern osMutexId_t myMutex04Handle;
+
 void TDF8541Init(void)
 {	
+	//osMutexAcquire(myMutex04Handle,portMAX_DELAY);
+	I2C0_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	I2C0_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
 	I2C1_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
 	I2C1_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	osMutexRelease(myMutex04Handle);
 }
 /*-----------------------------------------------------------------------
 Function name:	AmpMute
@@ -101,12 +110,16 @@ void TDF8541_AmpMute(SCH_BOOL OnOff)
 	{
 		tbl_Amp_Init[1]&=~0x01; 
 	}
-	I2C1_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
-	I2C1_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	//osMutexAcquire(myMutex04Handle,portMAX_DELAY);
+	//I2C0_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	//I2C0_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	//I2C1_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	//I2C1_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	//osMutexRelease(myMutex04Handle);
 }
 void Amp8541_DLL_Loader(void)
 {
-	Printf("AmpType --- TDF8541 \n");
+	App_Printf("AmpType --- TDF8541 \r\n");
 	App_Amp.pAmpInit = TDF8541Init;
 	App_Amp.pAmpMute = TDF8541_AmpMute;
 }

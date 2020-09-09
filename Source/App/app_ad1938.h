@@ -9,16 +9,17 @@
 #define CLATCH_LOW()        //GPIO_PinClear(SPI_AD1938_SS)
 
 ///#define AD1938_RESET_CTL		    
-#define IO_AD1938_RESET              //GPIOA
-#define GPIO_AD1938_RESET_CTL        //GPIO_PTA6//////
-#define AD1938_RESET_RELEASE         //GPIO_PinSet(GPIO_AD1938_RESET_CTL)
-#define AD1938_RESET_HOLD            //GPIO_PinClear(GPIO_AD1938_RESET_CTL)
+#define IO_AD1938_RESET              AD1938_RESET_GPIO_Port//GPIOD
+#define GPIO_AD1938_RESET_CTL        AD1938_RESET_Pin//GPIO_PTA11//////
+;
+#define AD1938_RESET_RELEASE         HAL_GPIO_WritePin(AD1938_RESET_GPIO_Port, AD1938_RESET_Pin, GPIO_PIN_SET)//GPIO_PinSet(GPIO_AD1938_RESET_CTL)
+#define AD1938_RESET_HOLD            HAL_GPIO_WritePin(AD1938_RESET_GPIO_Port, AD1938_RESET_Pin, GPIO_PIN_RESET)//GPIO_PinClear(GPIO_AD1938_RESET_CTL)
 
 ///#define AD1978_RESET_CTL		    
-#define IO_AD1978_RESET              //GPIOB
-#define GPIO_AD1978_RESET_CTL        //GPIO_PTF0//////
-#define AD1978_RESET_RELEASE         //GPIO_PinSet(GPIO_AD1978_RESET_CTL)
-#define AD1978_RESET_HOLD            //GPIO_PinClear(GPIO_AD1978_RESET_CTL)
+#define IO_AD1978_RESET              ADAU1978_RESET_GPIO_Port//GPIOD
+#define GPIO_AD1978_RESET_CTL        ADAU1978_RESET_Pin//GPIO13//////
+#define AD1978_RESET_RELEASE         HAL_GPIO_WritePin(IO_AD1978_RESET, GPIO_AD1978_RESET_CTL, GPIO_PIN_SET)//GPIO_PinSet(GPIO_AD1978_RESET_CTL)
+#define AD1978_RESET_HOLD            HAL_GPIO_WritePin(IO_AD1978_RESET, GPIO_AD1978_RESET_CTL, GPIO_PIN_RESET)//GPIO_PinClear(GPIO_AD1978_RESET_CTL)
 extern void AD1938_IO_Init(void);
 ///=========================================================================================
 #define AD1938_GLOBAL_ADDR     (0x04<<1)

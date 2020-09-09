@@ -40,7 +40,7 @@ typedef struct
 	FLAG_T Status;
 	SCH_U32 TimeCounter;
 }SYS_T;
-extern SYS_T Sys;
+extern  SYS_T Sys;
 
 #define Set_SLEEP_Mode           Sys.Status.Flag.SleepMode = ON 
 #define Clr_SLEEP_Mode           Sys.Status.Flag.SleepMode = OFF 
@@ -172,7 +172,7 @@ extern SYS_T Sys;
 
 
 
-
+extern void SysTick_Handler1(void);
 extern void SysDataInit(void);
 #endif
 

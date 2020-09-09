@@ -76,12 +76,22 @@ void UartBufInit(Uart_T uart,Uart_RT TxRx)
 	if(UartBufAddr[uart][TxRx])
 		Queue_Init(UartBufAddr[uart][TxRx]);
 }
+int tmp=-1;
 SCH_U16 UartBufCnt(Uart_T uart,Uart_RT TxRx)
 {
 	QUEUE_T *pUartBuf;
 	pUartBuf = UartBufAddr[uart][TxRx];
 	if(pUartBuf)
+	{
+	//int cnt=Queue_Cnt(pUartBuf);
+	//if(tmp!=cnt){
+		//tmp=cnt;
+		//if(!tmp)
+		//App_Printf("\r\n QueueOut size %x",tmp);
+		//}
+		
 		return Queue_Cnt(pUartBuf);
+	}
 	return 0;
 }
 SCH_BOOL UartGetFromBuf(Uart_T uart, Uart_RT TxRx, SCH_U8 *data, SCH_U16 Len)
@@ -175,7 +185,7 @@ void Uart_Tx_DataPro(Uart_T uart)
 	if(UartGetFromBuf(uart,Uart_Tx,&u8data,1))
 	{
 		//UartSendData8(uart, u8data);
-		HAL_UART_Transmit_IT(Uart_Arry[uart],&u8data,1);
+		HAL_UART_Transmit(Uart_Arry[uart],&u8data,1,0x0000FFFF);
 		UartTxIntEn(uart);
 	}
 }
@@ -199,6 +209,9 @@ SCH_BOOL UartRxData(Uart_T uart, SCH_U8 *data, SCH_U16 Len)
 ********************************************************************************/
 SCH_BOOL UartTxData(Uart_T uart, SCH_U8 *const data, SCH_U16 Len)
 {
+#if 1
+	HAL_UART_Transmit_IT(Uart_Arry[uart],data, Len);
+#else
 	if(UartTxCnt(uart) != 0)
 	{
 		if(UartPutToBuf(uart,Uart_Tx,data,Len))
@@ -211,6 +224,7 @@ SCH_BOOL UartTxData(Uart_T uart, SCH_U8 *const data, SCH_U16 Len)
 		return TRUE;
 	}
 	return FALSE;
+#endif
 }
 SCH_BOOL UartTxData_Direct(Uart_T uart, SCH_U8 *data, SCH_U16 Len)
 {

@@ -215,10 +215,12 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
   USBD_CUSTOM_HID_HandleTypeDef   *hhid;
   hhid = (USBD_CUSTOM_HID_HandleTypeDef*)hUsbDeviceFS.pClassData;
     for(i=0;i<64;i++) 
-    {
+    {   
         USB_Rx_Buf[i]=hhid->Report_buf[i];
 		Uart_Rx_DataPro(SCH_Uart0, hhid->Report_buf[i]);
         printf("USB_Rx_Buf[%d] = 0x%x \r\n",i,USB_Rx_Buf[i]);
+		USB_Received_Count = 64;
+		if(i>=hhid->Report_buf[2]-1) break;
     } 
 	
   return (USBD_OK);

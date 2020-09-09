@@ -26,6 +26,7 @@ void Task_2ms_Pro(void)
 void Task_4ms_Pro(void)
 {
 	TASK_Voltage_Det();
+	Start_Detect();
 }
 
 void Task_8ms_Pro(void)
@@ -33,9 +34,8 @@ void Task_8ms_Pro(void)
 	///TASK_Arm_Pro();
 	TASK_Bt_Pro();
 	TASK_Power_Pro();
-	TASK_Eeprom_Pro();
+	//TASK_Eeprom_Pro();
 	TASK_Dsp_Pro();
-	Start_Detect();
 	DSP_Test_Detect();
 }
 
@@ -48,8 +48,6 @@ void Task_100ms_Pro(void)
 {
 	if(Get_IAP_Mode)
 		IAP_Pro();
-	TASK_LED_pro();
-	
 	//PostMessage(BT_MODULE,M2B_DSP_DATA,0x01);
 }
 ///=============================================================================================

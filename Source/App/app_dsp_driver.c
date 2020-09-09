@@ -10,6 +10,9 @@
 ***************************************************************************************************
 */
 #include "include.h"
+extern osMutexId_t myMutex05Handle;
+extern osMutexId_t myMutex06Handle;
+extern osMutexId_t myMutex07Handle;
 /********************************************************************************
 **  Function	: DSP_IO_Ctl
 **  Author		: 
@@ -21,7 +24,7 @@ void DSP_IO_Init(void)
 {///===
 	//GPIO_PinInit(GPIO_DSP_RESET_CTL, GPIO_PinOutput);
 	//GPIO_PinInit(GPIO_REM_EN_CTL,    GPIO_PinOutput);
-	//GPIO_PinInit(SPI_DSP_SS,         GPIO_PinOutput);
+	//HAL_GPIO_Init(SPI_DSP_SS,SPI2_CS_Pin);
 	//DSP_SS_HIGH();
 }
 /********************************************************************************
@@ -57,6 +60,7 @@ void SIGMA_WRITE(SCH_U8 devAddress, SCH_U16 address, SCH_U8 *pData)
 	}
 	DSP_SS_HIGH();
 	SysWaitUs(50);
+	
 }
 /********************************************************************************
 **  Function	: SIGMA_SAFELOAD_WRITE_REGISTER
@@ -69,6 +73,7 @@ void SIGMA_SAFELOAD_WRITE_REGISTER(SCH_U8 devAddress, SCH_U16 address, SCH_U16 l
 {
 	SCH_U8 spiBuff[4];
 	SCH_U8 index;
+	//osMutexAcquire(myMutex06Handle,portMAX_DELAY);
 	for(index=0;index<length;index++)
 	{
 		SIGMA_WRITE(devAddress,MOD_SAFELOADMODULE_DATA_SAFELOAD0_ADDR+index,  pData);
@@ -85,6 +90,7 @@ void SIGMA_SAFELOAD_WRITE_REGISTER(SCH_U8 devAddress, SCH_U16 address, SCH_U16 l
 	spiBuff[3] = length;
 	SIGMA_WRITE(devAddress,MOD_SAFELOADMODULE_NUM_SAFELOAD_ADDR,spiBuff);
 	SysWaitUs(50);
+	//osMutexRelease(myMutex06Handle);
 }
 /********************************************************************************
 **  Function	: SIGMA_WRITE_REGISTER_BLOCK
@@ -95,6 +101,7 @@ void SIGMA_SAFELOAD_WRITE_REGISTER(SCH_U8 devAddress, SCH_U16 address, SCH_U16 l
 ********************************************************************************/
 void SIGMA_WRITE_REGISTER_BLOCK(SCH_U8 devAddress, SCH_U16 address, SCH_U16 length, const SCH_U8 *pData)
 {
+	//osMutexAcquire(myMutex05Handle,portMAX_DELAY);
 	DSP_SS_LOW();
 	SPI_RW(Spi_DSP,devAddress);
 	SPI_RW(Spi_DSP,address>>8);
@@ -105,10 +112,12 @@ void SIGMA_WRITE_REGISTER_BLOCK(SCH_U8 devAddress, SCH_U16 address, SCH_U16 leng
 	}
 	DSP_SS_HIGH();
 	SysWaitUs(500);
+	//osMutexRelease(myMutex05Handle);
 }
 
 void SIGMA_WRITE_DELAY(SCH_U8 devAddress, SCH_U16 length, const SCH_U8 *pData)
 {
+	//osMutexAcquire(myMutex07Handle,portMAX_DELAY);
 	DSP_SS_LOW();
 	SPI_RW(Spi_DSP,devAddress);
 	while(length--)
@@ -117,6 +126,7 @@ void SIGMA_WRITE_DELAY(SCH_U8 devAddress, SCH_U16 length, const SCH_U8 *pData)
 	}
 	DSP_SS_HIGH();
 	SysWaitUs(500);
+	//osMutexRelease(myMutex07Handle);
 }
 
 

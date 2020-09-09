@@ -14,7 +14,7 @@
 ///=======================================================
 #define BT_VER_GET       	"AT+B GVER\r"
 #define BT_BLEADV_SET       "AT+B BLEADV 1\r"
-#define BT_NAME_SET         "AT+B SLDN DSP_8CH1\r"
+#define BT_NAME_SET         "AT+B SLDN DSP_16CH\r"
 #define BT_NAME_GET         "AT+B GLDN\r"
 #define BT_FACTORYRESET     "AT+FACTORYRESET\r"
 #define BT_LBDADDR_GET      "AT+B GLBD\r"

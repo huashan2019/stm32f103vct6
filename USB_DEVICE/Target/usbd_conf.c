@@ -36,6 +36,9 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+unsigned char bUSB_Dev_On;
+unsigned char bUSB_DataOut_Complete;
+unsigned char bUSB_DataIn_Complete;
 
 /* USER CODE END PV */
 

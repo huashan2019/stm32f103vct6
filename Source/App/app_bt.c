@@ -11,9 +11,19 @@
 */
 #include "include.h"
 #include "usb_device.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os2.h"
+#include "semphr.h"
+
+extern	osMutexId_t myMutex02Handle;
 
 extern unsigned char USB_Rx_Buf[64];
 extern USBD_HandleTypeDef hUsbDeviceFS;
+extern unsigned char bUSB_Dev_On;
+extern unsigned char bUSB_DataOut_Complete;
+extern unsigned char bUSB_DataIn_Complete;
+
 extern uint8_t USBD_CUSTOM_HID_SendReport(USBD_HandleTypeDef *pdev,
                                    uint8_t *report,
                                    uint16_t len);
@@ -54,7 +64,7 @@ SCH_BOOL Set_PASSWORD(SCH_U8 *Data)
 ///======================================================================================
 void Bt_ACK(SCH_U8 ack_type)
 {
-	SCH_U8 buf[6+11];
+	SCH_U8 buf[6+11],i;
 	#if 1
 	
 	buf[0] = 'A';
@@ -86,8 +96,36 @@ void Bt_ACK(SCH_U8 ack_type)
 	buf[14]=ack_type;
 	buf[15]=GetCheckData_Xor(&buf[10], 5);
 	buf[16] = 0x0d;/*\r*/
-	UartTxData(Uart_CONNECT, buf, 6+11);
+	//UartTxData(Uart_CONNECT, buf, 6+11);
 
+	if(Uart_CONNECT == SCH_Uart_PC /*&& bUSB_Dev_On*/)
+	{
+
+		for(i = 0;i<(6+1+10);i++)
+		USB_Rx_Buf[i] = buf[i];
+		
+		
+		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Rx_Buf, sizeof(USB_Rx_Buf));
+		vTaskDelay(100);
+		//while(!bUSB_DataOut_Complete)
+		{
+				;	
+		}
+		
+	}
+	else if(Uart_CONNECT == SCH_Uart_BT)
+	{
+		HAL_UART_Transmit_IT(&huart1, buf, 6+11);
+		vTaskDelay(10);
+		App_Printf("\r\n Tx ack : ");
+		//for(i = 0;i<6+1+10;i++)
+		//printf(" %x",buf[i]);
+		//printf("\r\n ");
+	}
+	else
+	{
+		;
+	}
 
 	#else
 	buf[0]=HEAD_ADDRESS_MCU;
@@ -112,8 +150,11 @@ SCH_U8 Mix_Mixer_data[11];
 void BtDataAnalyse(void)
 {
 	SCH_U8 *pData=&BtRx_Data;
+	//taskENTER_CRITICAL();
+	
 	if(BtRx_GroupID<COMM_NACK_NG)           
 		Bt_ACK(COMM_ACK);
+	#if 1
 	switch(BtRx_GroupID)
 	{
 		case A2M_ACK:///===========================================================================================ACK================
@@ -585,6 +626,9 @@ void BtDataAnalyse(void)
 
 		default:break;
 	}
+	#endif
+	
+	//taskEXIT_CRITICAL();
 }
 /********************************************************************************
 **  Function	: M2B_TxService
@@ -891,19 +935,37 @@ void M2B_TxService(void)
 	BtTxModuel.TxData[BtTx_Length+10-1] = BtTxModuel.TxData_Parity;
 	BtTxModuel.TxData[BtTx_Length+10] = 0x0d;/*\r*/
 	//UartTxData(Uart_CONNECT, BtTxModuel.TxData, BtTx_Length+1+10);
-	if(Uart_CONNECT == SCH_Uart_BT)
+
+	if(Uart_CONNECT == SCH_Uart_PC /*&& bUSB_Dev_On*/)
 	{
 		for(i = 0;i<(BtTx_Length+1+10);i++)
 		USB_Rx_Buf[i] = BtTxModuel.TxData[i];
+		bUSB_DataOut_Complete = 0;
 		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Rx_Buf, sizeof(USB_Rx_Buf));
+		
+		vTaskDelay(20);
+		//while(!bUSB_DataOut_Complete)
+		{
+			;
+		}
 	}
-	else if(Uart_CONNECT == SCH_Uart_PC)
-	HAL_UART_Transmit_IT(&huart2, BtTxModuel.TxData, BtTx_Length+1+10);
-	
-	Printf("Tx data : ");
+	else if(Uart_CONNECT == SCH_Uart_BT)
+	{
+		UartTxData(Uart_CONNECT, BtTxModuel.TxData, BtTx_Length+11);
+	}
+	else
+	{
+
+	}
+
+	osMutexAcquire(myMutex02Handle,portMAX_DELAY);
+
+	App_Printf("\r\n Tx data : ");
 	for(i = 0;i<BtTx_Length+1+10;i++)
-	Printf(" %x",BtTxModuel.TxData[i]);
+	App_Printf(" %x",BtTxModuel.TxData[i]);
+	//App_Printf("\r\n ");
 	
+   	osMutexRelease(myMutex02Handle);
 	BtTxModuel.Check_Ack=1;
 	BtTxModuel.Check_ResendCounte=0;
 	BtTxModuel.Check_ResendTimer=0;
@@ -933,7 +995,18 @@ void TASK_Bt_Pro(void)
 			BtTxModuel.Check_ResendTimer=0;
 			if(++BtTxModuel.Check_ResendCounte<3)
 			{
-				 UartTxData(Uart_CONNECT, BtTxModuel.TxData, BtTx_Length+11);
+				U8 i;
+				 if(Uart_CONNECT == SCH_Uart_PC )
+				 {
+					 for(i = 0;i<(BtTx_Length+1+10);i++)
+					 USB_Rx_Buf[i] = BtTxModuel.TxData[i];
+					 USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Rx_Buf, sizeof(USB_Rx_Buf));
+				 }
+				 else
+				 {
+					 UartTxData(Uart_CONNECT, BtTxModuel.TxData, BtTx_Length+11);
+					 
+				 }
 			}
 			else
 			{

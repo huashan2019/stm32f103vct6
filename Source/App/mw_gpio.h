@@ -23,21 +23,21 @@ extern void DSP_Test_Detect(void);
 
 ///==============================================================================================BT========
 ///#define DSP_RESET_CTL		    
-#define IO_BT_RESET                 //GPIOA
-#define GPIO_BT_RESET_CTL           //GPIO_PTA7//////
-#define BT_RESET_RELEASE            //GPIO_PinSet(GPIO_BT_RESET_CTL)
-#define BT_RESET_HOLD               //GPIO_PinClear(GPIO_BT_RESET_CTL)
+#define IO_BT_RESET                 BT_REST_GPIO_Port//GPIOA
+#define GPIO_BT_RESET_CTL           BT_REST_Pin//GPIO_PTA7//////
+#define BT_RESET_RELEASE            HAL_GPIO_WritePin(IO_BT_RESET, GPIO_BT_RESET_CTL, GPIO_PIN_SET)//GPIO_PinSet(GPIO_BT_RESET_CTL)
+#define BT_RESET_HOLD               HAL_GPIO_WritePin(IO_BT_RESET, GPIO_BT_RESET_CTL, GPIO_PIN_RESET)//GPIO_PinClear(GPIO_BT_RESET_CTL)
 ///===================BT END========================================   
 
 
 
 ///==============================================================================================SYS PWR========      
-///#define IO_SYS_POWER              //GPIOA
-#define GPIO_SYS_POWER_CTL      	 //GPIO_PTB2//////
-#define TurnOn_SYS_POWER        	 //GPIO_PinSet(GPIO_SYS_POWER_CTL)
-#define TurnOff_SYS_POWER       	 //GPIO_PinClear(GPIO_SYS_POWER_CTL)
+#define IO_SYS_POWER              	 SYS_POW_EN_GPIO_Port//GPIOE
+#define GPIO_SYS_POWER_CTL      	 SYS_POW_EN_Pin//GPIO6//////
+#define TurnOn_SYS_POWER        	 HAL_GPIO_WritePin(IO_SYS_POWER, GPIO_SYS_POWER_CTL, GPIO_PIN_SET)//GPIO_PinSet(GPIO_SYS_POWER_CTL)
+#define TurnOff_SYS_POWER       	 HAL_GPIO_WritePin(IO_SYS_POWER, GPIO_SYS_POWER_CTL, GPIO_PIN_SET)//GPIO_PinClear(GPIO_SYS_POWER_CTL)
 extern void SYS_Power_Ctl(SCH_BOOL OnOff);
-///#define IO_ACC_EN              //GPIOB
+#define IO_ACC_EN              //GPIOB
 #define GPIO_ACC_EN_CTL      	 //GPIO_PTF5//////
 #define TurnOn_ACC_EN        	 //GPIO_PinSet(GPIO_ACC_EN_CTL)
 #define TurnOff_ACC_EN       	 //GPIO_PinClear(GPIO_ACC_EN_CTL)
@@ -60,10 +60,10 @@ extern void ACC_EN_Ctl(SCH_BOOL OnOff);
 
 ///==========================================================================================AMP===����========      
 ///#define AMP_CTL		    
-#define IO_AMP                 //GPIOB
-#define GPIO_AMP_CTL           //GPIO_PTF7//////
-#define TurnOn_AMP        	   //GPIO_PinSet(GPIO_AMP_CTL)
-#define TurnOff_AMP       	   //GPIO_PinClear(GPIO_AMP_CTL)
+#define IO_AMP                 POW_AMP_STANDBY_GPIO_Port//GPIOC
+#define GPIO_AMP_CTL           POW_AMP_STANDBY_Pin//GPIO8//////
+#define TurnOn_AMP        	   HAL_GPIO_WritePin(POW_AMP_STANDBY_GPIO_Port, POW_AMP_STANDBY_Pin, GPIO_PIN_SET)
+#define TurnOff_AMP       	   HAL_GPIO_WritePin(POW_AMP_STANDBY_GPIO_Port, POW_AMP_STANDBY_Pin, GPIO_PIN_RESET);
 ///#define AMP_BEEP		    
 #define IO_AMP_BEEP            //GPIOA
 #define GPIO_AMP_BEEP          //GPIO_PTC5//////
@@ -77,6 +77,6 @@ extern void ACC_EN_Ctl(SCH_BOOL OnOff);
 ///===================AMP END========================= 
 
 
-
+extern void SCH_GPIO_PinInit(GPIO_TypeDef* GPIOx,SCH_U32 GPIO_Pin,SCH_U32 GPIO_Mode);
 extern void GPIOInit(void);
 #endif

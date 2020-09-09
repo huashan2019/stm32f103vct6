@@ -10,6 +10,7 @@
 ***************************************************************************************************
 */
 #include "include.h"
+extern osMutexId_t myMutex03Handle;
 
 AMP_T App_Amp;
 
@@ -39,14 +40,16 @@ SCH_BOOL AmpTypeCheck(void)
 {
 	SCH_U8 i;
 	App_Amp.AmpTypeCheck = FALSE;
+	
+	//osMutexAcquire(myMutex03Handle,portMAX_DELAY);
 	for(i=0;i<MAX_AMP_TYPE;i++)
 	{
-		if(I2C1_IsFindAddr(AmpChipAddr[i]))
+		if(I2C0_IsFindAddr(AmpChipAddr[i]))
 		{
 			if(App_Amp.AmpTypeCheck == FALSE)
 			{
 				App_Amp.AmpAddr = AmpChipAddr[i];
-				Printf("AmpAddrCheck OK --- %X \n",App_Amp.AmpAddr);
+				App_Printf("AmpAddrCheck OK --- %X \r\n",App_Amp.AmpAddr);
 				App_Amp.AmpTypeCheck = TRUE;
 				App_Amp.AmpType = (_AmpSysType_t)i;
 			}
@@ -54,14 +57,16 @@ SCH_BOOL AmpTypeCheck(void)
 			{
 				App_Amp.AmpAddr1 = AmpChipAddr[i];
 				App_Amp.AmpType1 = (_AmpSysType_t)i;
-				Printf("AmpAddrCheck OK --- %X \n",App_Amp.AmpAddr1);
+				App_Printf("AmpAddrCheck OK --- %X \r\n",App_Amp.AmpAddr1);
 				break;
 			}
 		}
 	}
+	
+	//osMutexRelease(myMutex03Handle);
 	if(App_Amp.AmpType == MAX_AMP_TYPE)
 	{
-		Printf("AmpAddrCheck fail \n");
+		App_Printf("AmpAddrCheck fail \r\n");
 		return FALSE;
 	}
 	if(AmpDllLoader[App_Amp.AmpType])
@@ -77,7 +82,7 @@ SCH_BOOL AmpTypeCheck(void)
 ********************************************************************************/
 void TASK_Amp_Pro(void)
 {
-#if 0
+#if 1
 	switch(App_Amp.AmpState)
 	{
 		case AMP_IDLE:
@@ -86,6 +91,10 @@ void TASK_Amp_Pro(void)
 			///if(App_Radio.RadioPwrState == RADIO_NORMAL)
 			{
 				App_Amp.AmpState = AMP_CHECK;
+				App_Amp.AmpAddr = AmpChipAddr[0];
+				App_Amp.AmpType = (_AmpSysType_t)0;
+				App_Amp.AmpAddr = AmpChipAddr[1];
+				App_Amp.AmpType = (_AmpSysType_t)1;
 				TurnOn_AMP;
 			}
 			break;

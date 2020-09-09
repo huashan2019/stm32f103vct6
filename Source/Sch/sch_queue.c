@@ -10,7 +10,8 @@
 ***************************************************************************************************
 */
 #include "sch_config.h"
-
+#include "FreeRTOS.h"
+#include "task.h"
 
 void Queue_Init(QUEUE_T *p_queue)
 {
@@ -33,10 +34,11 @@ QUE_BOOL Queue_IsEmpty(QUEUE_T *p_queue)
 }
 QUE_BOOL Queue_In(QUEUE_T *p_queue, void *p_data, QUE_U16 Len)
 {
-	QUE_U16 Length = 0;
+	QUE_U16 Length = 0,ulReturn;
 	if(p_queue->Cnt > p_queue->Qsize - Len)///
 		return FALSE;
-	QUEUE_INT_DISABLE;
+	//QUEUE_INT_DISABLE;
+	ulReturn = taskENTER_CRITICAL_FROM_ISR();
 	while(Length < Len)
 	{
 		sch_memcpy((QUE_U8 *)p_queue->Pbuf+(p_queue->Head+Length)%p_queue->Qsize*p_queue->Isize, (QUE_U8 *)p_data+Length*p_queue->Isize, p_queue->Isize);
@@ -44,16 +46,20 @@ QUE_BOOL Queue_In(QUEUE_T *p_queue, void *p_data, QUE_U16 Len)
 	}
 	p_queue->Head = (p_queue->Head+Len)%p_queue->Qsize;
 	p_queue->Cnt += Len;
-	QUEUE_INT_ENABLE;
+	
+	//App_Printf("\r\n QueueIn size %x",p_queue->Cnt);
+	//QUEUE_INT_ENABLE;
+	taskEXIT_CRITICAL_FROM_ISR( ulReturn );
 	return TRUE;
 }
 
 QUE_BOOL Queue_Out(QUEUE_T *p_queue, void *p_data, QUE_U16 Len)
 {
-	QUE_U16 Length = 0;
+	QUE_U16 Length = 0,ulReturn;
 	if(p_queue->Cnt < Len)///
 		return FALSE;
-	QUEUE_INT_DISABLE;
+	//QUEUE_INT_DISABLE;
+	ulReturn = taskENTER_CRITICAL_FROM_ISR();
 	while(Length < Len)
 	{
 		sch_memcpy((QUE_U8 *)p_data+Length*p_queue->Isize, (QUE_U8 *)p_queue->Pbuf+(p_queue->Tail+Length)%p_queue->Qsize*p_queue->Isize, p_queue->Isize);
@@ -61,15 +67,17 @@ QUE_BOOL Queue_Out(QUEUE_T *p_queue, void *p_data, QUE_U16 Len)
 	}
 	p_queue->Tail = (p_queue->Tail+Len)%p_queue->Qsize;
 	p_queue->Cnt -= Len;
-	QUEUE_INT_ENABLE;
+	//QUEUE_INT_ENABLE;
+	taskEXIT_CRITICAL_FROM_ISR( ulReturn );
 	return TRUE;
 }
 QUE_BOOL Queue_Insert(QUEUE_T *p_queue, void *p_data, QUE_U16 Len)
 {
-	QUE_U16 Length = Len;
+	QUE_U16 Length = Len,ulReturn;
 	if(p_queue->Cnt > p_queue->Qsize - Len)///
 		return FALSE;
-	QUEUE_INT_DISABLE;
+	//QUEUE_INT_DISABLE;
+	ulReturn = taskENTER_CRITICAL_FROM_ISR();
 	while(Length)
 	{
 		sch_memcpy((QUE_U8 *)p_queue->Pbuf+(p_queue->Tail+p_queue->Qsize-Length)%p_queue->Qsize*p_queue->Isize, (QUE_U8 *)p_data+(Len - Length)*p_queue->Isize, p_queue->Isize);
@@ -77,6 +85,7 @@ QUE_BOOL Queue_Insert(QUEUE_T *p_queue, void *p_data, QUE_U16 Len)
 	}
 	p_queue->Tail = (p_queue->Tail+p_queue->Qsize-Len)%p_queue->Qsize;
 	p_queue->Cnt += Len;
-	QUEUE_INT_ENABLE;
+	//QUEUE_INT_ENABLE;
+	taskEXIT_CRITICAL_FROM_ISR( ulReturn );
 	return TRUE;
 }

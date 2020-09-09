@@ -13,6 +13,9 @@
 #include "pmc.h"
 #include "sysinit.h"
 #else
+#include "FreeRTOS.h"
+#include "cmsis_os2.h"
+#include "semphr.h"
 
 #include "adc.h"
 #include "usart.h"
@@ -32,6 +35,7 @@
 #include "config.h"
 #include "sch_config.h"
 #include "sch_printf.h"
+#include "sch_common.h"
 
 #include "bsp.h"
 #include "system.h"

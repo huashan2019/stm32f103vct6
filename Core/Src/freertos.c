@@ -31,6 +31,7 @@
 #include "usbd_customhid.h" //
 #include "adc.h"
 #include "stm32f1xx_hal_rtc.h"
+#include "semphr.h"
 
 /* USER CODE END Includes */
 
@@ -72,7 +73,7 @@ osThreadId_t myTask03Handle;
 const osThreadAttr_t myTask03_attributes = {
   .name = "myTask03",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 256 * 4
+  .stack_size = 1024 * 4
 };
 /* Definitions for myPrintfTask */
 osThreadId_t myPrintfTaskHandle;
@@ -93,7 +94,7 @@ osThreadId_t myTask_8ms_ProHandle;
 const osThreadAttr_t myTask_8ms_Pro_attributes = {
   .name = "myTask_8ms_Pro",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 256 * 4
+  .stack_size = 512 * 4
 };
 /* Definitions for myTask_16ms_Pro */
 osThreadId_t myTask_16ms_ProHandle;
@@ -107,7 +108,37 @@ osThreadId_t myTask_100ms_PrHandle;
 const osThreadAttr_t myTask_100ms_Pr_attributes = {
   .name = "myTask_100ms_Pr",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 256 * 4
+  .stack_size = 512 * 4
+};
+/* Definitions for myQueue01 */
+osMessageQueueId_t myQueue01Handle;
+const osMessageQueueAttr_t myQueue01_attributes = {
+  .name = "myQueue01"
+};
+/* Definitions for myMutex01 */
+osMutexId_t myMutex01Handle;
+const osMutexAttr_t myMutex01_attributes = {
+  .name = "myMutex01"
+};
+/* Definitions for myMutex02 */
+osMutexId_t myMutex02Handle;
+const osMutexAttr_t myMutex02_attributes = {
+  .name = "myMutex02"
+};
+/* Definitions for myMutex03 */
+osMutexId_t myMutex03Handle;
+const osMutexAttr_t myMutex03_attributes = {
+  .name = "myMutex03"
+};
+/* Definitions for myMutex04 */
+osMutexId_t myMutex04Handle;
+const osMutexAttr_t myMutex04_attributes = {
+  .name = "myMutex04"
+};
+/* Definitions for myBinarySem01 */
+osSemaphoreId_t myBinarySem01Handle;
+const osSemaphoreAttr_t myBinarySem01_attributes = {
+  .name = "myBinarySem01"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -141,6 +172,27 @@ __weak unsigned long getRunTimeCounterValue(void)
 {
 return ulHighFrequencyTimerTicks;
 }
+
+/*
+*********************************************************************************************************
+*	函 数 名: AppObjCreate
+*	功能说明: 创建任务通信机制
+*	形    参: 无
+*	返 回 值: 无
+*********************************************************************************************************
+*/
+
+static void AppObjCreate (void)
+{
+	/* 创建互斥信号量 */
+    xMutex = xSemaphoreCreateMutex();
+	
+	if(xMutex == NULL)
+    {
+        /* 没有创建成功，用户可以在这里加入创建失败的处理机制 */
+    }
+}
+
 /* USER CODE END 1 */
 
 /**
@@ -152,10 +204,29 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
        
   /* USER CODE END Init */
+  /* Create the mutex(es) */
+  /* creation of myMutex01 */
+  myMutex01Handle = osMutexNew(&myMutex01_attributes);
+
+  /* creation of myMutex02 */
+  myMutex02Handle = osMutexNew(&myMutex02_attributes);
+
+  /* creation of myMutex03 */
+  myMutex03Handle = osMutexNew(&myMutex03_attributes);
+
+  /* creation of myMutex04 */
+  myMutex04Handle = osMutexNew(&myMutex04_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
+  
+  /* 创建任务通信机制 */
+  AppObjCreate();
   /* USER CODE END RTOS_MUTEX */
+
+  /* Create the semaphores(s) */
+  /* creation of myBinarySem01 */
+  myBinarySem01Handle = osSemaphoreNew(1, 1, &myBinarySem01_attributes);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
@@ -164,6 +235,10 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* creation of myQueue01 */
+  myQueue01Handle = osMessageQueueNew (16, sizeof(uint16_t), &myQueue01_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -213,12 +288,28 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 	//printf("TaskDefault -- Software Version : %s \r\n", MCU_VERSION);
-	SPI_FLASH_ReadDeviceID();
-    vTaskDelay(200);
-	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
-    vTaskDelay(200);
-	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
-    osDelay(1);
+	//SPI_FLASH_ReadDeviceID();
+	
+	//App_Printf("LED on: %s \r\n", 1);
+    //vTaskDelay(500);
+	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+    //vTaskDelay(500);
+	//xLastWakeTime = xTaskGetTickCountFromISR();
+	//vTaskDelayUntil(&xLastWakeTime,10);
+	//SysWaitUs(100);
+	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+    //vTaskDelay(10);
+	//xLastWakeTime = xTaskGetTickCountFromISR();
+	//vTaskDelayUntil(&xLastWakeTime,10);
+	//SysWaitUs(100);
+	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+    //vTaskDelay(10);
+	//xLastWakeTime = xTaskGetTickCountFromISR();
+	//vTaskDelayUntil(&xLastWakeTime,10);
+	//SysWaitUs(100);
+	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+    //vTaskDelay(50);
+    //osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -242,10 +333,14 @@ void StartTask03(void *argument)
   for(;;)
   {
   
+  		//taskENTER_CRITICAL();
   		BT_DataRxPro(Uart_CONNECT,	 &BtRxModuel);
-  		BT_DataRxPro(Uart_OTHER,	 &PcRxModuel_0);
+  		BT_DataRxPro(Uart_OTHER,&PcRxModuel_0);
+  		BT_DataRxPro(Uart_OTHER1,&PcRxModuel_1);
+		
+  		//taskEXIT_CRITICAL();
 	 	 //vTaskDelay(500);
-		 //printf("Task3 -- Software Version : %s \r\n", MCU_VERSION);
+		// printf("Task3 -- Software Version : %s \r\n", MCU_VERSION);
 		/* Call HAL_RTC_GetTime function to update date if counter higher than 24 hours */
 		//if (HAL_RTC_GetTime(&hrtc, &stimestructure, RTC_FORMAT_BIN) != HAL_OK)
 		//{
@@ -276,22 +371,22 @@ void PrintfTask(void *argument)
   for(;;)
   {
   
-  	//printf("PrintfTask -- Software Version : %s \r\n", MCU_VERSION);
 #if 1
-
-	printf("=================================================\r\n");
-	printf("任务名	    任务状态 优先级   剩余栈 任务序号\r\n");
+	taskENTER_CRITICAL();
+  	App_Printf("PrintfTask -- Software Version : %s \r\n", MCU_VERSION);
+	App_Printf("=================================================\r\n");
+	App_Printf("任务名	    任务状态 优先级   剩余栈 任务序号\r\n");
 	vTaskList((char *)&pcWriteBuffer);
-	printf("%s\r\n", pcWriteBuffer);
+	App_Printf("%s\r\n", pcWriteBuffer);
 	
-	printf("\r\n任务名		 运行计数		  使用率\r\n");
+	App_Printf("\r\n任务名		 运行计数		  使用率\r\n");
 	vTaskGetRunTimeStats((char *)&pcWriteBuffer);
-	printf("%s\r\n", pcWriteBuffer);
+	App_Printf("%s\r\n", pcWriteBuffer);
+	taskEXIT_CRITICAL();
 
 
 #endif
-    //vTaskDelay(20);
-    osDelay(100);
+    osDelay(500);
   }
   /* USER CODE END PrintfTask */
 }
@@ -309,8 +404,14 @@ void StartTask_4ms_Pro(void *argument)
   /* Infinite loop */
   for(;;)
   {
-  	Task_4ms_Pro();
-    osDelay(1);
+	
+	//if(F_4ms_Val)
+	{
+		//App_Printf("Task_4ms_Pro -- Software Version : %s \r\n", MCU_VERSION);
+		//F_4ms_Clr;
+  		Task_4ms_Pro();
+	}
+    osDelay(4);
   }
   /* USER CODE END StartTask_4ms_Pro */
 }
@@ -328,8 +429,13 @@ void StartTask_8ms_Pro(void *argument)
   /* Infinite loop */
   for(;;)
   {
-  	Task_8ms_Pro();
-    osDelay(1);
+	//if(F_8ms_Val)
+	{
+		//App_Printf("Task_8ms_Pro -- Software Version : %s \r\n", MCU_VERSION);
+		//F_8ms_Clr;
+	  	Task_8ms_Pro();
+	}
+    osDelay(8);
   }
   /* USER CODE END StartTask_8ms_Pro */
 }
@@ -341,14 +447,33 @@ void StartTask_8ms_Pro(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask_16ms_Pro */
+static unsigned char F_FLAG;
+
 void StartTask_16ms_Pro(void *argument)
 {
   /* USER CODE BEGIN StartTask_16ms_Pro */
   /* Infinite loop */
   for(;;)
   {
-	Task_16ms_Pro();
-    osDelay(1);
+	//if(F_16ms_Val)
+	{
+		//App_Printf("Task_16ms_Pro -- Software Version : %s \r\n", MCU_VERSION);
+		//F_16ms_Clr;
+		Task_16ms_Pro();
+		if(F_FLAG)	
+		{
+				F_FLAG = 0;
+			HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+		}
+		else
+		{
+				F_FLAG = 1;
+			HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+		}
+		//vTaskDelay(16);
+		
+	}
+    osDelay(16);
   }
   /* USER CODE END StartTask_16ms_Pro */
 }
@@ -366,8 +491,13 @@ void StartTask_100ms_Pro(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	Task_100ms_Pro();
-    osDelay(1);
+	//if(F_100ms_Val)
+	{
+		//App_Printf("Task_100ms_Pro -- Software Version : %s \r\n", MCU_VERSION);
+		//F_100ms_Clr;
+		Task_100ms_Pro();
+	}
+    osDelay(100);
   }
   /* USER CODE END StartTask_100ms_Pro */
 }

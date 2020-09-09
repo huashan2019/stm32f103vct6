@@ -30,6 +30,7 @@ extern SCH_U8 GetCheckData_Xor(SCH_U8 *data, SCH_U8 Len);
 void AtDataAnalyse(SCH_U8 *Data)
 {
 	SCH_U8 SPPDATA_STATUS,BLE_STATUS;
+	
 	if(sch_compare(Data,"DATAINIT ",9)==TRUE)
 	{
 		PCSTATFlag = 1;

@@ -4,7 +4,7 @@
 
 
 #define UART0_FUNC    ENABLE /*USB DATA*/
-#define UART1_FUNC    DISABLE/*DEBUG DATA*/
+#define UART1_FUNC    ENABLE/*DEBUG DATA*/
 #define UART2_FUNC    ENABLE /*BT DATA*/
 #define UART3_FUNC    DISABLE
 
@@ -44,4 +44,6 @@ extern SCH_BOOL UartRxData(Uart_T uart, SCH_U8 *data, SCH_U16 Len);
 extern void SysUartExit(Uart_T uart);
 extern SCH_BOOL SysUartInit(Uart_T uart,SCH_U32 Baudrate);
 extern void UART_IntSerive(Uart_T uart);
+extern void Uart_Rx_DataPro(Uart_T uart,SCH_U8 data);
+
 #endif

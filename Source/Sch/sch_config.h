@@ -44,7 +44,7 @@ typedef void (*U8pfunction)(SCH_U8);
 ///=============config=================
 #include "mw_uart.h"
 //#define PRINTF_EN
-#define PRINTF_UART				SCH_Uart0
+#define PRINTF_UART				SCH_Uart3
 #define PRINTF_BAUDRATE         115200
 #define SCH_TO_TXBUF(data)		UartTxData_Direct(PRINTF_UART, data, 1)///UartTxData(PRINTF_UART, data, 1)///
 #ifdef PRINTF_EN

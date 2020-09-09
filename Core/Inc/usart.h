@@ -27,9 +27,13 @@
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
+#include "semphr.h"
+
+extern UART_HandleTypeDef huart0;
 
 /* USER CODE END Includes */
-extern UART_HandleTypeDef huart0;
+
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 
@@ -49,6 +53,8 @@ void MX_USART1_UART_Init(void);
 void MX_USART2_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+static SemaphoreHandle_t  xMutex = NULL;
+void  App_Printf(char *format, ...);
 
 /* USER CODE END Prototypes */
 

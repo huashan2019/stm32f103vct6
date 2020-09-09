@@ -38,6 +38,8 @@ void Check_Uart(void)
 		Uart_OTHER   = SCH_Uart_BT;
 		Uart_OTHER1  = SCH_Uart_PC;
 	}
+	
+	Uart_CONNECT = SCH_Uart_BT;
 }
 
 
@@ -69,6 +71,9 @@ void Change_Uart(Uart_T Uart)
 SCH_U8 RxData_TEMP[80];
 SCH_U8 Data_Addr;
 SCH_U8 Data_Num;
+extern unsigned char USB_Received_Count;
+extern unsigned char USB_Rx_Buf[64];
+extern unsigned char bUSB_DataOut_Complete;
 
 
 void BT_DataRxPro(Uart_T Uart,Rx_MODUEL_S *RxModuel)
@@ -84,6 +89,8 @@ void BT_DataRxPro(Uart_T Uart,Rx_MODUEL_S *RxModuel)
 				if(RxModuel->RxData[0] == HEAD_ADDRESS_BT)///协议数据
 				{
 					RxModuel->RxData_Flag = 0x01;
+					
+					bUSB_DataOut_Complete = 0;
 				}
 				else if(RxModuel->RxData[0] == AT_START_END_A)///(\r)蓝牙AT指令
 				{
@@ -177,6 +184,8 @@ void BT_DataRxPro(Uart_T Uart,Rx_MODUEL_S *RxModuel)
 					RxModuel->RxData_Flag = 0x00;
 					break;
 				}
+				
+				App_Printf("Rx udata head: ");
 				RxModuel->RxData_Flag = 0x11;
 				break;
 			case 0x11:
@@ -184,12 +193,18 @@ void BT_DataRxPro(Uart_T Uart,Rx_MODUEL_S *RxModuel)
 					return;
 				if(RxModuel->RxData[RxModuel->RxData_Length-1] == GetCheckData_Xor(RxModuel->RxData,RxModuel->RxData_Length-1))
 				{
+					U8 i ;
+					
 					if(Uart_CONNECT != Uart)
 					{
 						Change_Uart(Uart);
 						sch_memcpy(BtRxModuel.RxData,RxModuel->RxData,RxModuel->RxData_Length);
 					}
-					
+					//sch_memcpy(BtRxModuel.RxData,RxModuel->RxData,RxModuel->RxData_Length);
+					App_Printf("Rx udata : %x",RxModuel->RxData_Flag);
+					for( i = 0;i<RxModuel->RxData[Data_Addr+3];i++)
+					printf(" %x",BtRxModuel.RxData[i]);
+
 					BtDataAnalyse();
 				}
 				RxModuel->RxData_Flag = 0x00;
@@ -250,9 +265,9 @@ void BT_DataRxPro(Uart_T Uart,Rx_MODUEL_S *RxModuel)
 									Change_Uart(Uart);
 								}
 								sch_memcpy(BtRxModuel.RxData,&RxModuel->RxData[Data_Addr+1],RxModuel->RxData[Data_Addr+3]);
-								Printf("Rx data : ");
+								App_Printf("\r\n Rx data : ");
 								for( i = 0;i<RxModuel->RxData[Data_Addr+3];i++)
-								Printf(" %x",BtRxModuel.RxData[i]);
+								App_Printf(" %x",BtRxModuel.RxData[i]);
 
 								if(BtRxModuel.RxData[BtRx_Length-1] != GetCheckData_Xor(&BtRx_Head1,BtRx_Length-1)) 
 								{

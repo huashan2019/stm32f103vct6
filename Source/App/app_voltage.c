@@ -29,7 +29,7 @@ void TASK_Voltage_Init(void)
 void EmergencyPowerDown(void)
 {
 	Printf("voltage error \n");
-	ClearMessage(ARM_MODULE);
+	ClearMessage(USB_MODULE);
 	PostMessage(POWER_MODULE,EVT_POWER_OFF,POWEROFF_FROM_VOLTAGE);
 }
 

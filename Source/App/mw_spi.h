@@ -8,6 +8,7 @@
 
 #define SPI1_FUNC    SPI_MODE_UNINT
 #define SPI2_FUNC    SPI_MODE_UNINT
+#define SPI3_FUNC    SPI_MODE_UNINT
 
 typedef enum
 {

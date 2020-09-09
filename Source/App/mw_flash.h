@@ -20,10 +20,12 @@
 +--------------------------------------------------------------------+
 */
 
-//#define FLASH_PAGE_SIZE               0x200///512
-#define FLASH_PAGE_CNT                0x80///The amount of data per page x4
-#define FLASH_DATA_ADDR               0x001D000///Flash data basic addr
-#define FLASH_DATA_ADDR_END           0x0020000///flash���ĵ�ַ
+//#define FLASH_PAGE_SIZE               0x800///2k
+#define FLASH_PAGE_CNT                5///The amount of data per page
+#define FLASH_DATA_ADDR               0x08038000///Flash data basic addr
+#define FLASH_DATA_ADDR_END			  0x08040000	
+
+
 typedef enum
 {
 	FLASH_DATA_0,

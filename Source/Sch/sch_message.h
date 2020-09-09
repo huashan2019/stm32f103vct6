@@ -13,7 +13,7 @@ typedef struct
 typedef enum
 {
 	POWER_MODULE,  ///0 
-	ARM_MODULE,
+	USB_MODULE,
 	DSP_MODULE,
 	BT_MODULE,
 	///AUTO_MODULE,
