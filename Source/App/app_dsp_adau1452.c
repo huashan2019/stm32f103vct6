@@ -13,6 +13,7 @@
 #include "dsp_IC_1.c"
 
 Dsp_T App_Dsp;
+Dsp_T App_Dsp1;
 
 const double Fs = 48000;///48K采样率
 const double pi = 3.1415926535898;
@@ -64,7 +65,7 @@ const SCH_U16 Delay_addr[9]=
 	MOD_DELAY_5_DELAY1_ALG0_DELAYAMT_ADDR,
 	MOD_DELAY_6_DELAY1_ALG0_DELAYAMT_ADDR,
 	MOD_DELAY_7_DELAY1_ALG0_DELAYAMT_ADDR,
-	MOD_DELAY_8_DELAY1_ALG0_DELAYAMT_ADDR
+	MOD_DELAY_8_DELAY1_ALG0_DELAYAMT_ADDR,
 };
 void Dsp_Delay_Init(void)
 {
@@ -77,13 +78,16 @@ void Dsp_Delay_Init(void)
 void Dsp_Delay(SCH_U8 Channel,SCH_U32 data)
 {
 	SCH_U8 buff[4] = {0x00, 0x00, 0x00, 0x00};
-	if(Channel > DSP_CHANNEL_CNT || Channel == 0x00)
+	if(Channel > DSP_CHANNEL_CNT+2 || Channel == 0x00 ||  Channel == 0x09)
 		return;
 	buff[0]=data>>24;
 	buff[1]=data>>16;
 	buff[2]=data>>8;
 	buff[3]=data;
-	SIGMA_WRITE_REGISTER_BLOCK( DEVICE_ADDR_IC_1, Delay_addr[Channel],   4, buff);
+	if(Channel < 9)
+		SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP1,DEVICE_ADDR_IC_1, Delay_addr[Channel],   4, buff);
+	else
+		SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP2,DEVICE_ADDR_IC_1, Delay_addr[Channel%9],   4, buff);
 	App_Dsp.Dsp_Data.DelayData[Channel] = data;
 }
 ///================================================================================================Delay END========
@@ -111,25 +115,28 @@ const SCH_U16 OutPutChl_addr[DSP_OUTPUT_CNT+1]=
 	MOD_BOARD1_NX1_1_5_MONOMUXSIGMA300NS5INDEX_ADDR,
 	MOD_BOARD1_NX1_1_6_MONOMUXSIGMA300NS6INDEX_ADDR,
 	MOD_BOARD1_NX1_1_7_MONOMUXSIGMA300NS7INDEX_ADDR,
-	MOD_BOARD1_NX1_1_8_MONOMUXSIGMA300NS8INDEX_ADDR
+	MOD_BOARD1_NX1_1_8_MONOMUXSIGMA300NS8INDEX_ADDR,
 };
 void Dsp_OutPutChl_Init(void)
 {
 	SCH_U16 index;
-	for(index=1;index<(DSP_OUTPUT_CNT+1);index++)
+	for(index=1;index<(DSP_OUTPUT_CNT+2);index++)
 	{
-		App_Dsp.Dsp_Data.OutPutChl[index] = (DSP_CHANNEL_T)index;
+		App_Dsp.Dsp_Data.OutPutChl[index] = (DSP_CHANNEL_T)index%9;
 	}
 }
 void Dsp_OutPutChl(SCH_U8 OutPut,SCH_U8 data)
 {
 	SCH_U8 buff[4] = {0x00, 0x00, 0x00, 0x00};
-	if(OutPut > DSP_OUTPUT_CNT || OutPut == 0x00)
+	if(OutPut > DSP_OUTPUT_CNT+1 || OutPut == 0x00 || OutPut == 0x09)
 		return;
 	buff[3] = LimitMaxMin(0 , data, DSP_CHANNEL_CNT);
 	if(Sys.Dsp_Hardware_Mode == 1)///1708布线模式
 		buff[3] = OutPut_Hardware_1708[buff[3]];
-	SIGMA_WRITE_REGISTER_BLOCK( DEVICE_ADDR_IC_1, OutPutChl_addr[OutPut],  4, buff);
+	if(OutPut < 9)
+		SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP1,DEVICE_ADDR_IC_1, OutPutChl_addr[OutPut],  4, buff);
+	else
+		SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP2,DEVICE_ADDR_IC_1, OutPutChl_addr[OutPut%9],  4, buff);
 	App_Dsp.Dsp_Data.OutPutChl[OutPut] = (DSP_CHANNEL_T)data;
 }
 ///========================================================================================OutPut END=========
@@ -146,6 +153,7 @@ const SCH_U8 Default_ReName[9][8] =
 	0x43,0x00,0x48,0x00,0x36,0x00,0x00,0x20,///CH6
 	0x43,0x00,0x48,0x00,0x37,0x00,0x00,0x20,///CH7
 	0x43,0x00,0x48,0x00,0x38,0x00,0x00,0x20,///CH8
+
 };
 void DspModeNameInit(void)
 {
@@ -158,16 +166,16 @@ void DspModeNameInit(void)
 void Dsp_ReName_Init(void)
 {
 	SCH_U16 index;	
-	for(index=0;index<(DSP_CHANNEL_CNT+1);index++)
+	for(index=0;index<(DSP_CHANNEL_CNT+2);index++)
 	{
-		sch_memcpy(App_Dsp.Dsp_Data.ReName[index],Default_ReName[index],DSP_NAME_SIZE);
+		sch_memcpy(App_Dsp.Dsp_Data.ReName[index],Default_ReName[index%9],DSP_NAME_SIZE);
 	}
 }
 void Dsp_ReName(SCH_U8 Channel,SCH_U8 *data)
 {
-	if(Channel > DSP_CHANNEL_CNT)
+	if(Channel > DSP_CHANNEL_CNT+1)
 		return;
-	sch_memcpy(App_Dsp.Dsp_Data.ReName[Channel],data,DSP_NAME_SIZE);
+	sch_memcpy(App_Dsp.Dsp_Data.ReName[Channel%9],data,DSP_NAME_SIZE);
 }
 ///========================================================================================Rename END=========
 
@@ -200,7 +208,7 @@ SCH_BOOL Dsp_Unite(SCH_U8 Channel0,SCH_U8 Channel1)
 void DspDataInit(SCH_BOOL MixEnable,SCH_BOOL SingleEnable)
 {	
 	Dsp_ReName_Init();
-	if(MixEnable)
+	//if(MixEnable)
 	{
 		Dsp_Mix_Init();
 	}
@@ -217,41 +225,55 @@ void DspDataInit(SCH_BOOL MixEnable,SCH_BOOL SingleEnable)
 void Dsp_Updata(SCH_BOOL MixEnable,SCH_BOOL SingleEnable)
 {
 	SCH_U16 index,index0;
-	AudioMute(HARDON);
+	//AudioMute(HARDON);
+	App_Printf("\r\n Updata dsp mute on: %d",SysPower.nPowerState);
+	
+#if 1
 	TurnOff_REM_EN;
 	if(MixEnable)
 	{
-		for(index=1;index<(DSP_CHANNEL_CNT+1);index++)
+		for(index=1;index<(DSP_CHANNEL_CNT/2+1);index++)//DSP1
 		{
 			Dsp_Mix_Mixer(index,&App_Dsp.Dsp_Data.MixData[index][1]);
+			App_Printf("\r\n Mix data: Channel=%d,add=%x,data=%x",0,index,App_Dsp.Dsp_Data.MixData[index][1]);
 		}
+		for(index=10;index<(DSP_CHANNEL_CNT+2);index++)//DSP2
+		{
+			Dsp_Mix_Mixer(index,&App_Dsp.Dsp_Data.MixData[index][1]);
+			App_Printf("\r\n Mix data: Channel=%d,add=%x,data=%x",0,index,App_Dsp.Dsp_Data.MixData[index][1]);
+		}
+
 	}
 	Dsp_Mix_Input(150);
+
 	for(index=0;index<DSP_CHANNEL_CNT;index++)
 	{
 		FeedDog();
 		Dsp_GEN_Filter(index,HIGH_PASS_FILTER,&App_Dsp.Dsp_Data.FiltersData[index][HIGH_PASS_FILTER]);
 		Dsp_GEN_Filter(index,LOW_PASS_FILTER, &App_Dsp.Dsp_Data.FiltersData[index][LOW_PASS_FILTER]);
 	}
-	for(index=1;index<(DSP_CHANNEL_CNT+1);index++)
+	
+	for(index=1;index<(DSP_CHANNEL_CNT+2);index++)
 	{
 		Dsp_Delay(index,App_Dsp.Dsp_Data.DelayData[index]);
 	}
 	if(SingleEnable)
 	{
-		for(index=0;index<(DSP_CHANNEL_CNT+1);index++)
+		for(index=0;index<(DSP_CHANNEL_CNT+2);index++)
 		{
 			Dsp_Single(index,App_Dsp.Dsp_Data.SingleData[index]);
 		}
 	}
-	for(index=0;index<(DSP_CHANNEL_CNT+1);index++)
+	for(index=0;index<(DSP_CHANNEL_CNT+2);index++)
 	{
 		Dsp_Mute_Direct(index,App_Dsp.Dsp_Data.Mute[index]);
 	}
-	for(index=0;index<(DSP_OUTPUT_CNT+1);index++)
+	
+	for(index=0;index<(DSP_OUTPUT_CNT+2);index++)
 	{
 		Dsp_OutPutChl(index,App_Dsp.Dsp_Data.OutPutChl[index]);
 	}
+	
 	for(index=0;index<DSP_CHANNEL_CNT;index++)
 	{
 		for(index0=0;index0<EQ_NUM_CNT;index0++)
@@ -260,12 +282,15 @@ void Dsp_Updata(SCH_BOOL MixEnable,SCH_BOOL SingleEnable)
 			Dsp_EQ_Set(index,(EQ_NUM_T)index0,&App_Dsp.Dsp_Data.EQ_Data[index][index0]);
 		}
 	}
+	
 	CheckVol();
 	if(SysPower.nPowerState == POWER_NORMAL_RUN)
 	{
 		AudioMute(HARDOFF);
 		///TurnOn_REM_EN;
+		App_Printf("\r\n Updata dsp mute off:");
 	}
+	#endif
 }
 ///=======================================================================================Dsp END=======
 void Dsp_Data_Reset(void)
@@ -397,7 +422,7 @@ void TASK_Dsp_Pro(void)
 	Dsp_EQ_Left_Req();
 	Dsp_EQ_Right_Req();
 	Dsp_StoreLoadPro();
-	Dsp_Info_Det();
+	//Dsp_Info_Det();
 	///M2D_TxService();
 }
 

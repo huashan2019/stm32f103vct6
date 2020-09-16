@@ -31,6 +31,7 @@ void SystemPowerUp(void)
 	ClearAllModeMessage();
 	GPIOInit();
 	AudioMute(HARDON);
+	App_Printf("\r\n Sys PwrUp mute on:" );
 	DSP_RESET_HOLD;
 	BT_RESET_HOLD;
 	AD1938_RESET_HOLD;
@@ -53,11 +54,13 @@ void PowerOnSystemModule(void)
 void PowerOffSystemModule(void)
 {
 	AudioMute(HARDON);
+	App_Printf("\r\n Sys PwrDn mute on:");
 	///App_Dsp.DspPwrState = DSP_CLOSE;
 }
 void EnterPowerOff(void)
 {
 	AudioMute(HARDON);
+	App_Printf("\r\n Enter PwrOff mute on:");
 	AMP_TURN_OFF();
 	SYS_Power_Ctl(OFF);
 	ACC_EN_Ctl(OFF);
@@ -82,6 +85,7 @@ void PowerMessage(void)
 			SysPower.nPowerState=POWER_ON_DELAY;
 			SysPower.Power_Timer=0;
 			AudioMute(HARDON);
+			App_Printf("\r\n Pwr Message mute on:");
 			///CCFL_Power_Ctl(OFF);
 			ClearAllModeMessage();
 			break;
@@ -114,7 +118,7 @@ void TASK_Power_Pro(void)
 	switch(SysPower.nPowerState)
 	{
 		case POWER_ON_START:
-			if(SysPower.Power_Timer>=T40MS_8)
+			if(SysPower.Power_Timer>=T100MS_100)
 			{
 			Clr_VolErr_Flag;
 			Get_START_Flag = 1;
@@ -137,7 +141,7 @@ void TASK_Power_Pro(void)
 			SystemPowerUp();
 			break;
 		case POWER_ARM_RESET:
-			if(SysPower.Power_Timer>=T96MS_8)
+			if(SysPower.Power_Timer>=T100MS_100)
 			{
 				DSP_RESET_HOLD;
 				BT_RESET_HOLD;
@@ -148,7 +152,7 @@ void TASK_Power_Pro(void)
 			}
 			break;
 		case POWER_VAR_RECOVER:
-			if(SysPower.Power_Timer>=T480MS_8)
+			if(SysPower.Power_Timer>=T500MS_100)
 			{
 				SysPower.Power_Timer=0;
 				SysPower.nPowerState=POWER_TFT_POWER_ON;			       
@@ -156,7 +160,7 @@ void TASK_Power_Pro(void)
 			}
 			break;
 		case POWER_TFT_POWER_ON:
-			if(SysPower.Power_Timer>=T96MS_8)
+			if(SysPower.Power_Timer>=T100MS_100)
 			{
 			
 				SysPower.Power_Timer=0;				
@@ -168,12 +172,10 @@ void TASK_Power_Pro(void)
 			}
 			break;
 		case POWER_SECURITY_CODE:
-			if(App_Dsp.DspPwrState == DSP_NORMAL&&SysPower.Power_Timer>=T4S_8)
+			if(App_Dsp.DspPwrState == DSP_NORMAL&&SysPower.Power_Timer>=T4S_100)
 			{
 				AudioMute(HARDOFF);
-				Set_AppStartOk;
-				//UartTxData(SCH_Uart_BT,BT_NAME_SET,sizeof(BT_NAME_SET));
-				
+				Set_AppStartOk;				
 				SysPower.nPowerState=POWER_NORMAL_RUN;
 				Printf("PowerState = POWER_NORMAL_RUN \n");
 			}
@@ -182,7 +184,7 @@ void TASK_Power_Pro(void)
 			break;
 		case POWER_CLOSE_SCREEN:
 			TurnOff_REM_EN;
-			if(SysPower.Power_Timer>=T480MS_8)
+			if(SysPower.Power_Timer>=T500MS_100)
 			{
 				EnterPowerOff();
 				SysPower.Power_Timer=0;
@@ -197,7 +199,7 @@ void TASK_Power_Pro(void)
 			SysPower.Power_Timer=0;
 			break;
 		case POWER_SYSTEM_STANDBY:
-			if(SysPower.Power_Timer >= T1S_8)
+			if(SysPower.Power_Timer >= T1S_100)
 			{
 				if(Get_SLEEP_Mode)
 				{
@@ -215,11 +217,11 @@ void TASK_Power_Pro(void)
 			}
 			break;
 		case POWER_ACCOFF:
-			if(SysPower.Power_Timer >= T3S_8)
+			if(SysPower.Power_Timer >= T3S_100)
 			{
 				TurnOff_REM_EN;
 			}
-			if(SysPower.Power_Timer >= T5S_8)
+			if(SysPower.Power_Timer >= T5S_100)
 			{            
 				EnterPowerOff();
 				SysPower.nPowerState=POWER_ACCOFF2;
@@ -237,7 +239,7 @@ void TASK_Power_Pro(void)
 			}
 			break;
 		case POWER_ACCOFF2:
-			if(SysPower.Power_Timer >= T240MS_8)
+			if(SysPower.Power_Timer >= T200MS_100)
 			{
 				SysPower.Power_Timer=0;
 				if(!Get_START_Flag)
@@ -249,7 +251,7 @@ void TASK_Power_Pro(void)
 			}
 			break;			
 		case POWER_ARM_ERR_RESET:
-			if(SysPower.Power_Timer>=T1S_8)
+			if(SysPower.Power_Timer>=T1S_100)
 			{
 				SysPower.Power_Timer=0;
 				SysPower.nPowerState=POWER_ON_START;

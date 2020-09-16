@@ -6,8 +6,8 @@
 
 
 
-#define DSP_MIXER_MAX          186
-#define DSP_MIXER_DEFAULT      144
+#define DSP_MIXER_MAX          0xBA//186
+#define DSP_MIXER_DEFAULT      0x90//144
 #define DSP_MIXER_MIN            0
 
 

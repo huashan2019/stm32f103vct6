@@ -32,7 +32,7 @@ typedef struct
 	void (*pAmpInit)(void);	
 	void (*pAmpMute)(SCH_BOOL OnOff);
 }AMP_T;
-extern AMP_T App_Amp;
+extern  AMP_T App_Amp;
 
 #define AMP_TURN_ON()     App_Amp.AmpState=AMP_ENABLE
 #define AMP_TURN_OFF()    App_Amp.AmpState=AMP_DISABLE

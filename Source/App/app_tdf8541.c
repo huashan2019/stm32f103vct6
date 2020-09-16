@@ -15,7 +15,7 @@
 #include "semphr.h"
 
 /* amplifier init data table*/
-SCH_U8 tbl_Amp_Init[5]=
+static SCH_U8 tbl_Amp_Init[5]=
 {
 	/*IDB1 
 	D7------ 0: Disable clip detection below 10v,  1:Enable  clip detection below 10v
@@ -87,12 +87,10 @@ extern osMutexId_t myMutex04Handle;
 
 void TDF8541Init(void)
 {	
-	//osMutexAcquire(myMutex04Handle,portMAX_DELAY);
 	I2C0_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
 	I2C0_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
 	I2C1_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
 	I2C1_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
-	osMutexRelease(myMutex04Handle);
 }
 /*-----------------------------------------------------------------------
 Function name:	AmpMute
@@ -110,12 +108,11 @@ void TDF8541_AmpMute(SCH_BOOL OnOff)
 	{
 		tbl_Amp_Init[1]&=~0x01; 
 	}
-	//osMutexAcquire(myMutex04Handle,portMAX_DELAY);
-	//I2C0_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
-	//I2C0_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
-	//I2C1_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
-	//I2C1_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
-	//osMutexRelease(myMutex04Handle);
+	App_Printf("\r\n 8541Amp mute %x", OnOff);
+	I2C0_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	I2C0_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	I2C1_Tx(App_Amp.AmpAddr, tbl_Amp_Init, sizeof(tbl_Amp_Init));
+	I2C1_Tx(App_Amp.AmpAddr1, tbl_Amp_Init, sizeof(tbl_Amp_Init));
 }
 void Amp8541_DLL_Loader(void)
 {

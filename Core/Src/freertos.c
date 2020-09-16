@@ -72,8 +72,8 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t myTask03Handle;
 const osThreadAttr_t myTask03_attributes = {
   .name = "myTask03",
-  .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 1024 * 4
+  .priority = (osPriority_t) osPriorityNormal2,
+  .stack_size = 512 * 4
 };
 /* Definitions for myPrintfTask */
 osThreadId_t myPrintfTaskHandle;
@@ -93,7 +93,7 @@ const osThreadAttr_t myTask_4ms_Pro_attributes = {
 osThreadId_t myTask_8ms_ProHandle;
 const osThreadAttr_t myTask_8ms_Pro_attributes = {
   .name = "myTask_8ms_Pro",
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityNormal1,
   .stack_size = 512 * 4
 };
 /* Definitions for myTask_16ms_Pro */
@@ -101,13 +101,13 @@ osThreadId_t myTask_16ms_ProHandle;
 const osThreadAttr_t myTask_16ms_Pro_attributes = {
   .name = "myTask_16ms_Pro",
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 256 * 4
+  .stack_size = 512 * 4
 };
 /* Definitions for myTask_100ms_Pr */
 osThreadId_t myTask_100ms_PrHandle;
 const osThreadAttr_t myTask_100ms_Pr_attributes = {
   .name = "myTask_100ms_Pr",
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityNormal3,
   .stack_size = 512 * 4
 };
 /* Definitions for myQueue01 */
@@ -292,23 +292,29 @@ void StartDefaultTask(void *argument)
 	
 	//App_Printf("LED on: %s \r\n", 1);
     //vTaskDelay(500);
-	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+	//HAL_GPIO_WritePin(LED_CTRL2_GPIO_Port, LED_CTRL2_Pin, GPIO_PIN_SET);
     //vTaskDelay(500);
 	//xLastWakeTime = xTaskGetTickCountFromISR();
 	//vTaskDelayUntil(&xLastWakeTime,10);
 	//SysWaitUs(100);
-	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+	
+	SysWaitMs(500);
+	HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
     //vTaskDelay(10);
 	//xLastWakeTime = xTaskGetTickCountFromISR();
 	//vTaskDelayUntil(&xLastWakeTime,10);
 	//SysWaitUs(100);
-	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+	SysWaitMs(500);
+	HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
     //vTaskDelay(10);
 	//xLastWakeTime = xTaskGetTickCountFromISR();
 	//vTaskDelayUntil(&xLastWakeTime,10);
 	//SysWaitUs(100);
-	//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
-    //vTaskDelay(50);
+	
+	SysWaitMs(500);
+	HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+    vTaskDelay(500);
     //osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
@@ -371,7 +377,7 @@ void PrintfTask(void *argument)
   for(;;)
   {
   
-#if 1
+#if 0
 	taskENTER_CRITICAL();
   	App_Printf("PrintfTask -- Software Version : %s \r\n", MCU_VERSION);
 	App_Printf("=================================================\r\n");
@@ -447,14 +453,13 @@ void StartTask_8ms_Pro(void *argument)
 * @retval None
 */
 /* USER CODE END Header_StartTask_16ms_Pro */
-static unsigned char F_FLAG;
-
 void StartTask_16ms_Pro(void *argument)
 {
   /* USER CODE BEGIN StartTask_16ms_Pro */
   /* Infinite loop */
   for(;;)
   {
+		static U8 F_FLAG;
 	//if(F_16ms_Val)
 	{
 		//App_Printf("Task_16ms_Pro -- Software Version : %s \r\n", MCU_VERSION);
@@ -469,9 +474,7 @@ void StartTask_16ms_Pro(void *argument)
 		{
 				F_FLAG = 1;
 			HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
-		}
-		//vTaskDelay(16);
-		
+		}		
 	}
     osDelay(16);
   }

@@ -11,7 +11,6 @@
 */
 #include "include.h"
 
-extern osMutexId_t myMutex03Handle;
 
 
 /*************************************************************************************
@@ -26,14 +25,12 @@ void SysWait1Us(void)
 #if 1
 #if 1
 	SCH_U8 index = 4;
-	//osMutexAcquire(myMutex03Handle,portMAX_DELAY);
 	while(index--)
 		SCH_NOP;
 	SCH_NOP;SCH_NOP;SCH_NOP;
 	SCH_NOP;SCH_NOP;SCH_NOP;
 	SCH_NOP;SCH_NOP;SCH_NOP;
 	SCH_NOP;SCH_NOP;SCH_NOP;
-	//osMutexRelease(myMutex03Handle);
 #else
 	SCH_NOP;SCH_NOP;SCH_NOP;
 	SCH_NOP;SCH_NOP;SCH_NOP;

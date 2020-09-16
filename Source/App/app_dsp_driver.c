@@ -13,6 +13,7 @@
 extern osMutexId_t myMutex05Handle;
 extern osMutexId_t myMutex06Handle;
 extern osMutexId_t myMutex07Handle;
+
 /********************************************************************************
 **  Function	: DSP_IO_Ctl
 **  Author		: 
@@ -34,31 +35,69 @@ void DSP_IO_Init(void)
 **  Description	: ��д
 **  Return		: 
 ********************************************************************************/
-void SIGMA_READ(SCH_U8 devAddress, SCH_U16 address, SCH_U8 *pData)
+void SIGMA_READ(DspNum_T DspNum, SCH_U8 devAddress, SCH_U16 address, SCH_U8 *pData)
 {
 	SCH_U8 length = 4;
-	DSP_SS_LOW();
-	SPI_RW(Spi_DSP,devAddress);
-	SPI_RW(Spi_DSP,address>>8);
-	SPI_RW(Spi_DSP,address);
+	static Spi_T spi;
+	
+	if(DspNum == SCH_DSP1)	
+	{
+		spi = Spi_DSP;
+		DSP_SS_LOW();///DSP1
+	}
+	else
+	{
+		spi = Spi_DSP2;
+		DSP2_SS_LOW();///DSP2
+	}
+
+	SPI_RW(spi,devAddress);
+	SPI_RW(spi,address>>8);
+	SPI_RW(spi,address);
 	while(length--)
 	{
-		*pData++ = SPI_RW(Spi_DSP,0xFF);
+		*pData++ = SPI_RW(spi,0xFF);
 	}
-	DSP_SS_HIGH();
+	if(DspNum == SCH_DSP1)
+	{
+		DSP_SS_HIGH();
+		App_Printf("\r\n DSP1 RD:Adr=%x,Data:=%x",address,*pData,*(pData+1),*(pData+2),*(pData+3));
+	}
+	else
+	{
+		DSP2_SS_HIGH();
+		App_Printf("\r\n DSP2 RD:Adr=%x,Data:=%x",address,*pData,*(pData+1),*(pData+2),*(pData+3));
+	}
+	
 }
-void SIGMA_WRITE(SCH_U8 devAddress, SCH_U16 address, SCH_U8 *pData)
+void SIGMA_WRITE(DspNum_T DspNum, SCH_U8 devAddress, SCH_U16 address, SCH_U8 *pData)
 {
+	static Spi_T spi;
 	SCH_U8 length = 4;
-	DSP_SS_LOW();
-	SPI_RW(Spi_DSP,devAddress);
-	SPI_RW(Spi_DSP,address>>8);
-	SPI_RW(Spi_DSP,address);
+	if(DspNum == SCH_DSP1)
+	{
+		App_Printf("\r\n DSP1 WR:Adr=%x,Data:=%x",address,*pData,*(pData+1),*(pData+2),*(pData+3));
+		spi = Spi_DSP;
+		DSP_SS_LOW();///DSP1
+	}
+	else
+	{
+		App_Printf("\r\n DSP2 WR:Adr=%x,Data:=%x",address,*pData,*(pData+1),*(pData+2),*(pData+3));
+		spi = Spi_DSP2;
+		DSP2_SS_LOW();///DSP2
+	}
+
+	SPI_RW(spi,devAddress);
+	SPI_RW(spi,address>>8);
+	SPI_RW(spi,address);
 	while(length--)
 	{
-		SPI_RW(Spi_DSP,*pData++);
+		SPI_RW(spi,*pData++);
 	}
-	DSP_SS_HIGH();
+	if(DspNum == SCH_DSP1)	
+		DSP_SS_HIGH();
+	else
+		DSP2_SS_HIGH();
 	SysWaitUs(50);
 	
 }
@@ -69,28 +108,26 @@ void SIGMA_WRITE(SCH_U8 devAddress, SCH_U16 address, SCH_U8 *pData)
 **  Description	: ��ȫд
 **  Return		: 
 ********************************************************************************/
-void SIGMA_SAFELOAD_WRITE_REGISTER(SCH_U8 devAddress, SCH_U16 address, SCH_U16 length, SCH_U8 *pData)
+void SIGMA_SAFELOAD_WRITE_REGISTER(DspNum_T DspNum,SCH_U8 devAddress, SCH_U16 address, SCH_U16 length, SCH_U8 *pData)
 {
 	SCH_U8 spiBuff[4];
 	SCH_U8 index;
-	//osMutexAcquire(myMutex06Handle,portMAX_DELAY);
 	for(index=0;index<length;index++)
 	{
-		SIGMA_WRITE(devAddress,MOD_SAFELOADMODULE_DATA_SAFELOAD0_ADDR+index,  pData);
+		SIGMA_WRITE(DspNum,devAddress,MOD_SAFELOADMODULE_DATA_SAFELOAD0_ADDR+index,  pData);
 		pData+=4;
 	}
 	spiBuff[0] = 0x00;
 	spiBuff[1] = 0x00;
 	spiBuff[2] = address>>8;
 	spiBuff[3] = address;
-	SIGMA_WRITE(devAddress,MOD_SAFELOADMODULE_ADDRESS_SAFELOAD_ADDR,spiBuff);
+	SIGMA_WRITE(DspNum,devAddress,MOD_SAFELOADMODULE_ADDRESS_SAFELOAD_ADDR,spiBuff);
 	spiBuff[0] = 0x00;
 	spiBuff[1] = 0x00;
 	spiBuff[2] = 0x00;
 	spiBuff[3] = length;
-	SIGMA_WRITE(devAddress,MOD_SAFELOADMODULE_NUM_SAFELOAD_ADDR,spiBuff);
+	SIGMA_WRITE(DspNum,devAddress,MOD_SAFELOADMODULE_NUM_SAFELOAD_ADDR,spiBuff);
 	SysWaitUs(50);
-	//osMutexRelease(myMutex06Handle);
 }
 /********************************************************************************
 **  Function	: SIGMA_WRITE_REGISTER_BLOCK
@@ -99,34 +136,63 @@ void SIGMA_SAFELOAD_WRITE_REGISTER(SCH_U8 devAddress, SCH_U16 address, SCH_U16 l
 **  Description	: ֱ��д
 **  Return		: 
 ********************************************************************************/
-void SIGMA_WRITE_REGISTER_BLOCK(SCH_U8 devAddress, SCH_U16 address, SCH_U16 length, const SCH_U8 *pData)
+void SIGMA_WRITE_REGISTER_BLOCK(DspNum_T DspNum,SCH_U8 devAddress, SCH_U16 address, SCH_U16 length, const SCH_U8 *pData)
 {
-	//osMutexAcquire(myMutex05Handle,portMAX_DELAY);
-	DSP_SS_LOW();
-	SPI_RW(Spi_DSP,devAddress);
-	SPI_RW(Spi_DSP,address>>8);
-	SPI_RW(Spi_DSP,address);
+	static Spi_T spi;
+	if(DspNum == SCH_DSP1)	
+	{
+		App_Printf("\r\n DSP1 BLOCK:Add=%x Data:=%x,%x,%x,%x",address,*pData,*(pData+1),*(pData+2),*(pData+3));
+		spi = Spi_DSP;
+		DSP_SS_LOW();///DSP1
+	}
+	else
+	{
+		App_Printf("\r\n DSP2 BLOCK:Add=%x Data:=%x,%x,%x,%x",address,*pData,*(pData+1),*(pData+2),*(pData+3));
+		spi = Spi_DSP2;
+		DSP2_SS_LOW();///DSP2
+	}
+
+	SPI_RW(spi,devAddress);
+	SPI_RW(spi,address>>8);
+	SPI_RW(spi,address);
 	while(length--)
 	{
-		SPI_RW(Spi_DSP,*pData++);
+		SPI_RW(spi,*pData++);
 	}
-	DSP_SS_HIGH();
+	if(DspNum == SCH_DSP1)	
+		DSP_SS_HIGH();
+	else
+		DSP2_SS_HIGH();
 	SysWaitUs(500);
-	//osMutexRelease(myMutex05Handle);
 }
 
-void SIGMA_WRITE_DELAY(SCH_U8 devAddress, SCH_U16 length, const SCH_U8 *pData)
+void SIGMA_WRITE_DELAY(DspNum_T DspNum,SCH_U8 devAddress, SCH_U16 length, const SCH_U8 *pData)
 {
-	//osMutexAcquire(myMutex07Handle,portMAX_DELAY);
-	DSP_SS_LOW();
-	SPI_RW(Spi_DSP,devAddress);
+	static Spi_T spi;
+	if(DspNum == SCH_DSP1)	
+	{
+		App_Printf("\r\n DSP1 DELAY:devAddress=%x Data:=%x",devAddress,*pData,*(pData+1),*(pData+2),*(pData+3));
+		spi = Spi_DSP;
+		DSP_SS_LOW();///DSP1
+	}
+	else
+	{
+		App_Printf("\r\n DSP2 DELAY:devAddress=%x Data:=%x",devAddress,*pData,*(pData+1),*(pData+2),*(pData+3));
+		spi = Spi_DSP2;
+		DSP2_SS_LOW();///DSP2
+	}
+
+	SPI_RW(spi,devAddress);
 	while(length--)
 	{
-		SPI_RW(Spi_DSP,*pData++);
+		SPI_RW(spi,*pData++);
 	}
-	DSP_SS_HIGH();
+	if(DspNum == SCH_DSP1)	
+		DSP_SS_HIGH();
+	else
+		DSP2_SS_HIGH();
+
 	SysWaitUs(500);
-	//osMutexRelease(myMutex07Handle);
 }
 
 

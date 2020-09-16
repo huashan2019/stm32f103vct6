@@ -10,7 +10,6 @@
 ***************************************************************************************************
 */
 #include "include.h"
-extern osMutexId_t myMutex03Handle;
 
 AMP_T App_Amp;
 
@@ -33,7 +32,13 @@ void AmpMute(SCH_BOOL OnOff)
 	if(App_Amp.AmpState==AMP_NORMAL)
 	{
 		if(App_Amp.pAmpMute)
+		{
 			App_Amp.pAmpMute(OnOff);
+			if(OnOff)
+				App_Printf(" \r\n mute on:%X",OnOff);
+			else
+				App_Printf(" \r\n mute off:%X",OnOff);
+		}
 	}
 }
 SCH_BOOL AmpTypeCheck(void)
@@ -41,7 +46,6 @@ SCH_BOOL AmpTypeCheck(void)
 	SCH_U8 i;
 	App_Amp.AmpTypeCheck = FALSE;
 	
-	//osMutexAcquire(myMutex03Handle,portMAX_DELAY);
 	for(i=0;i<MAX_AMP_TYPE;i++)
 	{
 		if(I2C0_IsFindAddr(AmpChipAddr[i]))
@@ -63,7 +67,6 @@ SCH_BOOL AmpTypeCheck(void)
 		}
 	}
 	
-	//osMutexRelease(myMutex03Handle);
 	if(App_Amp.AmpType == MAX_AMP_TYPE)
 	{
 		App_Printf("AmpAddrCheck fail \r\n");

@@ -18,7 +18,7 @@ void Dsp_Single_Init(void)
 {
 	SCH_U16 index;	
 	App_Dsp.Dsp_Data.SingleData[DSP_CHANNEL_ALL_NONE] = DSP_SINGLE_ALL_DEFAULT;
-	for(index=1;index<(DSP_CHANNEL_CNT+1);index++)
+	for(index=1;index<(DSP_CHANNEL_CNT+2);index++)
 	{
 		App_Dsp.Dsp_Data.SingleData[index] = DSP_SINGLE_DEFAULT;
 	}
@@ -27,7 +27,7 @@ void Dsp_Single_Init(void)
 void Dsp_Mute_Init(void)
 {
 	SCH_U16 index;
-	for(index=0;index<(DSP_CHANNEL_CNT+1);index++)
+	for(index=0;index<(DSP_CHANNEL_CNT+2);index++)
 	{
 		App_Dsp.Dsp_Data.Mute[index] = DSP_UNMUTE;///unmute
 	}
@@ -52,15 +52,29 @@ void Dsp_Single_A(SCH_U8 Channel,SCH_U16 data)
 	data = LimitMaxMin(DSP_SINGLE_MIN, data, DSP_SINGLE_MAX);
 	Data = ((double)data-8000)/100;
 	index = pow(10,Data/20);
-	SIGMA_WRITE_REGISTER_BLOCK(    DEVICE_ADDR_IC_1, Single_addr[Channel]+1,  4, buff);
+	if(Channel < 9)
+	{
+		SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP1, DEVICE_ADDR_IC_1, Single_addr[Channel]+1,  4, buff);
+		App_Printf("\r\n DSP1 SingA:Add=%x Data:=%x,%x,%x,%x",Channel,*buff,*(buff+1),*(buff+2),*(buff+3));
+
+	}
+	else
+	{
+		SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP2, DEVICE_ADDR_IC_1, Single_addr[Channel%9]+1,	4, buff);
+		App_Printf("\r\n DSP2 SingA:Add=%x Data:=%x,%x,%x,%x",Channel,*buff,*(buff+1),*(buff+2),*(buff+3));
+	}
 	SIGMASTUDIOTYPE(index,buff);
-	SIGMA_SAFELOAD_WRITE_REGISTER( DEVICE_ADDR_IC_1, Single_addr[Channel],    1, buff);
+	
+	if(Channel < 9)
+		SIGMA_SAFELOAD_WRITE_REGISTER(SCH_DSP1,DEVICE_ADDR_IC_1, Single_addr[Channel],    1, buff);
+	else
+		SIGMA_SAFELOAD_WRITE_REGISTER(SCH_DSP2,DEVICE_ADDR_IC_1, Single_addr[Channel%9],    1, buff);
 	SysWaitMs(1);
 }
 void Dsp_Single(SCH_U8 Channel,SCH_U16 data)
 {
 	SCH_U16 startVol,targetVol;
-	if(Channel > DSP_CHANNEL_CNT)
+	if(Channel > DSP_CHANNEL_CNT+2)
 		return;
 	if(Channel == DSP_CHANNEL_ALL_NONE)
 		data = LimitMaxMin(DSP_SINGLE_MIN, data, App_Dsp.Dsp_Data.SingleMaxData);
@@ -161,19 +175,25 @@ void Dsp_Mute_A(SCH_U8 Channel,SCH_U8 Data,SCH_U8 Direct)
 {
 	SCH_U8 buff[4] = {0x00, 0x00, 0x00, 0x00};
 	buff[3] = Data;
-	if(Channel > DSP_CHANNEL_CNT)
+	if(Channel > DSP_CHANNEL_CNT+1)
 		return;
 	if(Data==DSP_MUTE&&Direct==0)
 	{
 		Dsp_VolUpdate(Channel,SOFTON);
 		SysWaitMs(10);
 	}
-	SIGMA_WRITE_REGISTER_BLOCK( DEVICE_ADDR_IC_1, Mute_addr[Channel],  4, buff);
+	if(Channel < 9)
+		SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP1, DEVICE_ADDR_IC_1, Mute_addr[Channel],  4, buff);
+	else
+		SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP2, DEVICE_ADDR_IC_1, Mute_addr[Channel%9],  4, buff);
 	if(Data==DSP_UNMUTE)
 	{
 		if((Channel!=DSP_CHANNEL_ALL_NONE)&&(App_Dsp.Dsp_Data.Mute[DSP_CHANNEL_ALL_NONE]==DSP_MUTE))
 		{
-			SIGMA_WRITE_REGISTER_BLOCK( DEVICE_ADDR_IC_1, Mute_addr[DSP_CHANNEL_ALL_NONE],  4, buff);
+			if(Channel < 9)
+				SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP1, DEVICE_ADDR_IC_1, Mute_addr[DSP_CHANNEL_ALL_NONE],  4, buff);
+			else
+				SIGMA_WRITE_REGISTER_BLOCK(SCH_DSP2, DEVICE_ADDR_IC_1, Mute_addr[DSP_CHANNEL_ALL_NONE],  4, buff);
 			App_Dsp.Dsp_Data.Mute[DSP_CHANNEL_ALL_NONE] = DSP_UNMUTE;
 		}
 		if(Direct==0)

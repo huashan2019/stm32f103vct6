@@ -16,11 +16,11 @@ typedef enum
 	DSP_CHANNEL_7   = 0x07,
 	DSP_CHANNEL_8   = 0x08,
 }DSP_CHANNEL_T;
-#define DSP_CHANNEL_CNT          8
-#define DSP_OUTPUT_CNT           8
-#define DSP_INPUT_CNT           10
+#define DSP_CHANNEL_CNT          16//8
+#define DSP_OUTPUT_CNT           16//8
+#define DSP_INPUT_CNT            10//10
 
-#define DSP_MODE_CNT             8
+#define DSP_MODE_CNT             16//8
 #define DSP_NAME_SIZE            8///BYTE
 
 #define DSP_FREQ_MAX         96000
@@ -151,15 +151,15 @@ typedef enum
 typedef struct 
 {
 	SCH_U32         CheckSum;
-	SCH_U8          ReName[DSP_CHANNEL_CNT+1][DSP_NAME_SIZE];
-	SCH_U8          MixData[DSP_CHANNEL_CNT+1][DSP_INPUT_CNT+1];
+	SCH_U8          ReName[DSP_CHANNEL_CNT+2][DSP_NAME_SIZE];
+	SCH_U8          MixData[DSP_CHANNEL_CNT+2][DSP_INPUT_CNT+1];
 	Filters_T       FiltersData[DSP_CHANNEL_CNT][HPLP_FILTER_CNT];
 	EQ_T            EQ_Data[DSP_CHANNEL_CNT][EQ_NUM_CNT];
-	SCH_U16         DelayData[DSP_CHANNEL_CNT+1];
-	SCH_U16         SingleData[DSP_CHANNEL_CNT+1+1];
+	SCH_U16         DelayData[DSP_CHANNEL_CNT+2];
+	SCH_U16         SingleData[DSP_CHANNEL_CNT+2];
 	SCH_U16         SingleMaxData;///总音量的最大值
-	MUTE_MODE       Mute[DSP_CHANNEL_CNT+1];
-	DSP_CHANNEL_T   OutPutChl[DSP_OUTPUT_CNT+1];
+	MUTE_MODE       Mute[DSP_CHANNEL_CNT+2];
+	DSP_CHANNEL_T   OutPutChl[DSP_OUTPUT_CNT+2];
 }Dsp_Data_T;
 typedef struct 
 {

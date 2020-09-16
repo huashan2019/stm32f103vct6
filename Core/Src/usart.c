@@ -291,11 +291,8 @@ void  App_Printf(char *format, ...)
     va_end(v_args);
 
 	/* ª•≥‚–≈∫≈¡ø */
-	//xSemaphoreTake(xMutex, portMAX_DELAY);
 	osMutexAcquire(myMutex01Handle,portMAX_DELAY);
-
     printf("%s", buf_str);
-   	//xSemaphoreGive(xMutex);
    	osMutexRelease(myMutex01Handle);
 }
 

@@ -56,6 +56,8 @@
 
 
 
+#define T100MS_100           1
+#define T200MS_100           2
 #define T500MS_100           5
 #define T1S_100              10
 #define T2S_100              20
@@ -76,7 +78,6 @@
 
 
 
-extern void SCH_Task_Execute (void);
 extern void Task_4ms_Pro(void);
 extern void Task_8ms_Pro(void);
 extern void Task_16ms_Pro(void);

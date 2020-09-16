@@ -16,7 +16,6 @@
 #include "cmsis_os2.h"
 #include "semphr.h"
 
-extern	osMutexId_t myMutex02Handle;
 
 extern unsigned char USB_Rx_Buf[64];
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -116,7 +115,7 @@ void Bt_ACK(SCH_U8 ack_type)
 	else if(Uart_CONNECT == SCH_Uart_BT)
 	{
 		HAL_UART_Transmit_IT(&huart1, buf, 6+11);
-		vTaskDelay(10);
+		vTaskDelay(20);
 		App_Printf("\r\n Tx ack : ");
 		//for(i = 0;i<6+1+10;i++)
 		//printf(" %x",buf[i]);
@@ -958,14 +957,12 @@ void M2B_TxService(void)
 
 	}
 
-	osMutexAcquire(myMutex02Handle,portMAX_DELAY);
 
 	App_Printf("\r\n Tx data : ");
 	for(i = 0;i<BtTx_Length+1+10;i++)
 	App_Printf(" %x",BtTxModuel.TxData[i]);
 	//App_Printf("\r\n ");
 	
-   	osMutexRelease(myMutex02Handle);
 	BtTxModuel.Check_Ack=1;
 	BtTxModuel.Check_ResendCounte=0;
 	BtTxModuel.Check_ResendTimer=0;

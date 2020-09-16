@@ -52,11 +52,11 @@ void AudioMute(MUTE_T MUTE_Type)
 	}	
 	else if(MUTE_Type== HARDON)
 	{
-		MUTE_Ctl(ON);
+		//MUTE_Ctl(ON);
 	}
 	else if(MUTE_Type==HARDOFF)
 	{
-		MUTE_Ctl(OFF);
+		//MUTE_Ctl(OFF);
 	}
 }
 
