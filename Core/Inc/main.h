@@ -141,6 +141,8 @@ void Error_Handler(void);
 #define I2C2_SDA_Pin GPIO_PIN_9
 #define I2C2_SDA_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+void HAL_PCD_ConnectCallback(PCD_HandleTypeDef *hpcd);
+void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd);
 
 /* USER CODE END Private defines */
 

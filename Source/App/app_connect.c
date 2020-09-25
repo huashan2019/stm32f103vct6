@@ -45,6 +45,7 @@ void Check_Uart(void)
 
 void Change_Uart(Uart_T Uart)
 {
+	App_Printf("\r\n Change_Uart %d",Uart);
 
 	if(App_Dsp.DSP_Updata_State == UpData_Idle)
 	{
@@ -72,7 +73,6 @@ SCH_U8 RxData_TEMP[80];
 SCH_U8 Data_Addr;
 SCH_U8 Data_Num;
 extern unsigned char USB_Received_Count;
-extern unsigned char USB_Rx_Buf[64];
 extern unsigned char bUSB_DataOut_Complete;
 
 
@@ -185,7 +185,7 @@ void BT_DataRxPro(Uart_T Uart,Rx_MODUEL_S *RxModuel)
 					break;
 				}
 				
-				App_Printf("Rx udata head: ");
+				App_Printf("\r\n Rx udata head: ");
 				RxModuel->RxData_Flag = 0x11;
 				break;
 			case 0x11:
@@ -201,9 +201,9 @@ void BT_DataRxPro(Uart_T Uart,Rx_MODUEL_S *RxModuel)
 						sch_memcpy(BtRxModuel.RxData,RxModuel->RxData,RxModuel->RxData_Length);
 					}
 					//sch_memcpy(BtRxModuel.RxData,RxModuel->RxData,RxModuel->RxData_Length);
-					App_Printf("Rx udata : %x",RxModuel->RxData_Flag);
-					for( i = 0;i<RxModuel->RxData[Data_Addr+3];i++)
-					printf(" %x",BtRxModuel.RxData[i]);
+					App_Printf("\r\n Rx udata : %x",RxModuel->RxData_Flag);
+					//for( i = 0;i<RxModuel->RxData[Data_Addr+3];i++)
+					//App_Printf(" %x",BtRxModuel.RxData[i]);
 
 					BtDataAnalyse();
 				}

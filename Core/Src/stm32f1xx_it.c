@@ -55,7 +55,7 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-unsigned char USB_Tx_Buf[64];
+unsigned char USB_Tx_Buf[USBD_CUSTOMHID_OUTREPORT_BUF_SIZE];
 
 
 
@@ -271,7 +271,7 @@ void EXTI9_5_IRQHandler(void)
 void TIM1_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_UP_IRQn 0 */
-  SysTick_Handler1();
+  //SysTick_Handler1();
   /* USER CODE END TIM1_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_UP_IRQn 1 */

@@ -100,3 +100,6 @@
 .\stm32f103vct6\sch_common.o: ..\Source\App\dsp_IC_1_PARAM.h
 .\stm32f103vct6\sch_common.o: ..\Source\App\dsp_IC_1_REG.h
 .\stm32f103vct6\sch_common.o: ..\Source\App\app_eprom.h
+.\stm32f103vct6\sch_common.o: ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h
+.\stm32f103vct6\sch_common.o: ../USB_DEVICE/Target/usbd_conf.h
+.\stm32f103vct6\sch_common.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

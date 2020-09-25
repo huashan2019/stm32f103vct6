@@ -87,8 +87,8 @@ SCH_BOOL Dsp_Mix_Input(SCH_U8 data)
 	{
 		Data = (double)data-144;
 		SIGMASTUDIOTYPE(pow(10,Data/20),buff);
-		SIGMA_SAFELOAD_WRITE_REGISTER(SCH_DSP1,DEVICE_ADDR_IC_1, Mix_Mixer_Input_addr[index], 1, buff);
-		SIGMA_SAFELOAD_WRITE_REGISTER(SCH_DSP2,DEVICE_ADDR_IC_1, Mix_Mixer_Input_addr[index], 1, buff);
+		SIGMA_SAFELOAD_WRITE_REGISTER(SCH_DSP1,DEVICE_ADDR_IC_1, Mix_Mixer_Input_addr[index%10], 1, buff);
+		SIGMA_SAFELOAD_WRITE_REGISTER(SCH_DSP2,DEVICE_ADDR_IC_1, Mix_Mixer_Input_addr[index%10], 1, buff);
 		//App_Printf("\r\n Dsp1 MixInput: Channel=%d,add=%x,data=%x,%x,%x,%x",0,Mix_Mixer_Input_addr[index],buff[0],buff[1],buff[2],buff[3]);
 		//App_Printf("\r\n Dsp2 MixInput: Channel=%d,add=%x,data=%x,%x,%x,%x",0,Mix_Mixer_Input_addr[index],buff[0],buff[1],buff[2],buff[3]);
 	}

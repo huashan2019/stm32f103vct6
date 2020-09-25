@@ -17,7 +17,7 @@
 #include "semphr.h"
 
 
-extern unsigned char USB_Rx_Buf[64];
+extern unsigned char USB_Tx_Buf[USBD_CUSTOMHID_OUTREPORT_BUF_SIZE];
 extern USBD_HandleTypeDef hUsbDeviceFS;
 extern unsigned char bUSB_Dev_On;
 extern unsigned char bUSB_DataOut_Complete;
@@ -63,7 +63,7 @@ SCH_BOOL Set_PASSWORD(SCH_U8 *Data)
 ///======================================================================================
 void Bt_ACK(SCH_U8 ack_type)
 {
-	SCH_U8 buf[6+11],i;
+	static SCH_U8 buf[6+11],i;
 	#if 1
 	
 	buf[0] = 'A';
@@ -100,12 +100,15 @@ void Bt_ACK(SCH_U8 ack_type)
 	if(Uart_CONNECT == SCH_Uart_PC /*&& bUSB_Dev_On*/)
 	{
 
-		for(i = 0;i<(6+1+10);i++)
-		USB_Rx_Buf[i] = buf[i];
+		for(i = 0;i<(6+1);i++)
+		USB_Tx_Buf[i] = buf[i+10];
+
+		for(i = 7;i<sizeof(USB_Tx_Buf);i++)
+		USB_Tx_Buf[i] = 0;
 		
 		
-		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Rx_Buf, sizeof(USB_Rx_Buf));
-		vTaskDelay(100);
+		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
+		vTaskDelay(2);
 		//while(!bUSB_DataOut_Complete)
 		{
 				;	
@@ -530,7 +533,10 @@ void BtDataAnalyse(void)
 					break;
 				case 0x8E:
 					PostMessage(BT_MODULE,M2B_DSP_DATA,SCH_WORD(pData[0],0x0E));
-
+					break;
+				case 0x8F:
+					PostMessage(BT_MODULE,M2B_DSP_DATA,SCH_WORD(pData[0],0x0F));
+					break;
 					
 				default:break;
 			}
@@ -826,6 +832,10 @@ void M2B_TxService(void)
 				case 0x0E:
 					pData[length_data++] = Get_DSP_OFF_Flag ? 0x01 : 0x02;
 					break;
+					
+				case 0x0F:
+					pData[length_data++] = 0x10;
+					break;
 
 				case 0x14:///EQ_1 first 8byte
 					pData[length_data++] = index;
@@ -937,12 +947,20 @@ void M2B_TxService(void)
 
 	if(Uart_CONNECT == SCH_Uart_PC /*&& bUSB_Dev_On*/)
 	{
-		for(i = 0;i<(BtTx_Length+1+10);i++)
-		USB_Rx_Buf[i] = BtTxModuel.TxData[i];
-		bUSB_DataOut_Complete = 0;
-		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Rx_Buf, sizeof(USB_Rx_Buf));
+		for(i = 0;i<(BtTx_Length+1);i++)
+		USB_Tx_Buf[i] = BtTxModuel.TxData[10+i];
 		
-		vTaskDelay(20);
+		for(i = (BtTx_Length+1);i<sizeof(USB_Tx_Buf);i++)
+		USB_Tx_Buf[i] = 0;
+
+		bUSB_DataOut_Complete = 0;
+		USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
+		
+		App_Printf("\r\n Tx Udata : ");
+		for(i = 0;i<sizeof(USB_Tx_Buf);i++)
+		App_Printf(" %x",USB_Tx_Buf[i]);
+
+		vTaskDelay(2);
 		//while(!bUSB_DataOut_Complete)
 		{
 			;
@@ -951,6 +969,10 @@ void M2B_TxService(void)
 	else if(Uart_CONNECT == SCH_Uart_BT)
 	{
 		UartTxData(Uart_CONNECT, BtTxModuel.TxData, BtTx_Length+11);
+		
+		App_Printf("\r\n Tx BTdata : ");
+		for(i = 0;i<BtTx_Length+1+10;i++)
+		App_Printf(" %x",BtTxModuel.TxData[i]);
 	}
 	else
 	{
@@ -958,9 +980,6 @@ void M2B_TxService(void)
 	}
 
 
-	App_Printf("\r\n Tx data : ");
-	for(i = 0;i<BtTx_Length+1+10;i++)
-	App_Printf(" %x",BtTxModuel.TxData[i]);
 	//App_Printf("\r\n ");
 	
 	BtTxModuel.Check_Ack=1;
@@ -995,9 +1014,13 @@ void TASK_Bt_Pro(void)
 				U8 i;
 				 if(Uart_CONNECT == SCH_Uart_PC )
 				 {
-					 for(i = 0;i<(BtTx_Length+1+10);i++)
-					 USB_Rx_Buf[i] = BtTxModuel.TxData[i];
-					 USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Rx_Buf, sizeof(USB_Rx_Buf));
+					 for(i = 0;i<(BtTx_Length+1);i++)
+					 USB_Tx_Buf[i] = BtTxModuel.TxData[i+10];
+					 
+					 for(i = (BtTx_Length+1);i<sizeof(USB_Tx_Buf);i++)
+					 USB_Tx_Buf[i] = 0;
+
+					 USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, USB_Tx_Buf, sizeof(USB_Tx_Buf));
 				 }
 				 else
 				 {

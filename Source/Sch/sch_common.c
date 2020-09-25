@@ -10,6 +10,8 @@
 ***************************************************************************************************
 */
 #include "include.h"
+#include "usbd_def.h"
+#include "stm32f1xx_hal_pcd.h"
 
 
 
@@ -247,6 +249,8 @@ void ExchangeTwoVariable_U32(SCH_U32 *Data0,SCH_U32 *Data1)
 	*Data1 ^= *Data0;
 	*Data0 ^= *Data1;
 }
+
+
 
 
 

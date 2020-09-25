@@ -292,7 +292,7 @@ void StartDefaultTask(void *argument)
 	
 	//App_Printf("LED on: %s \r\n", 1);
     //vTaskDelay(500);
-	HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
 	//HAL_GPIO_WritePin(LED_CTRL2_GPIO_Port, LED_CTRL2_Pin, GPIO_PIN_SET);
     //vTaskDelay(500);
 	//xLastWakeTime = xTaskGetTickCountFromISR();
@@ -300,20 +300,20 @@ void StartDefaultTask(void *argument)
 	//SysWaitUs(100);
 	
 	SysWaitMs(500);
-	HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
     //vTaskDelay(10);
 	//xLastWakeTime = xTaskGetTickCountFromISR();
 	//vTaskDelayUntil(&xLastWakeTime,10);
 	//SysWaitUs(100);
 	SysWaitMs(500);
-	HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
     //vTaskDelay(10);
 	//xLastWakeTime = xTaskGetTickCountFromISR();
 	//vTaskDelayUntil(&xLastWakeTime,10);
 	//SysWaitUs(100);
 	
 	SysWaitMs(500);
-	HAL_GPIO_WritePin(LED_CTRL1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_SET);
     vTaskDelay(500);
     //osDelay(1);
   }
@@ -465,15 +465,15 @@ void StartTask_16ms_Pro(void *argument)
 		//App_Printf("Task_16ms_Pro -- Software Version : %s \r\n", MCU_VERSION);
 		//F_16ms_Clr;
 		Task_16ms_Pro();
-		if(F_FLAG)	
+		//if(F_FLAG)	
 		{
-				F_FLAG = 0;
-			HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
+			//	F_FLAG = 0;
+			//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_RESET);
 		}
-		else
+		//else
 		{
-				F_FLAG = 1;
-			HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
+			//	F_FLAG = 1;
+			//HAL_GPIO_WritePin(LED1_GPIO_Port, LED_CTRL1_Pin, GPIO_PIN_SET);
 		}		
 	}
     osDelay(16);

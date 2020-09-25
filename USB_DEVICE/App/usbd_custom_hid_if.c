@@ -103,7 +103,7 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
   0x09, 0x01,					 //   USAGE (Vendor Usage 1)ͬ��ͬ������
   0x15, 0x00,					 //   LOGICAL_MINIMUM (0)  ͬ��ͬ������
   0x26, 0xff, 0x00, 			 //   LOGICAL_MAXIMUM (255) ͬ��ͬ������
-  0x95, 0x40,					 //   REPORT_COUNT (64)����ͬ��REPORT_COUNT
+  0x95, USBD_CUSTOMHID_OUTREPORT_BUF_SIZE,					 //   REPORT_COUNT (64)����ͬ��REPORT_COUNT
   0x75, 0x08,					 //   REPORT_SIZE (8)������ͬ��REPORT_SIZE
   0x81, 0x02,					 //   INPUT (Data,Var,Abs)����ʾUSBҪ�������ݵ�PC�Ĺ���
   
@@ -111,7 +111,7 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
   0x09, 0x01,					 //   USAGE (Vendor Usage 1) ÿ�����ܵ�һ������?
   0x15, 0x00,					 //   LOGICAL_MINIMUM (0)	 ��ʾÿ�����������޶�Ϊ0
   0x26, 0xff, 0x00, 			 //   LOGICAL_MAXIMUM (255)    ��ʾÿ���������ݵ����ֵ�޶��?255
-  0x95, 0x40,					 //   REPORT_COUNT (64) ÿ�ν��յ����ݳ��ȣ�������64λ
+  0x95, USBD_CUSTOMHID_OUTREPORT_BUF_SIZE,					 //   REPORT_COUNT (64) ÿ�ν��յ����ݳ��ȣ�������64λ
   0x75, 0x08,					 //   REPORT_SIZE (8)		 �����ֶεĿ���?8bit����ʾÿ����������ݷ�Χ�?0~ffff ffff
   0x91, 0x02,					 //   OUTPUT (Data,Var,Abs) ��ʾUSB�豸Ҫ����PC�����ݵĹ���
 
@@ -134,7 +134,7 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 /* USER CODE BEGIN EXPORTED_VARIABLES */
-extern unsigned char USB_Rx_Buf[64];
+extern unsigned char USB_Rx_Buf[USBD_CUSTOMHID_OUTREPORT_BUF_SIZE];
 extern unsigned char USB_Received_Count;
 
 /* USER CODE END EXPORTED_VARIABLES */
@@ -214,12 +214,12 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
     
   USBD_CUSTOM_HID_HandleTypeDef   *hhid;
   hhid = (USBD_CUSTOM_HID_HandleTypeDef*)hUsbDeviceFS.pClassData;
-    for(i=0;i<64;i++) 
+    for(i=0;i<USBD_CUSTOMHID_OUTREPORT_BUF_SIZE;i++) 
     {   
         USB_Rx_Buf[i]=hhid->Report_buf[i];
 		Uart_Rx_DataPro(SCH_Uart0, hhid->Report_buf[i]);
-        printf("USB_Rx_Buf[%d] = 0x%x \r\n",i,USB_Rx_Buf[i]);
-		USB_Received_Count = 64;
+        //App_Printf("USB_Rx_Buf[%d] = 0x%x \r\n",i,USB_Rx_Buf[i]);
+		//USB_Received_Count = USBD_CUSTOMHID_OUTREPORT_BUF_SIZE;
 		if(i>=hhid->Report_buf[2]-1) break;
     } 
 	

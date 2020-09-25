@@ -11,7 +11,7 @@
 */
 #include "include.h"
 SCH_U8 BT_Addr[12+1];/*add one byte for HPF connect stat*/
-SCH_U8 BLE_GVER[30];
+SCH_U8 BLE_GVER[15];
 
 SCH_U8 BtSPPCONFlag;
 SCH_U8 bGUKAIBLE;

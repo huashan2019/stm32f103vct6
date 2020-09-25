@@ -55,6 +55,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_hal.h"
+#include "usbd_def.h"
 
 /** @addtogroup STM32F1xx_HAL_Driver
   * @{
@@ -1447,10 +1448,13 @@ __weak void HAL_PCD_ISOINIncompleteCallback(PCD_HandleTypeDef *hpcd, uint8_t epn
   * @param  hpcd PCD handle
   * @retval None
   */
+  
+extern USBD_HandleTypeDef hUsbDeviceFS;
 __weak void HAL_PCD_ConnectCallback(PCD_HandleTypeDef *hpcd)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hpcd);
+  USBD_Init(&hUsbDeviceFS);
 
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_PCD_ConnectCallback could be implemented in the user file
@@ -1466,6 +1470,7 @@ __weak void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
 {
   /* Prevent unused argument(s) compilation warning */
   UNUSED(hpcd);
+  USBD_DeInit(&hUsbDeviceFS);
 
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_PCD_DisconnectCallback could be implemented in the user file

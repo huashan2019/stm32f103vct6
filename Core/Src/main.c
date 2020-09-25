@@ -65,10 +65,12 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-unsigned char USB_Rx_Buf[64]; //USB接收缓存
+unsigned char USB_Rx_Buf[USBD_CUSTOMHID_OUTREPORT_BUF_SIZE]; //USB接收缓存
+
 unsigned char USB_Received_Count = 0;//USB接收数据计数
 unsigned int AD_DMA[2];
 uint8_t rUARTDataBuffer[1];
+
 
 
 void SysHardware_Init(void)
@@ -258,6 +260,7 @@ void SystemClock_Config(void)
   if(huart == &huart1)
   {
 	  Uart_Rx_DataPro(SCH_Uart1, rUARTDataBuffer[0]);
+	  Change_Uart(SCH_Uart1);
   }
   else if(huart == &huart2)
   {
@@ -267,6 +270,7 @@ void SystemClock_Config(void)
   while(HAL_UART_Receive_IT(huart, rUARTDataBuffer, 1) != HAL_OK); // Wait completly receive 1 byte data, and put data in rUARTDataBuffer
 
 }
+
 
 
 /* USER CODE END 4 */

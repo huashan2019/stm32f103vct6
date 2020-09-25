@@ -18,7 +18,7 @@ typedef enum
 }DSP_CHANNEL_T;
 #define DSP_CHANNEL_CNT          16//8
 #define DSP_OUTPUT_CNT           16//8
-#define DSP_INPUT_CNT            10//10
+#define DSP_INPUT_CNT            20//10
 
 #define DSP_MODE_CNT             16//8
 #define DSP_NAME_SIZE            8///BYTE
